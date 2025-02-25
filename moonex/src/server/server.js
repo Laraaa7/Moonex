@@ -24,5 +24,5 @@ setupChat(server);
 
 // Iniciar el servidor
 server.listen(5000, () => {
-  console.log("🚀 Servidor corriendo en http://localhost:5000");
+  console.log(" Servidor corriendo en http://localhost:5000");
 });
