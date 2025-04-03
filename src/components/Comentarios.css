@@ -1,0 +1,85 @@
+.comentarios-container {
+    background: #4A5F8C;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    width: 100%;
+    position: relative;
+    text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+}
+ 
+.cerrar-btn {
+    position: absolute;
+    top: -14px;
+    right: 14px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background-color: #1a2c5851;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    color: #DAE0EE;
+}
+.cerrar-btn:hover {
+    background-color: rgba(33, 50, 136, 0.7);
+  }
+.comentarios-lista {
+    list-style: none;
+    padding: 0;
+    text-align: left; /* Alinea los comentarios a la izquierda */
+    color: white;
+}
+ 
+.comentario {
+    border-bottom: 1px solid #DAE0EE;
+    padding: 10px 0;
+    text-align: left; /* Alinea cada comentario a la izquierda */
+}
+ 
+.comentario strong {
+    color: #DAE0EE;
+}
+ 
+.comentario-form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Asegura que los elementos estén alineados a la izquierda */
+    width: 100%;
+}
+ 
+.comentario-form textarea {
+    width: 50%; /* Ajusta el ancho del textarea */
+    height: 60px;
+    padding: 10px;
+    border-radius: 5px;
+    resize: none;
+    text-align: left;
+    background-color: #DAE0EE;
+    font-family: sans-serif;
+}
+ 
+.comentario-form button {
+ 
+    background-color: #4a5f8c93;
+    color: #DAE0EE;
+    border: 2px solid #DAE0EE;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    align-self: flex-start; /* Alinea el botón a la izquierda */
+}
+ 
+.comentario-form button:hover {
+    background-color: #5d71a0cc;
+    transform: translateY(-2px);
+}
+ 

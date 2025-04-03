@@ -1,0 +1,130 @@
+/* === NAVBAR GENERAL === */
+.navbar {
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000120;
+    padding: 10px 20px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+  }
+  
+  /* === LOGO === */
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logo a {
+    display: inline-flex;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logo img {
+    height: 60px;
+    margin-right: 10px;
+  }
+  
+  /* === SEARCH BAR (Material UI) === */
+  .search-bar {
+    flex: 1;
+    max-width: 300px;
+    margin: 0 20px;
+  }
+  
+  /* Si quieres personalizar el MUI TextField, puedes usar esta clase si le agregas `className="search-input"` */
+  .search-input .MuiOutlinedInput-root {
+    border-radius: 20px;
+    background-color: #DAE0EE;
+  }
+  
+  /* === NAV LINKS === */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    position: relative;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .nav-links a:hover {
+    transform: scale(1.05);
+  }
+  
+  .nav-links a:hover::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* === USER MENU === */
+  .user-menu {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .user-menu .MuiIconButton-root {
+    color: #DAE0EE;
+  }
+  
+  .user-menu-dropdown .MuiPaper-root {
+    background-color: #0E1C49 !important;
+    color: #DAE0EE !important;
+    border-radius: 10px;
+  }
+  
+  /* === RESPONSIVE DESIGN === */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 15px;
+    }
+  
+    .search-bar {
+      order: 2;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
+    }
+  
+    .nav-links {
+      order: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+  
+    .nav-links a {
+      padding: 8px 12px;
+      font-size: 0.95rem;
+    }
+  
+    .logo img {
+      height: 50px;
+    }
+  }
+  

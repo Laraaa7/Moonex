@@ -1,0 +1,205 @@
+.register-container {
+  display: flex;
+  width: 95%;
+  max-width: 1200px;
+  height: 600px;
+  margin: 60px auto;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Lado izquierdo */
+.register-left {
+  flex: 1;
+  background-color: #DAE0EE;
+  color: #0E1C49;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+  text-align: center;
+}
+
+.register-logo {
+  width: 250px;
+    margin-bottom: -2rem;
+}
+
+.switch-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #0E1C49;
+  font-weight: bold;
+  border: 1px solid #0E1C49;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch-button:hover {
+  background-color: #0E1C49;
+  color: #ffffff;
+}
+
+/* Lado derecho con paleta personalizada */
+.register-right {
+  flex: 1;
+  background-color: #4A5F8C;
+  color: #DAE0EE;
+  padding: 3rem 5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Botón de cerrar dentro del lado derecho */
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #000120;
+  color: #DAE0EE;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: #8F9AB6;
+}
+
+
+.register-right h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.register-form {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.register-form label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.register-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #0E1C49;
+}
+
+.register-form button {
+  padding: 0.9rem;
+  background-color: #000120;
+  color: #DAE0EE;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-form button:hover {
+  background-color: #8F9AB6;
+}
+
+.message {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+.password-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.password-label input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #0E1C49;
+  padding-right: 2rem;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 15px;
+  font-size: 1.3rem;
+  color: #4A5F8C;
+  cursor: pointer;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+    height: auto;
+    margin: 30px auto;
+    border-radius: 15px;
+  }
+
+  .register-left,
+  .register-right {
+    width: 87%;
+    padding: 1rem 1.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .register-form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .close-button {
+    top: 10px;
+    right: 15px;
+  }
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
