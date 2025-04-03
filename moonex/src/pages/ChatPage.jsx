@@ -1,4 +1,3 @@
-// ChatPage.js
 import React from 'react';
 import Chat from '../chatMoonex/Chat';
 

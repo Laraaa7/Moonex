@@ -1,0 +1,8 @@
+.follow-btn.following {
+    background-color: #0e1c498c;
+    color: #DAE0EE;
+  }
+  
+  .follow-btn.following:hover {
+    background-color: #5d71a0;
+  }

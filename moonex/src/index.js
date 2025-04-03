@@ -4,7 +4,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import ChatPage from './pages/ChatPage';
+import ProfilePage from './pages/ProfilePage';
 import reportWebVitals from './reportWebVitals';
+import CrearPostPage from './pages/CrearPostPage';
+import UserProfilePage from './pages/UserProfilePage';
+import FeedPage from './pages/FeedPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,6 +17,10 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/perfil" element={<ProfilePage />} />
+        <Route path="/crearPost" element={<CrearPostPage />} />
+        <Route path="/perfilDeUsuario" element={<UserProfilePage />} />
+        <Route path="/feed" element={<FeedPage />} />
       </Routes>
     </Router>
   </React.StrictMode>

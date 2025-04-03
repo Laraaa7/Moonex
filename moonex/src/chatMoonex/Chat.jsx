@@ -268,9 +268,6 @@ const Chat = () => {
   })}
   <div ref={messagesEndRef} />
 </div>
-
-
-        
         {imagePreviews.length > 0 && (
           <div className="image-preview">
             <div className="preview-grid">

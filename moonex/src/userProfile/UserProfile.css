@@ -1,0 +1,142 @@
+/* Ajustes del contenedor */
+.user-actions {
+    position: relative;
+  }
+  
+  /* Botón de seguir */
+  .follow-button {
+    position: absolute;
+    top: 1px; /* Ajuste para alinear mejor */
+    right: 15px;
+    background-color: #4a5f8c93;
+    color: #DAE0EE;
+    border: 2px solid #DAE0EE;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .follow-button:hover {
+    background-color: #5d71a0cc;
+    transform: translateY(-2px);
+  }
+  
+  /* Cuando el usuario sigue */
+  .follow-button.following {
+    background-color: #DAE0EE;
+    color: #4A5F8C;
+  }
+
+  .message-button {
+    position: absolute;
+    top: 1px;
+    right: 115px;
+    background-color: #4a5f8c93;
+    color: #DAE0EE;
+    border: 2px solid #DAE0EE;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .message-button:hover {
+    background-color: #5d71a0cc;
+    transform: translateY(-2px);
+  }
+  
+  /* Cuando el usuario sigue, mueve el botón de mensaje */
+  .message-button.moved {
+    right: 140px;
+  }
+  
+  /* Responsive */
+  
+  /* Responsive Tablet */
+  @media (max-width: 1024px) {
+    .follow-button {
+      top: 8px;
+      right: 15px;
+      font-size: 13px;
+      padding: 7px 14px;
+    }
+  
+    .message-button {
+      top: 8px;
+      right: 100px;
+      font-size: 13px;
+      padding: 7px 14px;
+    }
+  
+    .message-button.moved {
+      right: 130px;
+    }
+  }
+  
+  /* Responsive Landscape */
+  @media (max-width: 768px) {
+    .follow-button {
+      top: 6px;
+      right: 10px;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  
+    .message-button {
+      top: 6px;
+      right: 85px;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  
+    .message-button.moved {
+      right: 115px;
+    }
+  }
+  
+  /* Responsive Portrait */
+  @media (max-width: 480px) {
+    .follow-button {
+      top: -10px;
+      right: 5px;
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+  
+    .message-button {
+      top: -10px;
+      right: 70px;
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+  
+    .message-button.moved {
+      right: 100px;
+    }
+  }
+  
+  /* Pantallas muy pequeñas */
+  @media (max-width: 350px) {
+    .follow-button {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+  
+    .message-button {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+  
+    .message-button.moved {
+      right: 85px;
+    }
+  }
+  
