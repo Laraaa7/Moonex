@@ -5,7 +5,13 @@ require('dotenv').config(); // Cargar las variables de entorno
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
-const setupChat = require('./chat'); // Importa la lógica del chat
+const setupChat = require('./chat');// Importa la lógica del chat
+const registerRoutes = require('./register'); // Importa la lógica del registro
+const loginRoutes = require('./login'); // Importa la lógica del login
+const updateProfileRoutes = require('./updateProfile'); // 👈 AÑADIDO
+const postRoutes = require('./post');
+const previewRoutes = require('./linkPreview');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -19,10 +25,19 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando");
 });
 
+// Incluir correctamente la ruta de registro
+app.use('/api/register', registerRoutes);
+
+//Incluir la ruta de login
+app.use('/login', loginRoutes);
+
+app.use('/', updateProfileRoutes); // 👈 AÑADIDO
 // Configurar WebSocket
 setupChat(server);
 
+app.use('/', postRoutes);
+app.use('/', previewRoutes);
 // Iniciar el servidor
 server.listen(5000, () => {
-  console.log(" Servidor corriendo en http://localhost:5000");
+  console.log("Servidor corriendo en http://localhost:5000");
 });

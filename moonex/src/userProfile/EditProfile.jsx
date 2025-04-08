@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./EditProfile.css";
 import defaultBanner from "../img/bannerDefecto.jpg";
 import defaultProfile from "../img/PfpDefecto.png";
@@ -7,35 +7,112 @@ import { FaTimes, FaCamera } from "react-icons/fa";
 const EditProfile = ({ closeModal }) => {
   const [bannerImage, setBannerImage] = useState(defaultBanner);
   const [profileImage, setProfileImage] = useState(defaultProfile);
+  const [nombre, setNombre] = useState("");
+  const [username, setUsername] = useState("");
+  const [originalUsername, setOriginalUsername] = useState(""); 
+  const [nacimiento, setNacimiento] = useState("");
+  const [ubicacion, setUbicacion] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const bannerInputRef = React.useRef(null);
-  const profileInputRef = React.useRef(null);
+  const bannerInputRef = useRef(null);
+  const profileInputRef = useRef(null);
 
-  const handleBannerClick = () => {
-    bannerInputRef.current.click();
-  };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setNombre(user.nombre || "");
+      setUsername(user.username || "");
+      setOriginalUsername(user.username || ""); // 👈 Set original username
+      setUbicacion(user.ubicacion || "");
+      setNacimiento(user.fecha_nacimiento?.split("T")[0] || "");
+      if (user.banner) setBannerImage(user.banner);
+      if (user.foto_perfil) setProfileImage(user.foto_perfil);
+    }
+  }, []);
 
-  const handleProfileClick = () => {
-    profileInputRef.current.click();
-  };
+  const handleBannerClick = () => bannerInputRef.current.click();
+  const handleProfileClick = () => profileInputRef.current.click();
 
-  const handleBannerChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
+  const handleBannerChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setBannerImage(e.target.result);
-      };
-      reader.readAsDataURL(event.target.files[0]);
+      reader.onload = (e) => setBannerImage(e.target.result);
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleProfileChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
+  const handleProfileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
-      };
-      reader.readAsDataURL(event.target.files[0]);
+      reader.onload = (e) => setProfileImage(e.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Comprueba que el nombre de usuario este disponible
+  const checkUsernameAvailability = async (newUsername) => {
+    // Si no ha cambiado no lo comprueba
+    if (newUsername === originalUsername) return true;
+    
+    try {
+      const response = await fetch(`http://localhost:5000/check-username?username=${newUsername}`);
+      const data = await response.json();
+      return response.ok;
+    } catch (error) {
+      console.error("Error al verificar username:", error);
+      return false;
+    }
+  };
+
+  const handleSave = async () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser?.id) return;
+
+    setError("");
+    setIsLoading(true);
+
+    try {
+      // Solo comprueba el nombre si ha cambiado respecto al original
+      if (username !== originalUsername) {
+        const isUsernameAvailable = await checkUsernameAvailability(username);
+        
+        if (!isUsernameAvailable) {
+          setError("El nombre de usuario ya está en uso.");
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      const response = await fetch(`http://localhost:5000/updateProfile/${storedUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          username,
+          nacimiento,
+          ubicacion,
+          foto_perfil: profileImage,
+          banner: bannerImage,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        closeModal();
+      } else {
+        setError(data.error || "Error al actualizar perfil");
+      }
+    } catch (err) {
+      console.error("Error al guardar perfil:", err);
+      setError("Hubo un error al actualizar el perfil.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,51 +122,74 @@ const EditProfile = ({ closeModal }) => {
         <button className="close-button" onClick={closeModal}>
           <FaTimes />
         </button>
-        
+
         <h2>Editar Perfil</h2>
-        
-        {/* Banner*/}
-        <div className="banner" style={{ backgroundImage: `url(${bannerImage})` }} onClick={handleBannerClick}>
+
+        <div
+          className="banner"
+          style={{ backgroundImage: `url(${bannerImage})` }}
+          onClick={handleBannerClick}
+        >
           <div className="image-overlay">
             <div className="camera-icon">
               <FaCamera />
             </div>
           </div>
-          <input
-            type="file"
-            ref={bannerInputRef}
-            onChange={handleBannerChange}
-            style={{ display: "none" }}
-            accept="image/*"
-          />
+          <input type="file" ref={bannerInputRef} onChange={handleBannerChange} style={{ display: "none" }} accept="image/*" />
         </div>
 
-        {/* Contenedor foto de perfil */}
         <div className="profile-pic-container" onClick={handleProfileClick}>
           <img src={profileImage} alt="Profile" className="profile-picture" />
           <div className="profile-pic-overlay">
             <FaCamera className="camera-icon-small" />
           </div>
-          <input
-            type="file"
-            ref={profileInputRef}
-            onChange={handleProfileChange}
-            style={{ display: "none" }}
-            accept="image/*"
-          />
+          <input type="file" ref={profileInputRef} onChange={handleProfileChange} style={{ display: "none" }} accept="image/*" />
         </div>
 
-        <label htmlFor="username">Nombre de Usuario</label>
-        <input type="text" id="username" name="username" />
+        <label htmlFor="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          maxLength={30}
+        />
+
+        <label htmlFor="username">Username (@)</label>
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => {
+            const cleanUsername = e.target.value.toLowerCase().trim().replace(/\s+/g, '');
+            setUsername(cleanUsername);
+          }}
+          maxLength={30}
+        />
 
         <label htmlFor="birthdate">Fecha de Nacimiento</label>
-        <input type="date" id="birthdate" name="birthdate" />
+        <input
+          type="date"
+          id="birthdate"
+          value={nacimiento}
+          onChange={(e) => setNacimiento(e.target.value)}
+        />
 
         <label htmlFor="location">Ubicación</label>
-        <input type="text" id="location" name="location" />
+        <input
+          type="text"
+          id="location"
+          value={ubicacion}
+          onChange={(e) => setUbicacion(e.target.value)}
+          maxLength={20}
+        />
+
+        {error && <p className="error-message">{error}</p>}
 
         <div className="modal-buttons">
-          <button className="save-button">Guardar</button>
+          <button className="save-button" onClick={handleSave} disabled={isLoading}>
+            {isLoading ? "Guardando..." : "Guardar"}
+          </button>
           <button className="cancel-button" onClick={closeModal}>Cancelar</button>
         </div>
       </div>

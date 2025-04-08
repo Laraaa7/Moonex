@@ -1,5 +1,5 @@
 import React from "react";
-import "./AQuienSeguir.css"; // Archivo de estilos específico
+import "./AQuienSeguir.css";
 
 const AQuienSeguir = ({ suggestedUsers }) => {
   return (

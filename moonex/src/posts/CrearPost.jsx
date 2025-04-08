@@ -7,6 +7,7 @@ import './CrearPost.css';
 const CrearPost = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
+  const [message, setMessage] = useState('');
 
   const modules = {
     toolbar: [
@@ -15,12 +16,12 @@ const CrearPost = () => {
       ['bold', 'italic', 'underline', 'strike'],
       [{ 'color': [] }, { 'background': [] }],
       [{ 'align': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
       ['image', 'video'],
       ['code-block', 'blockquote']
     ]
-  };  
+  };
 
   const formats = [
     'header', 'font', 'size',
@@ -32,23 +33,59 @@ const CrearPost = () => {
     'code-block', 'blockquote'
   ];
 
-  const handlePublish = () => {
-    console.log("Publicando post:", { title: postTitle, body: postBody });
+  const handlePublish = async () => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+
+    if (!storedUser || !postTitle || !postBody) {
+      setMessage('Completa todos los campos');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/crear-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: storedUser.id,
+          titulo: postTitle,
+          username: storedUser.username,
+          nombre: storedUser.nombre,
+          contenido: postBody,
+          imagen: '',
+          foto_perfil: storedUser.foto_perfil || ''
+        }),
+        
+        
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Post publicado correctamente');
+        setPostTitle('');
+        setPostBody('');
+      } else {
+        setMessage(data.error || 'Error al publicar');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Error al conectar con el servidor");
+    }
   };
 
   const handleCancel = () => {
     setPostTitle('');
     setPostBody('');
+    setMessage('');
   };
 
   return (
     <div>
       <Barranav />
-      
       <div className="crear-post-container">
         <div className="crear-post-content">
           <h2 className="crear-post-title">Escribir Post</h2>
-          
+
           <div className="form-group">
             <label htmlFor="post-title">Título <span className="required">*</span></label>
             <input 
@@ -60,7 +97,7 @@ const CrearPost = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="post-body">Contenido <span className="required">*</span></label>
             <ReactQuill 
@@ -73,20 +110,12 @@ const CrearPost = () => {
               placeholder="Escribe el contenido de tu post aquí..."
             />
           </div>
-          
+
+          {message && <p className="message">{message}</p>}
+
           <div className="form-actions">
-            <button 
-              className="publish-button"
-              onClick={handlePublish}
-            >
-              Publicar
-            </button>
-            <button 
-              className="cancel-button"
-              onClick={handleCancel}
-            >
-              Cancelar
-            </button>
+            <button className="publish-button" onClick={handlePublish}>Publicar</button>
+            <button className="cancel-button" onClick={handleCancel}>Cancelar</button>
           </div>
         </div>
       </div>
