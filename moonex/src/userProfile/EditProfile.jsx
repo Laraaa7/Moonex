@@ -24,7 +24,7 @@ const EditProfile = ({ closeModal }) => {
       const user = JSON.parse(storedUser);
       setNombre(user.nombre || "");
       setUsername(user.username || "");
-      setOriginalUsername(user.username || ""); // 👈 Set original username
+      setOriginalUsername(user.username || "");
       setUbicacion(user.ubicacion || "");
       setNacimiento(user.fecha_nacimiento?.split("T")[0] || "");
       if (user.banner) setBannerImage(user.banner);
@@ -53,14 +53,11 @@ const EditProfile = ({ closeModal }) => {
     }
   };
 
-  // Comprueba que el nombre de usuario este disponible
   const checkUsernameAvailability = async (newUsername) => {
-    // Si no ha cambiado no lo comprueba
     if (newUsername === originalUsername) return true;
     
     try {
       const response = await fetch(`http://localhost:5000/check-username?username=${newUsername}`);
-      const data = await response.json();
       return response.ok;
     } catch (error) {
       console.error("Error al verificar username:", error);
@@ -76,7 +73,6 @@ const EditProfile = ({ closeModal }) => {
     setIsLoading(true);
 
     try {
-      // Solo comprueba el nombre si ha cambiado respecto al original
       if (username !== originalUsername) {
         const isUsernameAvailable = await checkUsernameAvailability(username);
         
@@ -93,8 +89,8 @@ const EditProfile = ({ closeModal }) => {
         body: JSON.stringify({
           nombre,
           username,
-          nacimiento,
-          ubicacion,
+          nacimiento: nacimiento.trim() === "" ? null : nacimiento,
+          ubicacion: ubicacion.trim() === "" ? null : ubicacion,
           foto_perfil: profileImage,
           banner: bannerImage,
         }),
@@ -125,17 +121,27 @@ const EditProfile = ({ closeModal }) => {
 
         <h2>Editar Perfil</h2>
 
-        <div
-          className="banner"
-          style={{ backgroundImage: `url(${bannerImage})` }}
-          onClick={handleBannerClick}
-        >
-          <div className="image-overlay">
+        <div className="banner" style={{ backgroundImage: `url(${bannerImage})` }}>
+          <div className="image-overlay" onClick={handleBannerClick}>
             <div className="camera-icon">
               <FaCamera />
             </div>
           </div>
-          <input type="file" ref={bannerInputRef} onChange={handleBannerChange} style={{ display: "none" }} accept="image/*" />
+
+          {/* Ícono X para quitar banner */}
+          {bannerImage !== defaultBanner && (
+            <div className="remove-banner-icon" onClick={() => setBannerImage(defaultBanner)}>
+              <FaTimes />
+            </div>
+          )}
+
+          <input
+            type="file"
+            ref={bannerInputRef}
+            onChange={handleBannerChange}
+            style={{ display: "none" }}
+            accept="image/*"
+          />
         </div>
 
         <div className="profile-pic-container" onClick={handleProfileClick}>
@@ -143,7 +149,13 @@ const EditProfile = ({ closeModal }) => {
           <div className="profile-pic-overlay">
             <FaCamera className="camera-icon-small" />
           </div>
-          <input type="file" ref={profileInputRef} onChange={handleProfileChange} style={{ display: "none" }} accept="image/*" />
+          <input
+            type="file"
+            ref={profileInputRef}
+            onChange={handleProfileChange}
+            style={{ display: "none" }}
+            accept="image/*"
+          />
         </div>
 
         <label htmlFor="nombre">Nombre</label>

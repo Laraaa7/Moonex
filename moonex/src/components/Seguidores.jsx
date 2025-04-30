@@ -1,19 +1,73 @@
-import React from 'react';
-import { FaTimes } from 'react-icons/fa';
-import './Seguidores.css';
+import React, { useEffect, useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import "./Seguidores.css";
+
+const API_BASE_URL = "http://localhost:5000";
 
 const Seguidores = ({ onClose }) => {
-  const followers = [
-    { username: '@User1', name: 'User 1' },
-    { username: '@User2', name: 'User 2' },
-    { username: '@User3', name: 'User 3' },
-    { username: '@User4', name: 'User 4' },
-  ];
+  const [seguidores, setSeguidores] = useState([]);
+  const [estadoBotones, setEstadoBotones] = useState({});
+  const [isLoading, setIsLoading] = useState(true); 
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  // hace que no se cierre al clicar
-  const handleModalClick = (e) => {
-    e.stopPropagation();
+  useEffect(() => {
+    const fetchSeguidores = async () => {
+      try {
+        setIsLoading(true); // Empieza la carga
+        const res = await fetch(`${API_BASE_URL}/social/seguidores/${currentUser.id}`);
+        const data = await res.json();
+        setSeguidores(data);
+
+        const estados = {};
+        for (const user of data) {
+          const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              seguidor_id: currentUser.id,
+              seguido_id: user.id,
+            }),
+          });
+          const checkData = await checkRes.json();
+          estados[user.id] = checkData.isFollowing;
+        }
+
+        setEstadoBotones(estados);
+      } catch (err) {
+        console.error("Error al obtener seguidores:", err);
+      } finally {
+        setIsLoading(false); // Fin de carga
+      }
+    };
+
+    if (currentUser?.id) {
+      fetchSeguidores();
+    }
+  }, [currentUser?.id]);
+
+  const toggleFollow = async (usuarioId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/social`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          seguidor_id: currentUser.id,
+          seguido_id: usuarioId,
+        }),
+      });
+
+      const data = await res.json();
+
+      setEstadoBotones((prev) => ({
+        ...prev,
+        [usuarioId]: data.followed,
+      }));
+    } catch (error) {
+      console.error("Error al seguir/dejar de seguir:", error);
+    }
   };
+
+  const handleModalClick = (e) => e.stopPropagation();
 
   return (
     <div className="seguidores-overlay" onClick={onClose}>
@@ -25,15 +79,29 @@ const Seguidores = ({ onClose }) => {
           </button>
         </div>
         <div className="seguidores-list">
-          {followers.map((follower, index) => (
-            <div key={index} className="follower-item">
-              <div className="follower-info">
-                <p className="follower-name">{follower.name}</p>
-                <p className="follower-username">{follower.username}</p>
+                  {isLoading ? (
+              <div className="spinner"></div>
+            ) : seguidores.length === 0 ? (
+
+            <p>No tienes seguidores aún.</p>
+          ) : (
+            seguidores.map((user) => (
+              <div key={user.id} className="follower-item">
+                <div className="follower-info">
+                  <p className="follower-name">{user.nombre}</p>
+                  <p className="follower-username">@{user.username}</p>
+                </div>
+                {user.id !== currentUser.id && (
+                  <button
+                    className={`follow-btn ${estadoBotones[user.id] ? "following" : ""}`}
+                    onClick={() => toggleFollow(user.id)}
+                  >
+                    {estadoBotones[user.id] ? "Siguiendo" : "Seguir"}
+                  </button>
+                )}
               </div>
-              <button className="follow-btn">Seguir</button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

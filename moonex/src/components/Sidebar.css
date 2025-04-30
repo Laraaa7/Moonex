@@ -1,0 +1,51 @@
+.menu-movil-container {
+    display: none;
+  }
+  
+  /* SOLO visible en móvil */
+  @media (max-width: 768px) {
+    .menu-movil-container {
+      position: fixed;
+      top: 85px;
+      right: 20px;
+      z-index: 999;
+      display: block;
+    }
+  
+    .menu-icon-btn {
+      background-color: #4A5F8C;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+  
+    .menu-desplegable {
+      position: fixed;
+      top: 135px;
+      right: 0;
+      width: 90%;
+      max-width: 320px;
+      height: auto;
+      background-color: #1E2A4C;
+      border-left: 2px solid #DAE0EE;
+      padding: 20px 10px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      border-radius: 10px 0 0 10px;
+      z-index: 998;
+      overflow-y: auto;
+    }
+  
+    .menu-desplegable.abierto {
+      transform: translateX(0);
+    }
+  
+    .menu-desplegable > div {
+      margin-bottom: 20px;
+    }
+  }
+  

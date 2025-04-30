@@ -8,17 +8,26 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    
+
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
-    
+
+    if (username.includes(" ")) {
+      return res.status(400).json({ error: 'El nombre de usuario no puede contener espacios' });
+    }
+
+    if (username.length > 30) {
+      return res.status(400).json({ error: 'El nombre de usuario no puede tener más de 30 caracteres' });
+    }
+
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,12}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-        error: 'La contraseña debe tener entre 6 y 12 caracteres, incluir al menos una mayúscula y un número.'
+        error: 'La contraseña debe tener entre 10 y 100 caracteres, incluir al menos una mayúscula y un número.'
       });
     }
+
     
     // Verificar si el correo o el username ya existen
     db.query('SELECT * FROM usuarios WHERE email = ? OR username = ?', [email, username], async (err, results) => {

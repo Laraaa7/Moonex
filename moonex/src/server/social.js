@@ -1,0 +1,219 @@
+const express = require("express");
+const router = express.Router();
+const db = require("./db");
+
+// Seguir o dejar de seguir a un usuario
+router.post("/", (req, res) => {
+  const { seguidor_id, seguido_id } = req.body;
+  const seguidor = parseInt(seguidor_id);
+  const seguido = parseInt(seguido_id);
+
+  if (isNaN(seguidor) || isNaN(seguido) || seguidor === seguido) {
+    return res.status(400).json({ error: "IDs inválidos o iguales" });
+  }
+
+  db.query(
+    "SELECT * FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?",
+    [seguidor, seguido],
+    (err, existing) => {
+      if (err) {
+        console.error("Error al verificar seguimiento:", err);
+        return res.status(500).json({ error: "Error al seguir/dejar de seguir", details: err.message });
+      }
+
+      if (existing.length > 0) {
+        db.query(
+          "DELETE FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?",
+          [seguidor, seguido],
+          (err) => {
+            if (err) {
+              console.error("Error al dejar de seguir:", err);
+              return res.status(500).json({ error: "Error al dejar de seguir", details: err.message });
+            }
+            return res.json({ followed: false });
+          }
+        );
+      } else {
+        db.query(
+          "INSERT INTO seguidores (seguidor_id, seguido_id, fecha_seguimiento) VALUES (?, ?, NOW())",
+          [seguidor, seguido],
+          (err) => {
+            if (err) {
+              console.error("Error al seguir:", err);
+              return res.status(500).json({ error: "Error al seguir", details: err.message });
+            }
+            return res.json({ followed: true });
+          }
+        );
+      }
+    }
+  );
+});
+
+// Obtener estadísticas (seguidores, siguiendo, amigos)
+router.get("/estadisticas/:userId", (req, res) => {
+  const id = parseInt(req.params.userId);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "ID inválido" });
+  }
+
+  db.query("SELECT id FROM usuarios WHERE id = ?", [id], (err, exists) => {
+    if (err) {
+      console.error("Error al verificar usuario:", err);
+      return res.status(500).json({ error: "Error al obtener estadísticas", details: err.message });
+    }
+
+    if (exists.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const stats = {
+      seguidores: 0,
+      siguiendo: 0,
+      amigos: 0
+    };
+
+    let completedQueries = 0;
+
+    const sendResponseIfComplete = () => {
+      completedQueries++;
+      if (completedQueries === 3) {
+        res.json(stats);
+      }
+    };
+
+    db.query("SELECT COUNT(*) AS total FROM seguidores WHERE seguido_id = ?", [id], (err, result) => {
+      if (!err && result && result[0]) {
+        stats.seguidores = result[0].total;
+      } else {
+        console.error("Error al contar seguidores:", err);
+      }
+      sendResponseIfComplete();
+    });
+
+    db.query("SELECT COUNT(*) AS total FROM seguidores WHERE seguidor_id = ?", [id], (err, result) => {
+      if (!err && result && result[0]) {
+        stats.siguiendo = result[0].total;
+      } else {
+        console.error("Error al contar siguiendo:", err);
+      }
+      sendResponseIfComplete();
+    });
+
+    db.query(`
+      SELECT COUNT(*) AS total 
+      FROM seguidores AS s1 
+      INNER JOIN seguidores AS s2 
+      ON s1.seguidor_id = s2.seguido_id AND s1.seguido_id = s2.seguidor_id 
+      WHERE s1.seguidor_id = ?
+    `, [id], (err, result) => {
+      if (!err && result && result[0]) {
+        stats.amigos = result[0].total;
+      } else {
+        console.error("Error al contar amigos:", err);
+      }
+      sendResponseIfComplete();
+    });
+  });
+});
+
+// Comprobar si un usuario sigue a otro
+router.post("/check", (req, res) => {
+  const { seguidor_id, seguido_id } = req.body;
+  const seguidor = parseInt(seguidor_id);
+  const seguido = parseInt(seguido_id);
+
+  if (isNaN(seguidor) || isNaN(seguido)) {
+    return res.status(400).json({ error: "IDs inválidos", isFollowing: false });
+  }
+
+  db.query(
+    "SELECT * FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?",
+    [seguidor, seguido],
+    (err, result) => {
+      if (err) {
+        console.error("Error al comprobar seguimiento:", err);
+        return res.status(500).json({ error: "Error al comprobar seguimiento", isFollowing: false });
+      }
+      res.json({ isFollowing: result.length > 0 });
+    }
+  );
+});
+
+// Obtener lista de usuarios que sigue un usuario
+router.get("/siguiendo/:userId", (req, res) => {
+  const id = parseInt(req.params.userId);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "ID inválido" });
+  }
+
+  const query = `
+    SELECT u.id, u.username, u.nombre, u.foto_perfil
+    FROM seguidores s
+    JOIN usuarios u ON s.seguido_id = u.id
+    WHERE s.seguidor_id = ?
+  `;
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("Error al obtener la lista de seguidos:", err);
+      return res.status(500).json({ error: "Error al obtener la lista de seguidos" });
+    }
+    res.json(results);
+  });
+});
+
+// Obtener lista de seguidores de un usuario
+router.get("/seguidores/:userId", (req, res) => {
+    const id = parseInt(req.params.userId);
+  
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+  
+    const query = `
+      SELECT u.id, u.username, u.nombre, u.foto_perfil
+      FROM seguidores s
+      JOIN usuarios u ON s.seguidor_id = u.id
+      WHERE s.seguido_id = ?
+    `;
+  
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error("Error al obtener los seguidores:", err);
+        return res.status(500).json({ error: "Error al obtener los seguidores" });
+      }
+      res.json(results);
+    });
+  });
+
+  // Obtener sugerencias de usuarios a los que no sigues
+router.get("/sugerencias/:userId", (req, res) => {
+  const userId = parseInt(req.params.userId);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: "ID inválido" });
+  }
+
+  const query = `
+    SELECT u.id, u.username, u.nombre, u.foto_perfil
+    FROM usuarios u
+    WHERE u.id != ? AND u.id NOT IN (
+      SELECT seguido_id FROM seguidores WHERE seguidor_id = ?
+    )
+    ORDER BY RAND()
+    LIMIT 5
+  `;
+
+  db.query(query, [userId, userId], (err, results) => {
+    if (err) {
+      console.error("Error al obtener sugerencias:", err);
+      return res.status(500).json({ error: "Error al obtener sugerencias" });
+    }
+    res.json(results);
+  });
+});
+
+module.exports = router;

@@ -8,6 +8,7 @@
     color: inherit;
     background-color: #f8f9fa;
     transition: box-shadow 0.2s ease;
+    margin-right: 10px;
   }
   
   .link-preview-card:hover {

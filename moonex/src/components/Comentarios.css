@@ -1,14 +1,13 @@
-.comentarios-container {
-    background: #4A5F8C;
+.comments-container {
     border-radius: 8px;
     padding: 15px;
     margin-top: 10px;
-    width: 100%;
+    width: 80%;
     position: relative;
-    text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+    text-align: left;
 }
 
-.cerrar-btn {
+/*.cerrar-btn {
     position: absolute;
     top: -14px;
     right: 14px;
@@ -27,44 +26,49 @@
 .cerrar-btn:hover {
     background-color: rgba(33, 50, 136, 0.7);
   }
-.comentarios-lista {
-    list-style: none;
-    padding: 0;
-    text-align: left; /* Alinea los comentarios a la izquierda */
-    color: white;
-}
+*/
 
-.comentario {
-    border-bottom: 1px solid #DAE0EE;
-    padding: 10px 0;
-    text-align: left; /* Alinea cada comentario a la izquierda */
-}
-
-.comentario strong {
-    color: #DAE0EE;
-}
-
-.comentario-form {
+.comments-form {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Asegura que los elementos estén alineados a la izquierda */
-    width: 100%;
+    align-items: flex-start; 
+    width: 121%;
+    margin-bottom: 20px;
 }
 
-.comentario-form textarea {
-    width: 50%; /* Ajusta el ancho del textarea */
-    height: 60px;
-    padding: 10px;
-    border-radius: 5px;
+.comments-form textarea {
+    height: 50px;
     resize: none;
-    text-align: left;
-    background-color: #DAE0EE;
     font-family: sans-serif;
-}
-
-.comentario-form button {
-
+    border-radius: 20px;
+    padding: 0 15px; /* quitamos padding vertical */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 50px;
+    border: 1px solid rgba(218, 224, 238, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    width: 95%;
+    color: #DAE0EE;
+    overflow: hidden;
+  }
+  
+  /* centrado visual con placeholder */
+  .comments-form textarea::placeholder {
+    color: rgba(218, 224, 238, 0.6);
+    line-height: 50px;
+  }
+  
+  /* al enfocar el input */
+  .comments-form textarea:focus {
+    outline: none;
+    border-color: #DAE0EE;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+.comments-form button {
     background-color: #4a5f8c93;
     color: #DAE0EE;
     border: 2px solid #DAE0EE;
@@ -75,10 +79,18 @@
     cursor: pointer;
     transition: all 0.3s ease;
     cursor: pointer;
-    align-self: flex-start; /* Alinea el botón a la izquierda */
+    align-self: flex-start;
 }
 
-.comentario-form button:hover {
+.comments-form button:hover {
     background-color: #5d71a0cc;
     transform: translateY(-2px);
 }
+
+.comments-divider {
+    width: 119%;
+    border-top: 1px solid rgba(218, 224, 238, 0.2);
+    margin-bottom: 20px;
+    margin-top: -20px;
+  }
+  

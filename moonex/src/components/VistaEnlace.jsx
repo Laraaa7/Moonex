@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./VistaEnlace.css"; // Make sure to create this CSS file
+import "./VistaEnlace.css"; 
 
 const VistaEnlace = ({ url }) => {
   const [vista, setVista] = useState(null);

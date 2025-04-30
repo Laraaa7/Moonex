@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { TbCamera } from "react-icons/tb";
 import { IoMdSend } from "react-icons/io";
 import { HiMenu } from "react-icons/hi";
 import { FaTimes } from "react-icons/fa";
+import pfpDefecto from "../img/PfpDefecto.png";
 import "./Chat.css";
 
 const SOCKET_URL = "http://localhost:5000";
-const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 
 const ImageModal = ({ image, onClose }) => {
   const handleClick = (e) => {
-    if (e.target.classList.contains('modal-overlay')) {
+    if (e.target.classList.contains("modal-overlay")) {
       onClose();
     }
   };
@@ -25,14 +27,20 @@ const ImageModal = ({ image, onClose }) => {
 };
 
 const Chat = () => {
+  const { username } = useParams(); // username del receptor
+  const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}"); // usuario logueado
+  const [receptorId, setReceptorId] = useState(null);
+  const [conversaciones, setConversaciones] = useState([]);
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState(""); // eslint-disable-next-line
+  const [newMessage, setNewMessage] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const messagesEndRef = useRef(null);
+  const [receptorData, setReceptorData] = useState(null);
 
   const formatImageSrc = (imageString) => {
     if (!imageString) return "";
@@ -55,26 +63,26 @@ const Chat = () => {
         const img = new Image();
         img.src = event.target.result;
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
-          
+
           if (width > 1200) {
             height = Math.round((height * 1200) / width);
             width = 1200;
           }
-          
+
           canvas.width = width;
           canvas.height = height;
-          
-          const ctx = canvas.getContext('2d');
+
+          const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
-          
+
           canvas.toBlob(
             (blob) => {
               resolve(blob);
             },
-            'image/jpeg',
+            "image/jpeg",
             0.7
           );
         };
@@ -85,29 +93,79 @@ const Chat = () => {
   };
 
   useEffect(() => {
+    const fetchReceiverData = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/usuarios/username/${username}`);
+        const data = await res.json();
+        setReceptorId(data.id);
+        setReceptorData(data); // Aquí guardas nombre, foto, username...
+      } catch (err) {
+        console.error("Error al obtener receptor:", err);
+      }
+    };
+  
+    if (username) {
+      fetchReceiverData();
+    }
+  }, [username]);
+  
+
+  useEffect(() => {
     const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
 
     newSocket.on("chat history", (history) => {
-      const formattedHistory = history.map((message) => ({
-        ...message,
-        imagenes: Array.isArray(message.imagenes) ? message.imagenes.map(formatImageSrc) : []
-      }));
-      setMessages(formattedHistory);
+      const filtered = history
+        .filter(
+          (msg) =>
+            (msg.emisor_id === currentUser.id && msg.receptor_id === receptorId) ||
+            (msg.receptor_id === currentUser.id && msg.emisor_id === receptorId)
+        )
+        .map((message) => ({
+          ...message,
+          imagenes: Array.isArray(message.imagenes)
+            ? message.imagenes.map(formatImageSrc)
+            : [],
+        }));
+      setMessages(filtered);
     });
 
     newSocket.on("new message", (message) => {
-      setMessages((prevMessages) => {
-        const exists = prevMessages.some((msg) => msg.id === message.id);
-        if (!exists) {
-          return [...prevMessages, { ...message, imagenes: message.imagenes.map(formatImageSrc) }];
-        }
-        return prevMessages;
-      });
+      const isRelevant =
+        (message.emisor_id === currentUser.id && message.receptor_id === receptorId) ||
+        (message.receptor_id === currentUser.id && message.emisor_id === receptorId);
+
+      if (isRelevant) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            ...message,
+            imagenes: Array.isArray(message.imagenes)
+              ? message.imagenes.map(formatImageSrc)
+              : [],
+          },
+        ]);
+      }
     });
 
     return () => newSocket.disconnect();
-  }, []);
+  }, [receptorId, currentUser.id]);
+
+  useEffect(() => {
+    const fetchConversaciones = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/conversaciones/${currentUser.id}`);
+        const data = await res.json();
+        setConversaciones(data);
+      } catch (err) {
+        console.error("Error al obtener conversaciones:", err);
+      }
+    };
+
+    if (currentUser.id) {
+      fetchConversaciones();
+    }
+  }, [currentUser.id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,7 +176,7 @@ const Chat = () => {
   }, [messages]);
 
   const triggerImageUpload = () => {
-    document.getElementById('image-upload').click();
+    document.getElementById("image-upload").click();
   };
 
   const handleImageChange = async (e) => {
@@ -134,11 +192,9 @@ const Chat = () => {
 
       try {
         let processedFile = file;
-        
         if (file.size > MAX_IMAGE_SIZE) {
           processedFile = await compressImage(file);
         }
-
         validFiles.push(processedFile);
       } catch (error) {
         console.error(`Error processing ${file.name}:`, error);
@@ -147,7 +203,7 @@ const Chat = () => {
     }
 
     if (errorMessages.length > 0) {
-      alert(errorMessages.join('\n'));
+      alert(errorMessages.join("\n"));
     }
 
     setSelectedImages((prev) => [...prev, ...validFiles]);
@@ -166,27 +222,27 @@ const Chat = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage.trim() || imagePreviews.length > 0) {
-      try {
-        const message = {
-          emisor_id: 1,
-          receptor_id: 2,
-          contenido: newMessage,
-          imagenes: imagePreviews,
-          fecha_envio: new Date().toISOString(),
-        };
+    if (!newMessage.trim() && imagePreviews.length === 0) return;
 
-        if (JSON.stringify(message).length > 5 * 1024 * 1024) {
-          throw new Error('El mensaje es demasiado grande para enviar');
-        }
+    try {
+      const message = {
+        emisor_id: currentUser.id,
+        receptor_id: receptorId,
+        contenido: newMessage,
+        imagenes: imagePreviews,
+        fecha_envio: new Date().toISOString(),
+      };
 
-        socket.emit("new message", message);
-        setNewMessage("");
-        setSelectedImages([]);
-        setImagePreviews([]);
-      } catch (error) {
-        alert(`Error al enviar el mensaje: ${error.message}`);
+      if (JSON.stringify(message).length > 5 * 1024 * 1024) {
+        throw new Error("El mensaje es demasiado grande para enviar");
       }
+
+      socket.emit("new message", message);
+      setNewMessage("");
+      setSelectedImages([]);
+      setImagePreviews([]);
+    } catch (error) {
+      alert(`Error al enviar el mensaje: ${error.message}`);
     }
   };
 
@@ -203,6 +259,10 @@ const Chat = () => {
     setSelectedImage(image);
   };
 
+  const handleChatSelect = (username) => {
+    navigate(`/chat/${username}`);
+  };
+
   return (
     <div className="chat-container">
       <div className={`chat-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
@@ -210,64 +270,132 @@ const Chat = () => {
           <h3>Chats</h3>
         </div>
         <div className="chat-sidebar-rooms">
-          <div>No hay chats disponibles</div>
+  {conversaciones.length === 0 ? (
+    <div>No hay chats disponibles</div>
+  ) : (
+    conversaciones.map((convo) => (
+      <div
+        key={convo.id}
+        className="chat-sidebar-item"
+        onClick={() => handleChatSelect(convo.username)}
+        style={{ cursor: "pointer", padding: "10px", borderBottom: "1px solid #2c416d", display: "flex", gap: "10px" }}
+      >
+        <div className="chat-avatar-small">
+        {convo.foto_perfil ? (
+        <img
+          src={convo.foto_perfil}
+          alt="Perfil"
+          style={{ width: "45px", height: "45px", borderRadius: "50%" }}
+        />
+      ) : (
+        <img
+          src={pfpDefecto}
+          alt="Por defecto"
+          style={{ width: "45px", height: "45px", borderRadius: "50%" }}
+        />
+      )}
+
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap" }}>
+            <span style={{ fontWeight: "bold", color: "#fff" }}>
+              {convo.nombre}
+            </span>
+            <span style={{ color: "#aaa" }}>@{convo.username}</span>
+            <span style={{ color: "#888", fontSize: "12px" }}>
+              • {new Date(convo.fecha_envio).toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+          <div
+              style={{
+                color: "#ccc",
+                fontSize: "14px",
+                marginTop: "4px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}
+            >
+
+          <div className="chat-last-message">
+            {convo.ultimo_mensaje
+              ? convo.ultimo_mensaje
+              : convo.tiene_imagen
+              ? "📷 Imagen"
+              : ""}
+          </div>
+
+
+            </div>
+
         </div>
       </div>
-      <div className={`chat-main ${isSidebarOpen ? "with-sidebar" : "full-width"}`}>
-        <div className="chat-header">
-          <button onClick={toggleSidebar} className="toggle-sidebar-button">
-            <HiMenu size={24} color="white" />
-          </button>
-          <div className="chat-avatar">
-            <div className="avatar-circle">N</div>
-          </div>
-          <h2>Nombre Usuario</h2>
-        </div>
-        <div className="chat-messages">
-  {messages.flatMap((message, index) => {
-    const { id, contenido, imagenes, emisor_id } = message;
-    const isSelf = emisor_id === 1;
-    let messageElements = [];
-
-    if (imagenes && imagenes.length > 0) {
-      imagenes.forEach((img, imgIndex) => {
-        messageElements.push(
-          <div 
-            key={`${id}-img-${imgIndex}`} 
-            className={`message-container ${isSelf ? "self-message" : "other-message"}`}
-          >
-            <div className="message">
-              {imgIndex === 0 && contenido.trim() && <div className="text-above-image">{contenido}</div>}
-              <img
-                src={formatImageSrc(img)}
-                alt={`Imagen enviada ${imgIndex + 1}`}
-                className="message-image cursor-pointer"
-                onClick={() => handleImageClick(formatImageSrc(img))}
-                onError={(e) => {
-                  console.error("Error cargando imagen:", e);
-                  e.target.style.display = "none";
-                }}
-              />
-            </div>
-          </div>
-        );
-      });
-    } else if (contenido.trim()) {
-      // Si solo hay texto sin imágenes, se envía como un mensaje normal
-      messageElements.push(
-        <div 
-          key={`${id}-text`} 
-          className={`message-container ${isSelf ? "self-message" : "other-message"}`}
-        >
-          <div className="message">{contenido}</div>
-        </div>
-      );
-    }
-
-    return messageElements;
-  })}
-  <div ref={messagesEndRef} />
+    ))
+  )}
 </div>
+
+      </div>
+      <div className={`chat-main ${isSidebarOpen ? "with-sidebar" : "full-width"}`}>
+      <div className="chat-header">
+  <button onClick={toggleSidebar} className="toggle-sidebar-button">
+    <HiMenu size={24} color="white" />
+  </button>
+  <div className="chat-avatar">
+          <img
+            src={receptorData?.foto_perfil || pfpDefecto}
+            alt="avatar"
+            className="avatar-image"
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              marginRight: "15px"
+            }}
+          />
+        </div>
+        <div>
+          <div style={{ fontWeight: "bold", fontSize: "18px", color: "white" }}>
+            {receptorData?.nombre || "Usuario"}
+          </div>
+          <div style={{ color: "#ccc", fontSize: "14px" }}>
+            @{receptorData?.username || ""}
+          </div>
+        </div>
+      </div>
+
+
+        <div className="chat-messages">
+          {messages.map((msg, index) => {
+            const isSelf = msg.emisor_id === currentUser.id;
+            return (
+              <div
+                key={index}
+                className={`message-container ${isSelf ? "self-message" : "other-message"}`}
+              >
+                <div className="messages">
+                  {msg.contenido && <p>{msg.contenido}</p>}
+                  {msg.imagenes?.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt="img"
+                      className="message-image"
+                      onClick={() => handleImageClick(img)}
+                      onError={(e) => (e.target.style.display = "none")}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
+        </div>
+
         {imagePreviews.length > 0 && (
           <div className="image-preview">
             <div className="preview-grid">
@@ -276,7 +404,6 @@ const Chat = () => {
                   <button
                     className="close-preview"
                     onClick={() => handleClosePreview(index)}
-                    aria-label="Cerrar vista previa"
                   >
                     <FaTimes size={14} />
                   </button>
@@ -289,9 +416,10 @@ const Chat = () => {
             </div>
           </div>
         )}
+
         <form onSubmit={handleSendMessage} className="chat-input-form">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={triggerImageUpload}
             className="chat-image-button"
             aria-label="Subir imagen"
@@ -320,10 +448,7 @@ const Chat = () => {
       </div>
 
       {selectedImage && (
-        <ImageModal
-          image={selectedImage}
-          onClose={() => setSelectedImage(null)}
-        />
+        <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />
       )}
     </div>
   );

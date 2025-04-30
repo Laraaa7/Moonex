@@ -58,7 +58,26 @@
   cursor: pointer;
   overflow: hidden;
 }
+.remove-banner-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background-color: #1a2c5851;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  color: #DAE0EE;
+}
 
+.remove-banner-icon:hover {
+  background-color: rgba(33, 50, 136, 0.7);
+}
 .image-overlay {
   position: absolute;
   top: 0;
@@ -205,6 +224,7 @@
 .cancel-button:hover {
   background-color: rgba(143, 154, 182, 0.1);
 }
+
 
 /* Responsive */
 @media (max-width: 480px) {

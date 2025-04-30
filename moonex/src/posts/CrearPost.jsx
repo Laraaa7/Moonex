@@ -8,36 +8,42 @@ const CrearPost = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+
+  // Extraer texto sin etiquetas HTML
+  const getPlainTextLength = (html) => {
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    return temp.textContent?.trim().length || 0;
+  };
+
+  const plainContentLength = getPlainTextLength(postBody);
+  const titleTooLong = postTitle.length > 50;
+  const contentTooLong = plainContentLength > 280;
+
+  // Validación: no se permite publicar si falta título o contenido real
+  const isPublishDisabled =
+    !postTitle.trim() ||
+    plainContentLength === 0 ||
+    titleTooLong ||
+    contentTooLong;
 
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }],
       ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'indent': '-1' }, { 'indent': '+1' }],
-      ['image', 'video'],
-      ['code-block', 'blockquote']
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['image']
     ]
   };
 
-  const formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike',
-    'color', 'background',
-    'align',
-    'list', 'bullet', 'indent',
-    'link', 'image', 'video',
-    'code-block', 'blockquote'
-  ];
+  const formats = ['bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'image'];
 
   const handlePublish = async () => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    if (!storedUser || !postTitle || !postBody) {
-      setMessage('Completa todos los campos');
+    if (isPublishDisabled || !storedUser) {
+      setMessage('Completa todos los campos correctamente');
+      setMessageType('error');
       return;
     }
 
@@ -53,23 +59,24 @@ const CrearPost = () => {
           contenido: postBody,
           imagen: '',
           foto_perfil: storedUser.foto_perfil || ''
-        }),
-        
-        
+        })
       });
 
       const data = await response.json();
 
       if (response.ok) {
         setMessage('Post publicado correctamente');
+        setMessageType('success');
         setPostTitle('');
         setPostBody('');
       } else {
         setMessage(data.error || 'Error al publicar');
+        setMessageType('error');
       }
     } catch (error) {
       console.error("Error:", error);
       setMessage("Error al conectar con el servidor");
+      setMessageType('error');
     }
   };
 
@@ -77,6 +84,7 @@ const CrearPost = () => {
     setPostTitle('');
     setPostBody('');
     setMessage('');
+    setMessageType('');
   };
 
   return (
@@ -87,34 +95,50 @@ const CrearPost = () => {
           <h2 className="crear-post-title">Escribir Post</h2>
 
           <div className="form-group">
-            <label htmlFor="post-title">Título <span className="required">*</span></label>
-            <input 
-              type="text" 
-              id="post-title" 
+            <label>Título <span className="required">*</span></label>
+            <input
+              type="text"
               className="post-title-input"
               value={postTitle}
+              maxLength={50}
               onChange={(e) => setPostTitle(e.target.value)}
+              placeholder="Escribe el título de tu post"
               required
             />
+            <div className={`char-counter ${titleTooLong ? 'over-limit' : ''}`}>
+              {postTitle.length}/50
+            </div>
           </div>
 
           <div className="form-group">
-            <label htmlFor="post-body">Contenido <span className="required">*</span></label>
-            <ReactQuill 
+            <label>Contenido <span className="required">*</span></label>
+            <ReactQuill
               theme="snow"
               modules={modules}
               formats={formats}
               value={postBody}
               onChange={setPostBody}
               className="quill-editor"
-              placeholder="Escribe el contenido de tu post aquí..."
+              placeholder=" Añade el contenido de tu post"
             />
+            <div className={`char-counter ${contentTooLong ? 'over-limit' : ''}`}>
+              {plainContentLength}/280
+            </div>
           </div>
 
-          {message && <p className="message">{message}</p>}
+          {message && (
+            <p className={`message ${messageType}`}>{message}</p>
+          )}
 
           <div className="form-actions">
-            <button className="publish-button" onClick={handlePublish}>Publicar</button>
+            <button
+              className="publish-button"
+              onClick={handlePublish}
+              disabled={isPublishDisabled}
+              style={{ opacity: isPublishDisabled ? 0.6 : 1, cursor: isPublishDisabled ? 'not-allowed' : 'pointer' }}
+            >
+              Publicar
+            </button>
             <button className="cancel-button" onClick={handleCancel}>Cancelar</button>
           </div>
         </div>

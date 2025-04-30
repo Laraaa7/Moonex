@@ -1,37 +1,40 @@
 import React, { useState } from "react";
 import "./Comentarios.css";
-import { FaTimes} from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 
-const Comentarios = ({ postId, comentarios, agregarComentario, cerrarComentarios }) => {
+const Comentarios = ({ postId, cerrarComentarios }) => {
   const [nuevoComentario, setNuevoComentario] = useState("");
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (nuevoComentario.trim() === "") return;
-    agregarComentario(postId, nuevoComentario);
-    setNuevoComentario("");
+    if (nuevoComentario.trim() === "" || !currentUser.id) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/comentarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuario_id: currentUser.id,
+          publicacion_id: postId,
+          contenido: nuevoComentario,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Error al comentar");
+      setNuevoComentario("");
+      cerrarComentarios(); // cerrar el modal tras comentar
+    } catch (error) {
+      console.error("Error al enviar comentario:", error);
+    }
   };
 
   return (
-    <div className="comentarios-container">
-      <button className="cerrar-btn" onClick={cerrarComentarios}>
-        <FaTimes/> 
-      </button>
+    <div className="comments-container" onClick={(e) => e.stopPropagation()}>
+      
+      <div className="comments-divider"></div>
 
-      <ul className="comentarios-lista">
-        {comentarios.length === 0 ? (
-          <p>No hay comentarios aún.</p>
-        ) : (
-          comentarios.map((comentario, index) => (
-            <li key={index} className="comentario">
-              <strong>{comentario.usuario}</strong>
-              <p>{comentario.texto}</p>
-            </li>
-          ))
-        )}
-      </ul>
-
-      <form className="comentario-form" onSubmit={handleSubmit}>
+      <form className="comments-form" onSubmit={handleSubmit}>
         <textarea
           value={nuevoComentario}
           onChange={(e) => setNuevoComentario(e.target.value)}

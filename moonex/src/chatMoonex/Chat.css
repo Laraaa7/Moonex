@@ -15,7 +15,8 @@
   flex-direction: column;
   border-right: 1px solid #2c416d;
   flex-shrink: 0;
-  transition: transform 0.3s ease, width 0.3s ease;
+  transition: all 0.3s ease;
+  overflow-y: auto;
 }
 
 /* Encabezado de la barra lateral */
@@ -25,7 +26,6 @@
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  backdrop-filter: blur(10px);
   background-color: rgba(14, 28, 73, 0.6);
   display: flex;
   align-items: center;
@@ -37,6 +37,41 @@
   flex-grow: 1;
   padding: 10px;
   overflow-y: auto;
+}
+
+.chat-sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.chat-avatar-small img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.chat-avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chat-sidebar-username {
+  font-size: 16px;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Área principal del chat */
@@ -52,7 +87,7 @@
 .chat-header {
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   border-bottom: 1px solid #2c416d;
   backdrop-filter: blur(10px);
   background-color: rgba(14, 28, 73, 0.6);
@@ -60,7 +95,7 @@
 }
 
 .chat-avatar {
-  margin-right: 15px;
+  margin-right: 5px;
 }
 
 .avatar-circle {
@@ -98,22 +133,33 @@
   justify-content: flex-start;
 }
 
-.message {
-  padding: 10px 15px;
+.messages {
+  padding: 0 15px;
   border-radius: 15px;
   max-width: 70%;
   word-wrap: break-word;
 }
 
-.self-message .message {
+.self-message .messages {
   background-color: #4A5F8C;
   color: white;
 }
 
-.other-message .message {
-  background-color: #525252;
+.other-message .messages {
+  background-color: #6a7385;
   color: #fff;
 }
+
+.chat-last-message {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  color: #ccc;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
 
 /* Imágenes dentro del mensaje */
 .message-image {
@@ -403,9 +449,14 @@
     max-height: 200px;
   }
 
-  .message {
+  .messages {
     padding: 8px 12px;
     max-width: 80%;
+  }
+  .chat-avatar-small {
+    width: 15px;
+    height: 15px;
+   
   }
 }
 
@@ -423,7 +474,7 @@
     margin-left: 100px;
   }
 
-  .message {
+  .messages {
     padding: 6px 10px;
     max-width: 85%;
   }

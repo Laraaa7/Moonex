@@ -1,44 +1,148 @@
-/* Contenedor de "A quién seguir" */
 .follow-suggestions {
-    background-color: #4A5F8C;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    width: 300px;
-    padding: 20px;
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    border-radius: 10px;
-    color: #1a1a1a;
-    position: sticky; 
-    top: 100px; 
-    margin-right: 20px; 
-    margin-left: -150px;
+  position: fixed;
+  top: 155px;
+  bottom: 208px;
+  left: calc(50% - 790px);
+  background-color: #4A5F8C;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  color: #DAE0EE;
+  z-index: 10;
 }
 
-/* Título */
 .follow-suggestions h3 {
-    margin-bottom: 15px;
-    color: #DAE0EE;
-    font-size: 18px;
+  margin-bottom: 15px;
+  font-size: 19px;
+  text-align: center;
+  margin-top: 10px;
 }
 
-/* Lista de usuarios */
 .suggested-users {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Tarjeta de usuario */
 .suggested-user {
-    background-color: #8F9AB6;
-    border: 1px solid #DAE0EE;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 300px;
-    text-align: center;
-    color: #000120;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; 
+  background-color: #8F9AB6;
+  border: 1px solid #DAE0EE;
+  border-radius: 10px;
+  padding: 10px;
+  color: #000120;
 }
+.suggested-user:hover {
+  transform: scale(1.01);
+  background-color: #9fa9c2;
+}
+
+.suggested-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.suggested-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.suggested-names {
+  display: flex;
+  flex-direction: column;
+  max-width: 140px;
+  overflow: hidden;
+}
+
+.suggested-name {
+  margin: 0;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggested-username {
+  margin: 0;
+  font-size: 0.9em;
+  color: #DAE0EE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.follow-btn {
+  background-color: #0e1c498c;
+  color: #DAE0EE;
+  font-weight: bold;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.follow-btn:hover {
+  background-color: #1d2e5a;
+}
+
+.follow-btn.following {
+  background-color: #5d71a0;
+  border: 1px solid #DAE0EE;
+}
+
+.follow-btn.following:hover {
+  background-color: #6b81b8; 
+}
+
+/* Estilo para tarjetas en carga */
+.suggested-user.loading-card {
+  flex: 1; /* Hace que ocupe el mismo ancho que otras tarjetas */
+  align-self: stretch; /* Ocupar todo el ancho disponible del contenedor */
+  height: 50px;
+  border-radius: 10px;
+  animation: pulse 1.5s infinite ease-in-out;
+  background-color: #9fa9c2;
+  border: 1px solid #DAE0EE;
+}
+
+
+@keyframes pulse {
+  0% {
+    background-color: #9fa9c2;
+  }
+  50% {
+    background-color: #b5bed6;
+  }
+  100% {
+    background-color: #9fa9c2;
+  }
+}
+
+    
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+    .follow-suggestions {
+      left: 20px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .follow-suggestions {
+      position: static;
+      width: 90%;
+      margin: 20px auto;
+      order: 2;
+    }
+  }

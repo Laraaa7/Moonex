@@ -21,6 +21,37 @@
   max-width: 1200px; 
   padding: 20px;
   gap: 5px;
+  position: relative;
+}
+
+
+/* First, let's modify the sidebar-left and sidebar-right to be hidden by default on all screens except desktop */
+.sidebar-left {
+  width: 250px;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  display: none; /* Hidden by default */
+  margin-right: -250px;
+}
+
+.sidebar-right {
+  width: 270px;
+  top: 10px;
+  height: fit-content;
+  position: fixed;
+  top: 155px;
+  right: calc(50% - 720px);
+  z-index: 10;
+  display: none; /* Hidden by default */
+}
+
+/* Display sidebars only on large desktop screens */
+@media (min-width: 1201px) {
+  .sidebar-left,
+  .sidebar-right {
+    display: block; /* Show on desktop */
+  }
 }
 
 .posts-container {
@@ -29,7 +60,8 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  margin-left: 40px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .posts-card {
@@ -38,7 +70,9 @@
   border: none;
   padding: 15px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  width: 1070px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /*mantener la imagen y texto alineados */
@@ -55,37 +89,50 @@
 
 .post-username {
   font-weight: lighter;
-  margin-bottom: 10px;
   color: #dae0eeb6;
-  
+  margin: 0;
+}
+
+.post-time {
+  font-weight: lighter;
+  color: #dae0eeb6;
+  white-space: nowrap;
+  margin: 0;
 }
 
 .post-userinfo {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
   align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  margin-top: 5px;
+
 }
 
 .post-nombre {
   font-size: 16px;
   font-weight: bold;
   color: #DAE0EE;
-  margin-bottom: 5px;
+  margin: 0;
+}
+
+.post-nombre:hover {
+  text-decoration: underline;
 }
 
 .post-title {
   margin: 12px 0;
-  font-weight: 2000;
+  font-weight: 700;
   font-size: 15px;
   color: white;
 }
 
 .post-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .post-avatar {
@@ -94,9 +141,8 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #DAE0EE;
+  flex-shrink: 0;
 }
-
-
 
 .post-content {
   word-wrap: break-word;
@@ -105,12 +151,11 @@
   max-width: 100%;
 }
 
-
-
 .post-actions {
   display: flex;
   gap: 15px;
   margin-top: 10px;
+  color: #DAE0EE;
 }
 
 .post-actions span {
@@ -118,28 +163,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-}
-
-.comentarios-container {
-    width: 100%;
-    margin-top: 10px;
-    padding-top: 10px;
-    max-width: 100%; 
-    box-sizing: border-box; 
-    position: relative; 
-    
-  }
-
-.post-actions{
-color: #DAE0EE;
-cursor: pointer;
-}
-
-.post-actions span {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   padding: 8px;
   border-radius: 50%;
   transition: all 0.3s ease-in-out;
@@ -163,6 +187,15 @@ cursor: pointer;
   opacity: 1;
 }
 
+.comentarios-container {
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 10px;
+  max-width: 100%; 
+  box-sizing: border-box; 
+  position: relative; 
+}
+
 .link-preview-card {
   display: flex;
   flex-direction: row;
@@ -174,76 +207,699 @@ cursor: pointer;
   color: white;
   text-decoration: none;
   max-width: 100%;
-  transition: background 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+}
 
+.spinner {
+  border: 4px solid #DAE0EE;
+  border-top: 4px solid #4A5F8C;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
 
+.post-avatar,
+.post-nombre,
+.post-username,
+.post-userinfo {
+  cursor: pointer;
+}
 
-/* responsive*/
+/* Estilos para la funcionalidad de likes */
+.likes-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.likes-btn.liked {
+  color: #e0245e;
+}
+
+.likes-btn:hover {
+  color: #e0245e;
+}
+
+.like-icon {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.like-icon.active {
+  color: #e0245e;
+  transform: scale(1.1);
+}
+
+.likes-btn:active .like-icon {
+  transform: scale(0.9);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.feed-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0E1C49;
+  margin-top: 95px;
+  margin-bottom: 50px;
+}
+
+/* centrar el contenido */
+.feed-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.feed-content {
+  display: flex;
+  width: 100%;
+  max-width: 1200px; 
+  padding: 20px;
+  gap: 5px;
+  position: relative;
+}
+
+/* First, let's modify the sidebar-left and sidebar-right to be hidden by default on all screens except desktop */
+.sidebar-left {
+  width: 250px;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  display: none; /* Hidden by default */
+  margin-right: -250px;
+}
+
+.sidebar-right {
+  width: 270px;
+  top: 10px;
+  height: fit-content;
+  position: fixed;
+  top: 155px;
+  right: calc(50% - 720px);
+  z-index: 10;
+  display: none; /* Hidden by default */
+}
+
+/* Display sidebars only on large desktop screens */
+@media (min-width: 1201px) {
+  .sidebar-left,
+  .sidebar-right {
+    display: block; /* Show on desktop */
+  }
+}
+
+.posts-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.posts-card {
+  background-color: rgb(40, 55, 108); 
+  border-radius: 8px;
+  border: none;
+  padding: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/*mantener la imagen y texto alineados */
+.post-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.post-text {
+  width: 100%;
+  color: white;
+}
+
+.post-username {
+  font-weight: lighter;
+  color: #dae0eeb6;
+  margin: 0;
+}
+
+.post-time {
+  font-weight: lighter;
+  color: #dae0eeb6;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.post-userinfo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  margin-top: 5px;
+}
+
+.post-nombre {
+  font-size: 16px;
+  font-weight: bold;
+  color: #DAE0EE;
+  margin: 0;
+}
+
+.post-nombre:hover {
+  text-decoration: underline;
+}
+
+.post-title {
+  margin: 12px 0;
+  font-weight: 700;
+  font-size: 15px;
+  color: white;
+}
+
+.post-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #DAE0EE;
+  flex-shrink: 0;
+}
+
+.post-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word; 
+  white-space: normal; 
+  max-width: 100%;
+}
+
+.post-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  color: #DAE0EE;
+}
+
+.post-actions span {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.post-actions span::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.post-actions span:hover::before {
+  opacity: 1;
+}
+
+.comentarios-container {
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 10px;
+  max-width: 100%; 
+  box-sizing: border-box; 
+  position: relative; 
+}
+
+.link-preview-card {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+  background-color: #1c2c5c;
+  color: white;
+  text-decoration: none;
+  max-width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+}
+
+.spinner {
+  border: 4px solid #DAE0EE;
+  border-top: 4px solid #4A5F8C;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+.post-avatar,
+.post-nombre,
+.post-username,
+.post-userinfo {
+  cursor: pointer;
+}
+
+/* Estilos para la funcionalidad de likes */
+.likes-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.likes-btn.liked {
+  color: #e0245e;
+}
+
+.likes-btn:hover {
+  color: #e0245e;
+}
+
+.like-icon {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.like-icon.active {
+  color: #e0245e;
+  transform: scale(1.1);
+}
+
+.likes-btn:active .like-icon {
+  transform: scale(0.9);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Media queries mejoradas */
+@media (max-width: 1200px) {
+  .posts-container {
+    max-width: 700px;
+  }
+}
 
 /* tablet */
 @media (max-width: 1024px) {
   .feed-content {
     padding: 15px;
-
+  }
+  
+  .posts-container {
+    width: 100%;
+    margin: 0 auto;
   }
 }
 
-/* landscape */
+/* Center the posts container on all responsive sizes */
+.posts-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Show the menu toggle button on screens below desktop */
+.menu-movil-toggle {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px 20px;
+  margin-top: -30px;
+}
+
+/* Only hide the mobile menu button on desktop */
+@media (min-width: 1201px) {
+  .menu-movil-toggle {
+    display: none;
+  }
+}
+
+.menu-movil-btn {
+  background-color: #4A5F8C;
+  border: none;
+  color: #DAE0EE;
+  font-size: 22px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Style for the mobile menu panel that will contain the sidebar content */
+.menu-movil-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #1a2b5c;
+  padding: 20px 15px;
+  border-radius: 10px;
+  gap: 20px;
+  width: 90%;
+  max-width: 1000px;
+  margin: 10px auto;
+}
+
+/* landscape mobile y tablets pequeñas */
 @media (max-width: 768px) {
   .feed-content {
     flex-direction: column;
     align-items: center;
-    
+    padding: 10px;
   }
   
-  .follow-suggestions {
+  .sidebar-left {
+    width: 100%;
+    position: static;
+    margin-bottom: 20px;
     order: 2;
-    width: 90%;
-    margin-left: 50px;
-    margin-right: 50px;
-    padding-left: 0px;
-    padding-right: 0px;
+  }
+  
+  .feed-wrapper {
+    margin-top: 30px;
   }
   
   .posts-container {
-    order: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .feed-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #0E1C49;
+    margin-top: 200px;
+    margin-bottom: 50px;
+  }
+  
+  /* NUEVO: Ajustes mejorados para el menu-movil-panel */
+  .menu-movil-panel {
+    width: 88% ;
+    max-width: 100% ;
+    padding: 15px 10px ;
+    margin: 10px auto ;
+  }
+  
+  /* NUEVO: Ajustes para los contenedores internos */
+  .posts-populares-container {
+    width: 85% ;
+    max-width: 100%;
+    margin: 0 auto ;
+  }
+  
+  .follow-suggestions-container {
+    width: 85% ;
+    max-width: 85%;
+    margin: 0 auto;
+  }
+  
+ 
+  .main-content-panel {
+    flex-direction: column ;
+    gap: 15px;
+    width: 95% ;
+    max-width: 95%;
+    padding: 10px ;
+    margin: 0 auto ;
   }
 }
 
-/* portrait */
+/* móvil */
 @media (max-width: 480px) {
+  .feed-container {
+    margin-top: 240px;
+  }
+  
+  .menu-movil-panel {
+    width: 85%;
+    max-width: 100% ;
+    padding: 12px 8px;
+  }
+  
+  .posts-populares-container,
+  .follow-suggestions-container {
+    width: 80% ;
+    max-width: 90% ;
+  }
+  
   .feed-content {
     padding: 10px;
-    margin-top: 80px;
-    margin-bottom: -20px;
   }
   
-  .post-card {
+  .posts-card {
     padding: 12px;
+    width: 88%;
+    margin-left: 20px;
+    box-sizing: border-box;
+    padding-right: 22px;
+  }
+  
+  .post-header {
+    align-items: flex-start;
+  }
+  
+  .post-userinfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .post-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .post-actions {
+    justify-content: space-around;
   }
 
-  .posts-container {
-    width: 84%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 0;
-    padding-right: 25px;
-    max-width: 100%;
+}
+
+/* Móviles pequeños */
+@media (max-width: 350px) {
+  .post-userinfo {
+    flex-wrap: wrap;
   }
   
-  .follow-suggestions {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    padding-left: 0;
-    padding-right: 0;
-    max-width: 100%;
+  .menu-movil-panel {
+    width: 85%;
+    padding: 8px ;
   }
-  .posts-card {
+  
+  .posts-populares-container,
+  .follow-suggestions-container {
+    width: 95%;
+    max-width: 95%;
+  }
+}
+
+/* Ocultar sidebars en móviles y responsive */
+@media (max-width: 768px) {
+  .sidebar-left,
+  .sidebar-right {
+    display: none ;
+  }
+
+  .menu-movil-toggle {
+    display: flex;
+  }
+
+  .menu-movil-panel {
+    display: flex;
+  }
+}
+
+/* ===== FIXES FOR TABLET & MEDIUM SCREENS (769px - 1200px) ===== */
+@media (min-width: 769px) and (max-width: 1200px) {
+  /* Adjustments for feed container position */
+  .feed-container {
+    margin-top: 140px;
+    position: relative;
+  }
+  
+  /* Make the panel container layout better */
+  .menu-movil-panel {
+    position: relative;
+    background-color: #1a2b5c;
+    border-radius: 10px;
+    padding: 25px;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 900px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 60px;
+  }
+  
+  /* Layout for the menu columns */
+  .menu-columnas {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
-    max-width: 100%;
+    gap: 20px;
+  }
+  
+  /* Give equal width to each column */
+  .menu-columna {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Main content panel containing the dual columns */
+  .main-content-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* Fix positioning of the A quién seguir section */
+  .follow-suggestions-container {
+    flex: 1;
+    max-width: 42%; /* MODIFICADO: Reducido de 45% a 42% */
+  }
+  
+  /* Fix positioning of the Posts populares section */
+  .posts-populares-container {
+    flex: 1;
+    max-width: 42%; /* MODIFICADO: Reducido de 45% a 42% */
+  }
+  
+  /* Fix for the post button positioning */
+  .post-button {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10;
+    width: auto;
+    height: auto;
+    padding: 15px 30px;
+    border-radius: 50px;
+  }
+  
+  /* Override the problematic positioning rules */
+  .follow-suggestions {
+    position: static;
+    transform: none;
+  }
+  
+  .posts-populares {
+    position: static;
+    margin-left: 0;
+  }
+  
+  /* Ensure content has proper spacing */
+  .feed-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 15px;
+    margin-top: 20px;
+  }
+}
+
+/* Custom adjustment for layout between tablet and desktop */
+@media (min-width: 900px) and (max-width: 1200px) {
+  .menu-movil-panel {
+    max-width: 90%;
+    margin-top: 80px;
+  }
+  
+  .feed-container {
+    margin-top: 120px;
+  }
+  
+  /* Make two-column layout for main content properly centered */
+  .main-content-panel {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+/* Ensure the layout preserves on specific screen sizes */
+@media (min-width: 769px) and (max-width: 900px) {
+  .menu-movil-panel {
+    width: 95%;
+  }
+  
+  .main-content-panel {
+    padding: 10px;
+  }
+}
+
+/* Adjust feed-content layout for the responsive design */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .feed-content {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Make posts-container take full width */
+  .posts-container {
+    width: 100%;
+    max-width: 90%;
   }
 }

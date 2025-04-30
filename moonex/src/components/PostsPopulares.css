@@ -1,0 +1,31 @@
+.posts-populares {
+    background-color: #4A5F8C;
+    color: #DAE0EE;
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .posts-populares h4 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  .pop-post {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  
+  .pop-post strong {
+    display: block;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  
+  .pop-count {
+    font-size: 12px;
+    color: #DAE0EE99;
+  }
+  

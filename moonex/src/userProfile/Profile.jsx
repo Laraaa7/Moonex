@@ -9,33 +9,68 @@ import defaultProfile from "../img/PfpDefecto.png";
 import EditProfile from "../userProfile/EditProfile";
 import PostsUsuario from "../components/PostsUsuario";
 
+const API_BASE_URL = "http://localhost:5000";
+
 const Profile = () => {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSeguidores, setShowSeguidores] = useState(false);
   const [showSiguiendo, setShowSiguiendo] = useState(false);
   const [showAmigos, setShowAmigos] = useState(false);
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load user data on component mount and when showEditProfile changes
-  // This ensures we refresh user data after editing profile
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      fetchStats(parsedUser.id);
+    } else {
+      setLoading(false);
     }
   }, [showEditProfile]);
 
-  // Format date for display
+  const fetchStats = async (userId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/social/estadisticas/${userId}`);
+      if (!res.ok) throw new Error("Error al obtener estadísticas");
+      const data = await res.json();
+      setStats({
+        seguidores: data.seguidores ?? 0,
+        siguiendo: data.siguiendo ?? 0,
+        amigos: data.amigos ?? 0,
+      });
+    } catch (err) {
+      console.error("Error al obtener estadísticas:", err);
+      setStats({ seguidores: 0, siguiendo: 0, amigos: 0 });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
-    if (!dateString) return "";
-    
+    if (!dateString || dateString === "0000-00-00") return "Sin fecha";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString();
-    } catch (e) {
+      return date.toLocaleDateString("es-ES");
+    } catch {
       return dateString;
     }
   };
+
+  if (loading || !user || !stats) {
+    return (
+      <div className="profile-container">
+        <Barranav />
+        <div className="profile-content">
+          <div className="spinner-profile">
+            <div className="loader"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -44,7 +79,7 @@ const Profile = () => {
         <div className="profile-card">
           <div
             className="banner"
-            style={{ backgroundImage: `url(${user?.banner || defaultBanner})` }}
+            style={{ backgroundImage: `url(${user.banner || defaultBanner})` }}
           >
             <button
               className="edit-profile-button"
@@ -57,7 +92,7 @@ const Profile = () => {
           <div className="profile-info">
             <img
               className="profile-pic"
-              src={user?.foto_perfil || defaultProfile}
+              src={user.foto_perfil || defaultProfile}
               alt="Profile"
               onError={(e) => {
                 e.target.onerror = null;
@@ -65,53 +100,38 @@ const Profile = () => {
               }}
             />
             <span className="online-status"></span>
-            <h2>{user?.nombre || "Nombre de Usuario"}</h2>
-            <p className="user">
-              {user?.username ? `@${user.username}` : "@usuario"}
+            <h2>{user.nombre || "Nombre de Usuario"}</h2>
+            <p className="user">@{user.username || "usuario"}</p>
+            <p className="dob">
+              🎂 {user.fecha_nacimiento ? formatDate(user.fecha_nacimiento) : "Sin fecha"}
             </p>
-
-            <p className="dob">🎂 {user?.fecha_nacimiento ? formatDate(user.fecha_nacimiento) : "Fecha de nacimiento"}</p>
-            <p className="location">📍 {user?.ubicacion || "Lugar"}</p>
+            <p className="location">
+              📍 {user.ubicacion?.trim() ? user.ubicacion : "Sin ubicación"}
+            </p>
           </div>
 
           <div className="stats">
-            <div
-              className="seguidores-stat"
-              onClick={() => setShowAmigos(!showAmigos)}
-              style={{ position: "relative", cursor: "pointer" }}
-            >
+            <div onClick={() => setShowAmigos(!showAmigos)} style={{ cursor: "pointer" }}>
               <p>Amigos</p>
-              <p className="stat-number">1</p>
+              <p className="stat-number">{stats.amigos}</p>
               {showAmigos && <Amigos onClose={() => setShowAmigos(false)} />}
             </div>
 
-            <div
-              className="seguidores-stat"
-              onClick={() => setShowSeguidores(!showSeguidores)}
-              style={{ position: "relative", cursor: "pointer" }}
-            >
+            <div onClick={() => setShowSeguidores(!showSeguidores)} style={{ cursor: "pointer" }}>
               <p>Seguidores</p>
-              <p className="stat-number">1</p>
-              {showSeguidores && (
-                <Seguidores onClose={() => setShowSeguidores(false)} />
-              )}
+              <p className="stat-number">{stats.seguidores}</p>
+              {showSeguidores && <Seguidores onClose={() => setShowSeguidores(false)} />}
             </div>
 
-            <div
-              className="seguidores-stat"
-              onClick={() => setShowSiguiendo(!showSiguiendo)}
-              style={{ position: "relative", cursor: "pointer" }}
-            >
+            <div onClick={() => setShowSiguiendo(!showSiguiendo)} style={{ cursor: "pointer" }}>
               <p>Siguiendo</p>
-              <p className="stat-number">1</p>
-              {showSiguiendo && (
-                <Siguiendo onClose={() => setShowSiguiendo(false)} />
-              )}
+              <p className="stat-number">{stats.siguiendo}</p>
+              {showSiguiendo && <Siguiendo onClose={() => setShowSiguiendo(false)} />}
             </div>
           </div>
         </div>
 
-        <PostsUsuario />
+        {user?.id && <PostsUsuario usuarioId={user.id} />}
       </div>
 
       {showEditProfile && (

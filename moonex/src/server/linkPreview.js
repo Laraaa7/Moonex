@@ -11,7 +11,6 @@ router.get('/link-preview', async (req, res) => {
   }
   
   try {
-    console.log('Fetching preview for URL:', url);
     
     // Fetch the webpage content with a timeout
     const response = await axios.get(url, { 
@@ -47,7 +46,6 @@ router.get('/link-preview', async (req, res) => {
       metadata.image = `${urlObj.protocol}//${urlObj.host}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
     }
     
-    console.log('Link preview metadata:', metadata);
     res.json(metadata);
   } catch (error) {
     console.error('Error fetching link preview:', error);

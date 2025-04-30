@@ -17,7 +17,7 @@ const ImageGrid = ({ images }) => {
     // Contenedor principal
     gridContainer: {
       display: 'grid',
-      gap: '2px',
+      gap: '2px', 
       width: '100%',
       maxWidth: totalImages === 1 ? '380px' : '500px', // Ancho más pequeño para una sola imagen
       borderRadius: '15px',

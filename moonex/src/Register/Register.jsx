@@ -59,40 +59,73 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { userName, email, password, confirmPassword } = formData;
-
-    if (!userName || !email || !password || !confirmPassword) {
-      setMessage('Por favor, completa todos los campos.');
+  
+    // Validación: nombre de usuario
+    if (!userName) {
+      setMessage("El nombre de usuario es obligatorio.");
       return;
     }
-
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,12}$/;
-    if (!passwordRegex.test(password)) {
-      setMessage('La contraseña debe tener entre 6 y 12 caracteres, incluir al menos una mayúscula y un número.');
+    if (userName.length < 4) {
+      setMessage("El nombre de usuario debe tener al menos 4 caracteres.");
       return;
     }
-
+    if (!/^[a-z0-9_]+$/.test(userName)) {
+      setMessage("El nombre de usuario solo puede contener letras minúsculas, números y guión bajo.");
+      return;
+    }
+  
+    // Validación: email
+    if (!email) {
+      setMessage("El correo electrónico es obligatorio.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage("El formato del correo electrónico no es válido.");
+      return;
+    }
+  
+    // Validación: contraseña
+    if (!password) {
+      setMessage("La contraseña es obligatoria.");
+      return;
+    }
+    if (password.length < 10 || password.length > 100) {
+      setMessage("La contraseña debe tener entre 10 y 100 caracteres.");
+      return;
+    }
+    if (!/[A-Z]/.test(password)) {
+      setMessage("La contraseña debe incluir al menos una letra mayúscula.");
+      return;
+    }
+    if (!/\d/.test(password)) {
+      setMessage("La contraseña debe incluir al menos un número.");
+      return;
+    }
+  
+    // Validación: confirmación de contraseña
+    if (!confirmPassword) {
+      setMessage("Debes confirmar tu contraseña.");
+      return;
+    }
     if (password !== confirmPassword) {
-      setMessage('Las contraseñas no coinciden.');
+      setMessage("Las contraseñas no coinciden.");
       return;
     }
-
+  
+    // Envío al backend
     try {
       const response = await fetch('http://localhost:5000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: userName, email, password })
       });
-
+  
       const data = await response.json();
-      
-      // Check if status is 201 (created) or 200 (ok)
+  
       if (response.status === 201 || response.status === 200) {
-        // Store both user and a dummy token for consistency with social logins
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('token', data.user.id); // Use user ID as token or adjust if your API returns a token
-        
-        console.log("Registro exitoso, redirigiendo a /feed"); // Debug logging
-        navigate('/feed');
+        localStorage.removeItem('token');
+        navigate('/login');
       } else {
         setMessage(data.error || 'Error al registrarse');
       }
@@ -101,6 +134,7 @@ const Register = () => {
       setMessage('Error de conexión con el servidor.');
     }
   };
+  
 
   return (
     <div className="register-wrapper">
@@ -133,13 +167,24 @@ const Register = () => {
             <label>
               <i className='bx bx-user'></i>
               <input
-                type="text"
-                name="userName"
-                placeholder="Nombre Usuario"
-                value={formData.userName}
-                onChange={handleChange}
-                required
-              />
+                  type="text"
+                  name="userName"
+                  placeholder="Nombre Usuario"
+                  value={formData.userName}
+                  onChange={(e) => {
+                    let valor = e.target.value;
+                    
+                    valor = valor.replace(/[^a-z0-9_]/g, '');
+                    valor = valor.slice(0, 30);
+                  
+                    setFormData({ ...formData, userName: valor });
+                  }}
+                  required
+                  maxLength={30}
+                  minLength={6}
+                />
+
+
             </label>
 
             <label>
@@ -163,6 +208,8 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                maxLength={100}
+                minLength={10}
               />
               <i
                 className={`bx ${showPassword ? 'bx-hide' : 'bx-show'} toggle-eye`}
@@ -179,6 +226,8 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                maxLength={100}
+                minLength={10}
               />
               <i
                 className={`bx ${showConfirm ? 'bx-hide' : 'bx-show'} toggle-eye`}
