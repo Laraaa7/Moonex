@@ -35,7 +35,6 @@ const Chat = () => {
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [selectedImages, setSelectedImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -98,7 +97,7 @@ const Chat = () => {
         const res = await fetch(`http://localhost:5000/usuarios/username/${username}`);
         const data = await res.json();
         setReceptorId(data.id);
-        setReceptorData(data); // Aquí guardas nombre, foto, username...
+        setReceptorData(data); 
       } catch (err) {
         console.error("Error al obtener receptor:", err);
       }
@@ -206,18 +205,23 @@ const Chat = () => {
       alert(errorMessages.join("\n"));
     }
 
-    setSelectedImages((prev) => [...prev, ...validFiles]);
+    // Process valid files for preview
+    const newPreviews = [];
+    for (const file of validFiles) {
+      try {
+        const preview = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        newPreviews.push(preview);
+      } catch (error) {
+        console.error(`Error creating preview for ${file.name}:`, error);
+      }
+    }
 
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviews((prev) => [...prev, reader.result]);
-      };
-      reader.onerror = () => {
-        alert(`Error al cargar la vista previa de ${file.name}`);
-      };
-      reader.readAsDataURL(file);
-    });
+    setImagePreviews(prev => [...prev, ...newPreviews]);
   };
 
   const handleSendMessage = async (e) => {
@@ -239,7 +243,6 @@ const Chat = () => {
 
       socket.emit("new message", message);
       setNewMessage("");
-      setSelectedImages([]);
       setImagePreviews([]);
     } catch (error) {
       alert(`Error al enviar el mensaje: ${error.message}`);
@@ -247,7 +250,6 @@ const Chat = () => {
   };
 
   const handleClosePreview = (index) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -270,104 +272,82 @@ const Chat = () => {
           <h3>Chats</h3>
         </div>
         <div className="chat-sidebar-rooms">
-  {conversaciones.length === 0 ? (
-    <div>No hay chats disponibles</div>
-  ) : (
-    conversaciones.map((convo) => (
-      <div
-        key={convo.id}
-        className="chat-sidebar-item"
-        onClick={() => handleChatSelect(convo.username)}
-        style={{ cursor: "pointer", padding: "10px", borderBottom: "1px solid #2c416d", display: "flex", gap: "10px" }}
-      >
-        <div className="chat-avatar-small">
-        {convo.foto_perfil ? (
-        <img
-          src={convo.foto_perfil}
-          alt="Perfil"
-          style={{ width: "45px", height: "45px", borderRadius: "50%" }}
-        />
-      ) : (
-        <img
-          src={pfpDefecto}
-          alt="Por defecto"
-          style={{ width: "45px", height: "45px", borderRadius: "50%" }}
-        />
-      )}
-
+          {conversaciones.length === 0 ? (
+            <div>No hay chats disponibles</div>
+          ) : (
+            conversaciones.map((convo) => (
+              <div
+                key={convo.id}
+                className="chat-sidebar-item"
+                onClick={() => handleChatSelect(convo.username)}
+              >
+                <div className="chat-avatar-small">
+                  {convo.foto_perfil ? (
+                    <img
+                      src={convo.foto_perfil}
+                      alt="Perfil"
+                    />
+                  ) : (
+                    <img
+                      src={pfpDefecto}
+                      alt="Por defecto"
+                    />
+                  )}
+                </div>
+                <div className="chat-sidebar-info">
+                  <div className="chat-sidebar-header-info">
+                    <span className="chat-sidebar-name">
+                      {convo.nombre}
+                    </span>
+                    <span className="chat-sidebar-username">@{convo.username}</span>
+                    <span className="chat-sidebar-date">
+                      • {new Date(convo.fecha_envio).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  <div className="chat-last-message">
+                    {convo.ultimo_mensaje
+                      ? convo.ultimo_mensaje
+                      : convo.tiene_imagen
+                      ? "📷 Imagen"
+                      : ""}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px", flexWrap: "wrap" }}>
-            <span style={{ fontWeight: "bold", color: "#fff" }}>
-              {convo.nombre}
-            </span>
-            <span style={{ color: "#aaa" }}>@{convo.username}</span>
-            <span style={{ color: "#888", fontSize: "12px" }}>
-              • {new Date(convo.fecha_envio).toLocaleDateString("es-ES", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-          <div
-              style={{
-                color: "#ccc",
-                fontSize: "14px",
-                marginTop: "4px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
-              }}
-            >
-
-          <div className="chat-last-message">
-            {convo.ultimo_mensaje
-              ? convo.ultimo_mensaje
-              : convo.tiene_imagen
-              ? "📷 Imagen"
-              : ""}
-          </div>
-
-
-            </div>
-
-        </div>
-      </div>
-    ))
-  )}
-</div>
-
       </div>
       <div className={`chat-main ${isSidebarOpen ? "with-sidebar" : "full-width"}`}>
-      <div className="chat-header">
-  <button onClick={toggleSidebar} className="toggle-sidebar-button">
-    <HiMenu size={24} color="white" />
-  </button>
-  <div className="chat-avatar">
-          <img
-            src={receptorData?.foto_perfil || pfpDefecto}
-            alt="avatar"
-            className="avatar-image"
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              objectFit: "cover",
-              marginRight: "15px"
-            }}
-          />
-        </div>
-        <div>
-          <div style={{ fontWeight: "bold", fontSize: "18px", color: "white" }}>
-            {receptorData?.nombre || "Usuario"}
-          </div>
-          <div style={{ color: "#ccc", fontSize: "14px" }}>
-            @{receptorData?.username || ""}
-          </div>
-        </div>
-      </div>
+        <div className="chat-header">
+          <button onClick={toggleSidebar} className="toggle-sidebar-button">
+            <HiMenu size={24} color="white" />
+          </button>
 
+          <div
+            className="chat-header-profile"
+            onClick={() => navigate(`/perfilDeUsuario/${receptorData?.username}`)}
+          >
+            <div className="chat-avatar">
+              <img
+                src={receptorData?.foto_perfil || pfpDefecto}
+                alt="avatar"
+                className="avatar-image"
+              />
+            </div>
+            <div className="chat-header-info">
+              <div className="chat-header-name">
+                {receptorData?.nombre || "Usuario"}
+              </div>
+              <div className="chat-header-username">
+                @{receptorData?.username || ""}
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="chat-messages">
           {messages.map((msg, index) => {

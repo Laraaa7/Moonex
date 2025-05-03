@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 👈 Nuevo
 import Barranav from "../components/Barranav"; 
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -9,8 +10,8 @@ const CrearPost = () => {
   const [postBody, setPostBody] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  const navigate = useNavigate(); // 👈 Nuevo
 
-  // Extraer texto sin etiquetas HTML
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");
     temp.innerHTML = html;
@@ -21,7 +22,6 @@ const CrearPost = () => {
   const titleTooLong = postTitle.length > 50;
   const contentTooLong = plainContentLength > 280;
 
-  // Validación: no se permite publicar si falta título o contenido real
   const isPublishDisabled =
     !postTitle.trim() ||
     plainContentLength === 0 ||
@@ -69,6 +69,10 @@ const CrearPost = () => {
         setMessageType('success');
         setPostTitle('');
         setPostBody('');
+        // Redirigir al feed después de publicar exitosamente
+        setTimeout(() => {
+          navigate('/feed'); // Redirección
+        }, 1000); // Pequeña pausa para mostrar mensaje
       } else {
         setMessage(data.error || 'Error al publicar');
         setMessageType('error');

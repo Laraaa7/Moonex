@@ -22,15 +22,8 @@ const VerPost = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const suggestedUsers = [
-    { id: 1, username: "Usuario1" },
-    { id: 2, username: "Usuario2" },
-    { id: 3, username: "Usuario3" },
-    { id: 4, username: "Usuario4" },
-    { id: 5, username: "Usuario5" },
-  ];
-
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = currentUser?.id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,11 +46,11 @@ const VerPost = () => {
     };
 
     const fetchLikes = async () => {
-      if (!postId || !currentUser?.id) return;
+      if (!postId || !userId) return;
       try {
         const [likesRes, userLikesRes] = await Promise.all([
           fetch(`http://localhost:5000/likes/${postId}`),
-          fetch(`http://localhost:5000/likes/usuario/${currentUser.id}`)
+          fetch(`http://localhost:5000/likes/usuario/${userId}`)
         ]);
 
         const likesData = await likesRes.json();
@@ -72,10 +65,10 @@ const VerPost = () => {
 
     fetchData();
     fetchLikes();
-  }, [postId]);
+  }, [postId, userId]);
 
   const manejarLike = async () => {
-    if (!currentUser?.id) return navigate("/login");
+    if (!userId) return navigate("/login");
 
     try {
       setLiked(prev => !prev);
@@ -85,7 +78,7 @@ const VerPost = () => {
         method: liked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          usuario_id: currentUser.id,
+          usuario_id: userId,
           publicacion_id: postId
         })
       });
@@ -100,14 +93,14 @@ const VerPost = () => {
 
   const agregarComentario = async (e) => {
     e.preventDefault();
-    if (nuevoComentario.trim() === "" || !currentUser.id) return;
+    if (nuevoComentario.trim() === "" || !userId) return;
 
     try {
       const res = await fetch("http://localhost:5000/comentarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          usuario_id: currentUser.id,
+          usuario_id: userId,
           publicacion_id: postId,
           contenido: nuevoComentario,
         }),
@@ -161,9 +154,9 @@ const VerPost = () => {
     return imgs.length > 0 ? imgs : post.imagen ? [post.imagen] : [];
   };
 
-  const navigateToProfile = (username, userId) => {
+  const navigateToProfile = (username, userIdParam) => {
     if (!currentUser.username) return navigate("/login");
-    if (currentUser.username === username || currentUser.id === userId) {
+    if (currentUser.username === username || currentUser.id === userIdParam) {
       navigate("/perfil");
     } else {
       navigate(`/perfilDeUsuario/${username}`);
@@ -190,12 +183,20 @@ const VerPost = () => {
     return `${anos}año${anos > 1 ? "s" : ""}`;
   };
 
+  const suggestedUsers = [
+    { id: 1, username: "Usuario1" },
+    { id: 2, username: "Usuario2" },
+    { id: 3, username: "Usuario3" },
+    { id: 4, username: "Usuario4" },
+    { id: 5, username: "Usuario5" },
+  ];
+
   if (loading) {
     return (
       <div className="verpost-container">
         <Barranav />
         <div className="verpost-content">
-          <div className="spinner-container"><div className="spinner"></div></div>
+          <div className="rueda-contenedor"><div className="rueda"></div></div>
         </div>
       </div>
     );

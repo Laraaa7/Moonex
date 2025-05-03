@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./Comentarios.css";
-import { FaTimes } from "react-icons/fa";
 
 const Comentarios = ({ postId, cerrarComentarios }) => {
   const [nuevoComentario, setNuevoComentario] = useState("");

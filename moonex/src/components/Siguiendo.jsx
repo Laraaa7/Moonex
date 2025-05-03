@@ -1,61 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Siguiendo.css";
+import defaultProfile from "../img/PfpDefecto.png";
+
+const API_BASE_URL = "http://localhost:5000";
 
 const Siguiendo = ({ onClose }) => {
   const [siguiendo, setSiguiendo] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
-  
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = currentUser?.id;
+
   useEffect(() => {
     const fetchSiguiendo = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/social/siguiendo/${currentUser.id}`);
+        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${userId}`);
         const data = await res.json();
         setSiguiendo(data);
-  
-        const inicialEstado = {};
-        data.forEach((user) => {
-          inicialEstado[user.id] = true;
+
+        const estados = {};
+        data.forEach(user => {
+          estados[user.id] = true;
         });
-        setEstadoBoton(inicialEstado);
-      } catch (err) {
-        console.error("Error al obtener usuarios seguidos:", err);
+        setEstadoBoton(estados);
+      } catch (error) {
+        console.error("Error al obtener usuarios seguidos:", error);
       } finally {
         setIsLoading(false);
       }
     };
-  
-    if (currentUser?.id) {
+
+    if (userId) {
       fetchSiguiendo();
     }
-  }, [currentUser?.id]);
-  
+  }, [userId]); // Dependencia clara y válida
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch("http://localhost:5000/social", {
+      const res = await fetch(`${API_BASE_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          seguidor_id: currentUser.id,
+          seguidor_id: userId,
           seguido_id: usuarioId,
         }),
       });
 
       const data = await res.json();
-
-      // Cambiar estado del botón sin eliminar de la lista
-      setEstadoBoton((prev) => ({
-        ...prev,
-        [usuarioId]: data.followed,
-      }));
+      setEstadoBoton(prev => ({ ...prev, [usuarioId]: data.followed }));
     } catch (error) {
       console.error("Error al seguir/dejar de seguir:", error);
     }
+  };
+
+  const navigateToProfile = (username) => {
+    navigate(`/perfilDeUsuario/${username}`);
+    onClose();
   };
 
   const handleModalClick = (e) => e.stopPropagation();
@@ -70,28 +75,46 @@ const Siguiendo = ({ onClose }) => {
           </button>
         </div>
         <div className="seguidores-list">
-                {isLoading ? (
-              <div className="spinner"></div>
-            ) : siguiendo.length === 0 ? (
-              <p>No estás siguiendo a nadie todavía.</p>
-            ) : (
-              siguiendo.map((user) => (
-                <div key={user.id} className="follower-item">
-                  <div className="follower-info">
+          {isLoading ? (
+            <div className="spinner"></div>
+          ) : siguiendo.length === 0 ? (
+            <p>No estás siguiendo a nadie todavía.</p>
+          ) : (
+            siguiendo.map((user) => (
+              <div
+                className="follower-item"
+                key={user.id}
+                onClick={() => navigateToProfile(user.username)}
+                style={{ cursor: "pointer" }}
+              >
+                <div className="follower-info">
+                  <img
+                    className="follower-avatar"
+                    src={user.foto_perfil || defaultProfile}
+                    alt="Foto de perfil"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultProfile;
+                    }}
+                  />
+                  <div>
                     <p className="follower-name">{user.nombre}</p>
                     <p className="follower-username">@{user.username}</p>
                   </div>
-                  <button
-                    className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
-                    onClick={() => toggleFollow(user.id)}
-                  >
-                    {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
-                  </button>
                 </div>
-              ))
-            )}
-          </div>
-
+                <button
+                  className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFollow(user.id);
+                  }}
+                >
+                  {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

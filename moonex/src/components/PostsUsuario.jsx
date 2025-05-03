@@ -78,7 +78,7 @@ const PostsUsuario = ({ usuarioId }) => {
       <h3 ref={topRef}>
         { autorUsername
           ? `Posts de @${autorUsername}`
-          : "Posts del usuario"}
+          : `Posts de @${autorUsername}`}
       </h3>
       {loading ? (
         <>
