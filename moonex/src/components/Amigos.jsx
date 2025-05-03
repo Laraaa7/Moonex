@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Amigos.css";
+import defaultProfile from "../img/PfpDefecto.png";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -8,6 +10,7 @@ const Amigos = ({ onClose }) => {
   const [amigos, setAmigos] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
@@ -76,6 +79,11 @@ const Amigos = ({ onClose }) => {
 
   const handleModalClick = (e) => e.stopPropagation();
 
+  const navigateToProfile = (username) => {
+    navigate(`/perfilDeUsuario/${username}`);
+    onClose();
+  };
+
   return (
     <div className="amigos-overlay" onClick={onClose}>
       <div className="amigos-modal" onClick={handleModalClick}>
@@ -92,15 +100,34 @@ const Amigos = ({ onClose }) => {
             <p>No tienes amigos aún.</p>
           ) : (
             amigos.map((user) => (
-              <div key={user.id} className="amigo-item">
+              <div
+                key={user.id}
+                className="amigo-item"
+                onClick={() => navigateToProfile(user.username)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="amigo-info">
-                  <p className="amigo-name">{user.nombre}</p>
-                  <p className="amigo-username">@{user.username}</p>
+                  <img
+                    className="amigo-avatar"
+                    src={user.foto_perfil || defaultProfile}
+                    alt="Foto de perfil"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultProfile;
+                    }}
+                  />
+                  <div className="amigo-text">
+                    <p className="amigo-name">{user.nombre}</p>
+                    <p className="amigo-username">@{user.username}</p>
+                  </div>
                 </div>
                 {user.id !== currentUser.id && (
                   <button
                     className={`amigo-btn ${estadoBotones[user.id] ? "amigos" : ""}`}
-                    onClick={() => toggleFollow(user.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFollow(user.id);
+                    }}
                   >
                     {estadoBotones[user.id] ? "Amigos" : "Seguir"}
                   </button>

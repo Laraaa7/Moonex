@@ -12,7 +12,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border-left-color: #4a5f8c; /* o el color que uses */
+    border-left-color: #4a5f8c;
     animation: spin 1s linear infinite;
     margin: 20px auto;
   }
@@ -26,9 +26,41 @@
   
   .follower-info {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
-  }
+    flex: 1;
+    min-width: 0;
+}
+
+.follower-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; 
+    overflow: hidden; 
+}
+
+.follower-name {
+    font-weight: bold;
+    color: #DAE0EE;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.follower-username {
+    font-size: 14px;
+    color: #dae0eeb6;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
   
   .follower-avatar {
     width: 40px;

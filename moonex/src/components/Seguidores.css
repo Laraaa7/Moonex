@@ -130,7 +130,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        border-left-color: #4a5f8c; /* o el color que uses */
+        border-left-color: #4a5f8c;
         animation: spin 1s linear infinite;
         margin: 20px auto;
       }

@@ -87,21 +87,22 @@ const Siguiendo = ({ onClose }) => {
                 onClick={() => navigateToProfile(user.username)}
                 style={{ cursor: "pointer" }}
               >
-                <div className="follower-info">
-                  <img
-                    className="follower-avatar"
-                    src={user.foto_perfil || defaultProfile}
-                    alt="Foto de perfil"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = defaultProfile;
-                    }}
-                  />
-                  <div>
-                    <p className="follower-name">{user.nombre}</p>
-                    <p className="follower-username">@{user.username}</p>
-                  </div>
+              <div className="follower-info">
+                <img
+                  className="follower-avatar"
+                  src={user.foto_perfil || defaultProfile}
+                  alt="Foto de perfil"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = defaultProfile;
+                  }}
+                />
+                <div className="follower-text">
+                  <p className="follower-name">{user.nombre}</p>
+                  <p className="follower-username">@{user.username}</p>
                 </div>
+              </div>
+
                 <button
                   className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
                   onClick={(e) => {

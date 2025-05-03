@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Seguidores.css";
+import defaultProfile from "../img/PfpDefecto.png";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -8,12 +10,13 @@ const Seguidores = ({ onClose }) => {
   const [seguidores, setSeguidores] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
   const [isLoading, setIsLoading] = useState(true); 
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchSeguidores = async () => {
       try {
-        setIsLoading(true); // Empieza la carga
+        setIsLoading(true);
         const res = await fetch(`${API_BASE_URL}/social/seguidores/${currentUser.id}`);
         const data = await res.json();
         setSeguidores(data);
@@ -36,7 +39,7 @@ const Seguidores = ({ onClose }) => {
       } catch (err) {
         console.error("Error al obtener seguidores:", err);
       } finally {
-        setIsLoading(false); // Fin de carga
+        setIsLoading(false);
       }
     };
 
@@ -69,6 +72,11 @@ const Seguidores = ({ onClose }) => {
 
   const handleModalClick = (e) => e.stopPropagation();
 
+  const navigateToProfile = (username) => {
+    navigate(`/perfilDeUsuario/${username}`);
+    onClose();
+  };
+
   return (
     <div className="seguidores-overlay" onClick={onClose}>
       <div className="seguidores-modal" onClick={handleModalClick}>
@@ -79,22 +87,40 @@ const Seguidores = ({ onClose }) => {
           </button>
         </div>
         <div className="seguidores-list">
-                  {isLoading ? (
-              <div className="spinner"></div>
-            ) : seguidores.length === 0 ? (
-
+          {isLoading ? (
+            <div className="spinner"></div>
+          ) : seguidores.length === 0 ? (
             <p>No tienes seguidores aún.</p>
           ) : (
             seguidores.map((user) => (
-              <div key={user.id} className="follower-item">
+              <div
+                key={user.id}
+                className="follower-item"
+                onClick={() => navigateToProfile(user.username)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="follower-info">
-                  <p className="follower-name">{user.nombre}</p>
-                  <p className="follower-username">@{user.username}</p>
+                  <img
+                    className="follower-avatar"
+                    src={user.foto_perfil || defaultProfile}
+                    alt="Foto de perfil"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultProfile;
+                    }}
+                  />
+                  <div className="follower-text">
+                    <p className="follower-name">{user.nombre}</p>
+                    <p className="follower-username">@{user.username}</p>
+                  </div>
                 </div>
                 {user.id !== currentUser.id && (
                   <button
                     className={`follow-btn ${estadoBotones[user.id] ? "following" : ""}`}
-                    onClick={() => toggleFollow(user.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFollow(user.id);
+                    }}
                   >
                     {estadoBotones[user.id] ? "Siguiendo" : "Seguir"}
                   </button>
