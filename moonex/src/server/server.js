@@ -25,7 +25,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Servir archivos estáticos del frontend (para producción en Render)
-app.use(express.static(path.join(__dirname, '..', 'build')));
+app.use(express.static(path.join(__dirname, '../../build')));
 
 // Incluir rutas existentes
 app.use('/api/register', registerRoutes);
@@ -46,7 +46,7 @@ app.get("/api", (req, res) => {
 
 // Catch-all para servir index.html (soporte para React Router)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../../build', 'index.html'));
 });
 
 // Configurar WebSocket
