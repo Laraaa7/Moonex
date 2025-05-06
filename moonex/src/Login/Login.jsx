@@ -7,7 +7,7 @@ import googleLogo from '../img/google.png';
 import appleLogo from '../img/apple.png';
 import './Login.css';
 
-// Usa la URL de entorno si está definida, si no usa localhost
+// Usa la variable de entorno o fallback a localhost
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const Login = () => {
