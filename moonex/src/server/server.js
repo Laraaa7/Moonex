@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -46,4 +44,4 @@ setupChat(server);
 // Iniciar el servidor
 server.listen(5000, () => {
   console.log("Servidor corriendo en http://localhost:5000");
-});
+}); 
