@@ -12,7 +12,9 @@
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
+    height: 90px;
 }
+
 
 .logo {
     position: relative;
@@ -39,6 +41,7 @@
 .search-bar {
     margin-left: auto;
     margin-right: 20px;
+    position: relative; /* Ensure this has position relative */
 }
 
 .search-bar input {
@@ -58,7 +61,22 @@
     cursor: pointer;
     font-size: 16px;
     margin-left: 5px;
+    
 }
+
+.search-bar-wrapper {
+    position: relative;
+  }
+  
+  .search-bar-container {
+    position: relative;
+    margin-left: auto;
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+  
 
 .nav-links {
     display: flex;
@@ -93,6 +111,28 @@
     cursor: pointer;
 }
 
+.custom-menu {
+    background-color: #14273bc9 !important; 
+    color: white;            
+    border-radius: 12px !important;
+    border: 1px solid #ddd;
+    padding: 0;
+    min-width: 180px;
+    overflow: hidden;
+    font-size: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-menu .MuiMenuItem-root {
+    color: white !important;
+}
+
+.custom-menu .MuiMenuItem-root:hover {
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
@@ -104,7 +144,12 @@
         order: 2;
         margin: 10px 0;
     }
-
+    .search-bar-container {
+        position: relative;
+        margin-left: auto;
+        margin-right: 80px;
+      }
+      
     .nav-links {
         order: 1;
         flex-direction: row;
@@ -112,6 +157,7 @@
         justify-content: center;
         gap: 15px;
         margin-top: 10px;
+        margin-left: 20px;
     }
 
     .search-bar input {

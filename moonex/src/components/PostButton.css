@@ -1,8 +1,8 @@
 .post-button-container {
     position: fixed;
     top: 625px; 
-    left: calc(50% - 790px);
-    width: 340px; 
+    left: calc(50% - 745px);
+    width: 315px; 
     display: flex;
     justify-content: center;
     z-index: 10;

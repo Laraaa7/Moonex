@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { TextField, InputAdornment, IconButton, Menu, MenuItem } from "@mui/material";
-import { FaSearch, FaUserCircle } from "react-icons/fa"; // Usamos react-icons
+import { IconButton, Menu, MenuItem } from "@mui/material";
+import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Barranav.css";
 import MoonexLogo from "../img/MoonexLogo.png";
 import { UserAuth } from "../context/AuthContext";
+import SearchBar from "./SearchBar";  
 
 const Barranav = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -34,29 +35,8 @@ const Barranav = () => {
         </a>
       </div>
 
-      <div className="search-bar">
-        <TextField
-          placeholder="Buscar en Moonex"
-          size="small"
-          sx={{
-            backgroundColor: "#DAE0EE",
-            borderRadius: "20px",
-            width: "250px",
-            '& .MuiOutlinedInput-root': {
-              borderRadius: "20px",
-              '& fieldset': { border: 'none' },
-              '&:hover fieldset': { border: 'none' },
-              '&.Mui-focused fieldset': { border: 'none' }
-            }
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FaSearch />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <div className="search-bar-container">
+        <SearchBar /> 
       </div>
 
       <div className="nav-links">
@@ -68,7 +48,17 @@ const Barranav = () => {
           <IconButton onClick={handleMenuOpen} className="user-icon">
             <FaUserCircle size={28} color="white" />
           </IconButton>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+          <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          slotProps={{
+            paper: {
+              className: 'custom-menu'
+            }
+          }}
+          disableScrollLock
+        >
             <MenuItem onClick={() => { navigate('/perfil'); handleMenuClose(); }}>
               Ver Perfil
             </MenuItem>

@@ -60,7 +60,7 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 800px;
+  max-width: 650px; /* Adjusted to give more space to sidebars */
   margin: 0 auto;
 }
 

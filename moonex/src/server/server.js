@@ -12,6 +12,8 @@ const previewRoutes = require('./linkPreview');
 const likesRoutes = require('./likes');
 const socialRoutes = require('./social');
 const conversacionesRoutes = require('./conversaciones');
+const busquedaRouter = require("./busqueda");
+
 
 const app = express();
 const server = http.createServer(app);
@@ -35,9 +37,8 @@ app.use('/likes', likesRoutes);
 app.use('/social', socialRoutes);
 app.use('/', postRoutes);
 app.use('/', previewRoutes);
-
-// 👇 NUEVA ruta para conversaciones
 app.use('/api/conversaciones', conversacionesRoutes);
+app.use("/api/busqueda", busquedaRouter);
 
 // Configurar WebSocket
 setupChat(server);

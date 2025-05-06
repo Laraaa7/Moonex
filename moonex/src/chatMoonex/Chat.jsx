@@ -12,6 +12,25 @@ const SOCKET_URL = "http://localhost:5000";
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 
+
+const formatearTiempoChat = (fechaString) => {
+  const publicadaLocal = new Date(fechaString);
+  const ahora = new Date();
+  const diffSegundos = Math.floor((ahora - publicadaLocal) / 1000);
+  const minutos = Math.floor(diffSegundos / 60);
+  const horas = Math.floor(minutos / 60);
+  const dias = Math.floor(horas / 24);
+  const meses = Math.floor(dias / 30);
+  const anos = Math.floor(dias / 365);
+  if (diffSegundos < 60) return `${diffSegundos}s`;
+  if (minutos < 60) return `${minutos}min`;
+  if (horas < 24) return `${horas}h`;
+  if (dias < 30) return `${dias}d`;
+  if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
+  return `${anos}año${anos > 1 ? "s" : ""}`;
+};
+
+
 const ImageModal = ({ image, onClose }) => {
   const handleClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
@@ -97,17 +116,16 @@ const Chat = () => {
         const res = await fetch(`http://localhost:5000/usuarios/username/${username}`);
         const data = await res.json();
         setReceptorId(data.id);
-        setReceptorData(data); 
+        setReceptorData(data);
       } catch (err) {
         console.error("Error al obtener receptor:", err);
       }
     };
-  
+
     if (username) {
       fetchReceiverData();
     }
   }, [username]);
-  
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
@@ -221,7 +239,7 @@ const Chat = () => {
       }
     }
 
-    setImagePreviews(prev => [...prev, ...newPreviews]);
+    setImagePreviews((prev) => [...prev, ...newPreviews]);
   };
 
   const handleSendMessage = async (e) => {
@@ -283,29 +301,17 @@ const Chat = () => {
               >
                 <div className="chat-avatar-small">
                   {convo.foto_perfil ? (
-                    <img
-                      src={convo.foto_perfil}
-                      alt="Perfil"
-                    />
+                    <img src={convo.foto_perfil} alt="Perfil" />
                   ) : (
-                    <img
-                      src={pfpDefecto}
-                      alt="Por defecto"
-                    />
+                    <img src={pfpDefecto} alt="Por defecto" />
                   )}
                 </div>
                 <div className="chat-sidebar-info">
                   <div className="chat-sidebar-header-info">
-                    <span className="chat-sidebar-name">
-                      {convo.nombre}
-                    </span>
+                    <span className="chat-sidebar-name">{convo.nombre}</span>
                     <span className="chat-sidebar-username">@{convo.username}</span>
                     <span className="chat-sidebar-date">
-                      • {new Date(convo.fecha_envio).toLocaleDateString("es-ES", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      • {formatearTiempoChat(convo.fecha_envio)}
                     </span>
                   </div>
                   <div className="chat-last-message">
@@ -339,12 +345,8 @@ const Chat = () => {
               />
             </div>
             <div className="chat-header-info">
-              <div className="chat-header-name">
-                {receptorData?.nombre || "Usuario"}
-              </div>
-              <div className="chat-header-username">
-                @{receptorData?.username || ""}
-              </div>
+              <div className="chat-header-name">{receptorData?.nombre || "Usuario"}</div>
+              <div className="chat-header-username">@{receptorData?.username || ""}</div>
             </div>
           </div>
         </div>
@@ -387,7 +389,11 @@ const Chat = () => {
                   >
                     <FaTimes size={14} />
                   </button>
-                  <img src={preview} alt={`Vista previa ${index + 1}`} className="preview-image" />
+                  <img
+                    src={preview}
+                    alt={`Vista previa ${index + 1}`}
+                    className="preview-image"
+                  />
                 </div>
               ))}
               <label htmlFor="image-upload" className="add-image-preview">

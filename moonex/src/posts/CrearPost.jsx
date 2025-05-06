@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 👈 Nuevo
+import { useNavigate } from 'react-router-dom';
 import Barranav from "../components/Barranav"; 
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -10,7 +10,7 @@ const CrearPost = () => {
   const [postBody, setPostBody] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
-  const navigate = useNavigate(); // 👈 Nuevo
+  const navigate = useNavigate();
 
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");

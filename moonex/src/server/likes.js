@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('./db'); // Ajusta esta ruta si es necesario
+const db = require('./db'); 
 
 const router = express.Router();
 
