@@ -40,49 +40,47 @@ const Login = () => {
     }
   };
 
-const handleAppleSignIn = async () => {
-  const provider = new OAuthProvider('apple.com');
+  const handleAppleSignIn = async () => {
+    const provider = new OAuthProvider('apple.com');
 
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const credential = OAuthProvider.credentialFromResult(result);
-    const token = credential?.idToken;
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const credential = OAuthProvider.credentialFromResult(result);
+      const token = credential?.idToken;
 
-    const user = result.user;
+      const user = result.user;
 
-    // Guardar en localStorage
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+      // Guardar en localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-    
-    navigate('/feed');
-  } catch (error) {
-    console.error("Error al iniciar sesión con Apple:", error);
-    setMessage('Error al iniciar sesión con Apple');
-  }
-};
-
+      navigate('/feed');
+    } catch (error) {
+      console.error("Error al iniciar sesión con Apple:", error);
+      setMessage('Error al iniciar sesión con Apple');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
-  
+
     if (!email || !password) {
       setMessage('Por favor, completa todos los campos.');
       return;
     }
-  
+
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password })
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -95,71 +93,67 @@ const handleAppleSignIn = async () => {
       setMessage('Error en el servidor');
     }
   };
-  
 
   return (
     <div className="login-wrapper">
-    <div className="login-container">
-      <div className="login-left">
-      <img src={logo} alt="Moonex Logo" className="login-logo" />
-        <h2>Conecta bajo la misma luna</h2>
-      {/* <p className="eslogan">Únete a la órbita</p>*/}
+      <div className="login-container">
+        <div className="login-left">
+          <img src={logo} alt="Moonex Logo" className="login-logo" />
+          <h2>Conecta bajo la misma luna</h2>
 
-        <div className="login-buttons">
-          <button className="btn-social" onClick={handleGoogleSignIn}>
-            <img src={googleLogo} alt="Google" /> Iniciar con Google
-          </button>
-          <button className="btn-social" onClick={handleAppleSignIn}>
-            <img src={appleLogo} alt="Apple" /> Iniciar con Apple
-          </button>
+          <div className="login-buttons">
+            <button className="btn-social" onClick={handleGoogleSignIn}>
+              <img src={googleLogo} alt="Google" /> Iniciar con Google
+            </button>
+            <button className="btn-social" onClick={handleAppleSignIn}>
+              <img src={appleLogo} alt="Apple" /> Iniciar con Apple
+            </button>
+          </div>
+
+          <div className="separator">o</div>
+
+          <p className="register-text">
+            ¿No tienes una cuenta?
+          </p>
+          <button className="switch-btn" onClick={handleRegisterRedirect}>Registrarse</button>
         </div>
 
-        <div className="separator">o</div>
+        <div className="login-right">
+          <h2>Iniciar Sesión</h2>
+          <form onSubmit={handleSubmit} className="login-form">
+            {/* Correo electrónico */}
+            <label className="input-label">
+              <i className='bx bx-envelope'></i>
+              <input
+                type="email"
+                name="email"
+                placeholder="Correo Electrónico"
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-        <p className="register-text">
-          ¿No tienes una cuenta?
-        </p>
-        <button className="switch-btn" onClick={handleRegisterRedirect}>Registrarse</button>
+            {/* Contraseña con ojito */}
+            <label className="input-label password-labe">
+              <i className='bx bx-lock-alt'></i>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Contraseña"
+                onChange={handleChange}
+                required
+              />
+              <i
+                className={`bx ${showPassword ? 'bx-hide' : 'bx-show'} toggle-eye`}
+                onClick={() => setShowPassword(!showPassword)}
+              ></i>
+            </label>
+
+            <button type="submit">Iniciar Sesión</button>
+          </form>
+          {message && <p className="message">{message}</p>}
+        </div>
       </div>
-
-      <div className="login-right">
-
-        <h2>Iniciar Sesión</h2>
-        <form onSubmit={handleSubmit} className="login-form">
-
-{/* Correo electrónico */}
-<label className="input-label">
-  <i className='bx bx-envelope'></i>
-  <input
-    type="email"
-    name="email"
-    placeholder="Correo Electrónico"
-    onChange={handleChange}
-    required
-  />
-</label>
-
-{/* Contraseña con ojito */}
-<label className="input-label password-labe">
-  <i className='bx bx-lock-alt'></i>
-  <input
-    type={showPassword ? 'text' : 'password'}
-    name="password"
-    placeholder="Contraseña"
-    onChange={handleChange}
-    required
-  />
-  <i
-    className={`bx ${showPassword ? 'bx-hide' : 'bx-show'} toggle-eye`}
-    onClick={() => setShowPassword(!showPassword)}
-  ></i>
-</label>
-
-<button type="submit">Iniciar Sesión</button>
-</form>
-        {message && <p className="message">{message}</p>}
-      </div>
-    </div>
     </div>
   );
 };
