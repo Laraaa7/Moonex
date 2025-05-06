@@ -42,7 +42,7 @@ app.use("/api/busqueda", busquedaRouter);
 // Configurar WebSocket
 setupChat(server);
 
-// Iniciar el servidor (⚠️ USANDO process.env.PORT para Railway)
+// Iniciar el servidor 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
