@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const path = require('path');
+
 const setupChat = require('./chat');
 const registerRoutes = require('./register');
 const loginRoutes = require('./login');
@@ -14,7 +16,6 @@ const socialRoutes = require('./social');
 const conversacionesRoutes = require('./conversaciones');
 const busquedaRouter = require("./busqueda");
 
-
 const app = express();
 const server = http.createServer(app);
 
@@ -23,10 +24,8 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Ruta principal
-app.get("/", (req, res) => {
-  res.send("Servidor funcionando");
-});
+// Servir archivos estáticos del frontend (para producción en Render)
+app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // Incluir rutas existentes
 app.use('/api/register', registerRoutes);
@@ -40,10 +39,21 @@ app.use('/', previewRoutes);
 app.use('/api/conversaciones', conversacionesRoutes);
 app.use("/api/busqueda", busquedaRouter);
 
+// Ruta principal
+app.get("/api", (req, res) => {
+  res.send("Servidor funcionando");
+});
+
+// Catch-all para servir index.html (soporte para React Router)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+});
+
 // Configurar WebSocket
 setupChat(server);
 
 // Iniciar el servidor
-server.listen(5000, () => {
-  console.log("Servidor corriendo en http://localhost:5000");
-}); 
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
