@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
-const path = require('path'); // ✅ para servir React
+const path = require('path'); 
 
 // Importar tus módulos de rutas y chat
 const setupChat = require('./chat');
@@ -42,10 +42,10 @@ app.use('/', previewRoutes);
 app.use('/api/conversaciones', conversacionesRoutes);
 app.use("/api/busqueda", busquedaRouter);
 
-// ✅ Servir archivos estáticos del build de React
+// Servir archivos estáticos del build de React
 app.use(express.static(path.join(__dirname, '../../build')));
 
-// ✅ Ruta catch-all: devuelve index.html para cualquier ruta que NO sea API
+//Ruta catch-all: devuelve index.html para cualquier ruta que NO sea API
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../build', 'index.html'));
 });
