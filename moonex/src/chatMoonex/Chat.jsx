@@ -8,10 +8,9 @@ import { FaTimes } from "react-icons/fa";
 import pfpDefecto from "../img/PfpDefecto.png";
 import "./Chat.css";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = "/"; // CAMBIO para Render y local
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
-
 
 const formatearTiempoChat = (fechaString) => {
   const publicadaLocal = new Date(fechaString);
@@ -30,7 +29,6 @@ const formatearTiempoChat = (fechaString) => {
   return `${anos}año${anos > 1 ? "s" : ""}`;
 };
 
-
 const ImageModal = ({ image, onClose }) => {
   const handleClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
@@ -46,9 +44,9 @@ const ImageModal = ({ image, onClose }) => {
 };
 
 const Chat = () => {
-  const { username } = useParams(); // username del receptor
+  const { username } = useParams();
   const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}"); // usuario logueado
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [receptorId, setReceptorId] = useState(null);
   const [conversaciones, setConversaciones] = useState([]);
   const [socket, setSocket] = useState(null);
@@ -113,7 +111,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchReceiverData = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/usuarios/username/${username}`);
+        const res = await fetch(`/usuarios/username/${username}`); //CAMBIO aquí
         const data = await res.json();
         setReceptorId(data.id);
         setReceptorData(data);
@@ -171,7 +169,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchConversaciones = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/conversaciones/${currentUser.id}`);
+        const res = await fetch(`/api/conversaciones/${currentUser.id}`); // CAMBIO aquí
         const data = await res.json();
         setConversaciones(data);
       } catch (err) {

@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "./Seguidores.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const Seguidores = ({ onClose }) => {
   const [seguidores, setSeguidores] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
@@ -17,13 +15,13 @@ const Seguidores = ({ onClose }) => {
     const fetchSeguidores = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/social/seguidores/${currentUser.id}`);
+        const res = await fetch(`/social/seguidores/${currentUser.id}`);  // Cambiado aquí
         const data = await res.json();
         setSeguidores(data);
 
         const estados = {};
         for (const user of data) {
-          const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
+          const checkRes = await fetch(`/social/check`, {   // Cambiado aquí
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -50,7 +48,7 @@ const Seguidores = ({ onClose }) => {
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/social`, {
+      const res = await fetch(`/social`, {  // Cambiado aquí
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

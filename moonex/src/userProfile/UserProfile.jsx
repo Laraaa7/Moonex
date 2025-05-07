@@ -17,7 +17,6 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId: username } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const API_BASE_URL = "http://localhost:5000";
 
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "Fecha desconocida";
@@ -32,7 +31,7 @@ const UserProfile = () => {
 
       try {
         // Obtener datos del usuario
-        const res = await fetch(`${API_BASE_URL}/usuarios/username/${username}`);
+        const res = await fetch(`/usuarios/username/${username}`);
         const data = await res.json();
 
         if (!res.ok || !data?.id) {
@@ -43,7 +42,7 @@ const UserProfile = () => {
 
         // Obtener estadísticas
         try {
-          const statsRes = await fetch(`${API_BASE_URL}/social/estadisticas/${data.id}`);
+          const statsRes = await fetch(`/social/estadisticas/${data.id}`);
           const statsData = await statsRes.json();
           setStats({
             seguidores: statsData.seguidores ?? 0,
@@ -57,7 +56,7 @@ const UserProfile = () => {
         // Comprobar estado de seguimiento
         if (currentUser.id) {
           try {
-            const followRes = await fetch(`${API_BASE_URL}/social/check`, {
+            const followRes = await fetch(`/social/check`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -99,7 +98,7 @@ const UserProfile = () => {
           : Math.max(0, prev.seguidores - 1),
       }));
 
-      const res = await fetch(`${API_BASE_URL}/social`, {
+      const res = await fetch(`/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -124,12 +123,11 @@ const UserProfile = () => {
       alert("Debes iniciar sesión para enviar mensajes");
       return;
     }
-  
+
     if (userData?.username) {
-      navigate(`/chat/${userData.username}`); // Redirige al chat con el username del receptor
+      navigate(`/chat/${userData.username}`);
     }
   };
-  
 
   if (loading) {
     return (

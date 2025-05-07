@@ -9,8 +9,6 @@ import defaultProfile from "../img/PfpDefecto.png";
 import EditProfile from "../userProfile/EditProfile";
 import PostsUsuario from "../components/PostsUsuario";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const Profile = () => {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSeguidores, setShowSeguidores] = useState(false);
@@ -33,7 +31,7 @@ const Profile = () => {
 
   const fetchStats = async (userId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/social/estadisticas/${userId}`);
+      const res = await fetch(`/social/estadisticas/${userId}`);  // Cambiado aquí
       if (!res.ok) throw new Error("Error al obtener estadísticas");
       const data = await res.json();
       setStats({

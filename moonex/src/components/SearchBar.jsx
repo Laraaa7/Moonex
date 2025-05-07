@@ -41,11 +41,11 @@ const SearchBar = () => {
         setResults([]);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("resize", positionResults);
     window.addEventListener("scroll", positionResults);
-    
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("resize", positionResults);
@@ -53,7 +53,6 @@ const SearchBar = () => {
     };
   }, []);
 
-  // Position results whenever they change
   useEffect(() => {
     if (results.length > 0) {
       setTimeout(positionResults, 0);
@@ -69,7 +68,7 @@ const SearchBar = () => {
 
       const fetchResults = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/busqueda?query=${encodeURIComponent(query)}`);
+          const res = await fetch(`/api/busqueda?query=${encodeURIComponent(query)}`); // CAMBIO aquí
           if (!res.ok) {
             console.error("Error al buscar:", res.statusText);
             return;
