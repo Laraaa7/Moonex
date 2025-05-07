@@ -1,50 +1,70 @@
 .post-button-container {
-    position: fixed;
-    top: 625px; 
-    left: calc(50% - 745px);
-    width: 315px; 
-    display: flex;
-    justify-content: center;
-    z-index: 10;
-    height: 100px;
-  }
-  
-  .post-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: #4a5f8c93;
-    color: #DAE0EE;
-    padding: 10px 20px;
-    border-radius: 80px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
-    font-size: 19px;
-    border: 2px solid #DAE0EE;
-  }
-  
-  .post-button:hover {
-    background-color: #5d71a0cc;
-    transform: translateY(-2px);
-  }
-  
-  
+  position: fixed;
+  top: 600px;
+  left: calc(50% - 745px);
+  width: 315px;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  height: 100px;
+}
 
-  /* Responsive */
-  @media (max-width: 1200px) {
-    .post-button-container {
-      left: 20px;
-    }
+.post-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #4a5f8c93;
+  color: #DAE0EE;
+  padding: 10px 20px;
+  border-radius: 80px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  font-size: 19px;
+  border: 2px solid #DAE0EE;
+}
+
+.post-button:hover {
+  background-color: #5d71a0cc;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .post-button-container {
+    left: 20px;
   }
-  
-  @media (max-width: 768px) {
-    .post-button-container {
-      position: static;
-      width: 90%;
-      margin: 20px auto;
-    }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .post-button-container {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 95%;
+    margin-top: -85px;
+    height: auto;
+    margin-left: -345px;
   }
+
+  .follow-suggestions-container {
+    display: flex;
+    flex-direction: column;
+  }
+ 
+  .follow-suggestions-container .post-button-container {
+    order: 2; 
+  }
+}
+
+/* movil */
+@media (max-width: 768px) {
+  .post-button-container {
+    position: static;
+    width: 90%;
+    margin: 20px auto;
+  }
+}

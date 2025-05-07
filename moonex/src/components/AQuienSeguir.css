@@ -1,6 +1,6 @@
 .follow-suggestions {
   position: fixed;
-  top: 155px;
+  top: 125px;
   left: calc(50% - 790px);
   width: 270px;
   background-color: #4A5F8C;
@@ -63,7 +63,7 @@
 .suggested-names {
   display: flex;
   flex-direction: column;
-  max-width: 140px;
+  max-width: 110px;
   overflow: hidden;
 }
 
