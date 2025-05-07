@@ -25,13 +25,12 @@
 }
 
 
-/* First, let's modify the sidebar-left and sidebar-right to be hidden by default on all screens except desktop */
 .sidebar-left {
   width: 250px;
   position: sticky;
   top: 100px;
   height: fit-content;
-  display: none; /* Hidden by default */
+  display: none;
   margin-right: -250px;
 }
 
@@ -43,14 +42,13 @@
   top: 155px;
   right: calc(50% - 720px);
   z-index: 10;
-  display: none; /* Hidden by default */
+  display: none;
 }
 
-/* Display sidebars only on large desktop screens */
 @media (min-width: 1201px) {
   .sidebar-left,
   .sidebar-right {
-    display: block; /* Show on desktop */
+    display: block;
   }
 }
 
@@ -60,7 +58,7 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 650px; /* Adjusted to give more space to sidebars */
+  max-width: 650px; 
   margin: 0 auto;
 }
 
@@ -73,6 +71,7 @@
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+
 }
 
 /*mantener la imagen y texto alineados */
@@ -284,9 +283,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 60px;
+  margin-top: 30px; 
 }
-
 .feed-content {
   display: flex;
   width: 100%;
@@ -296,13 +294,13 @@
   position: relative;
 }
 
-/* First, let's modify the sidebar-left and sidebar-right to be hidden by default on all screens except desktop */
+
 .sidebar-left {
   width: 250px;
   position: sticky;
   top: 100px;
   height: fit-content;
-  display: none; /* Hidden by default */
+  display: none; 
   margin-right: -250px;
 }
 
@@ -314,14 +312,13 @@
   top: 155px;
   right: calc(50% - 720px);
   z-index: 10;
-  display: none; /* Hidden by default */
+  display: none; 
 }
 
-/* Display sidebars only on large desktop screens */
 @media (min-width: 1201px) {
   .sidebar-left,
   .sidebar-right {
-    display: block; /* Show on desktop */
+    display: block; 
   }
 }
 
@@ -503,7 +500,6 @@
   cursor: pointer;
 }
 
-/* Estilos para la funcionalidad de likes */
 .likes-btn {
   display: flex;
   align-items: center;
@@ -559,7 +555,6 @@
   }
 }
 
-/* Center the posts container on all responsive sizes */
 .posts-container {
   flex: 1;
   display: flex;
@@ -570,7 +565,6 @@
   margin: 0 auto;
 }
 
-/* Show the menu toggle button on screens below desktop */
 .menu-movil-toggle {
   display: flex;
   justify-content: flex-start;
@@ -578,7 +572,6 @@
   margin-top: -30px;
 }
 
-/* Only hide the mobile menu button on desktop */
 @media (min-width: 1201px) {
   .menu-movil-toggle {
     display: none;
@@ -595,18 +588,6 @@
   cursor: pointer;
 }
 
-/* Style for the mobile menu panel that will contain the sidebar content */
-.menu-movil-panel {
-  display: flex;
-  flex-direction: column;
-  background-color: #1a2b5c;
-  padding: 20px 15px;
-  border-radius: 10px;
-  gap: 20px;
-  width: 90%;
-  max-width: 1000px;
-  margin: 10px auto;
-}
 
 /* landscape mobile y tablets pequeñas */
 @media (max-width: 768px) {
@@ -645,16 +626,14 @@
     margin-top: 200px;
     margin-bottom: 50px;
   }
-  
-  /* NUEVO: Ajustes mejorados para el menu-movil-panel */
+
   .menu-movil-panel {
     width: 88% ;
     max-width: 100% ;
     padding: 15px 10px ;
     margin: 10px auto ;
   }
-  
-  /* NUEVO: Ajustes para los contenedores internos */
+
   .posts-populares-container {
     width: 85% ;
     max-width: 100%;
@@ -763,23 +742,21 @@
   }
 }
 
-/* ===== FIXES FOR TABLET & MEDIUM SCREENS (769px - 1200px) ===== */
+
 @media (min-width: 769px) and (max-width: 1200px) {
-  /* Adjustments for feed container position */
   .feed-container {
     margin-top: 140px;
     position: relative;
   }
-  
-  /* Make the panel container layout better */
+
   .menu-movil-panel {
     position: relative;
     background-color: #1a2b5c;
     border-radius: 10px;
     padding: 25px;
     margin: 0 auto;
-    width: 90%;
-    max-width: 900px;
+    width: 70%;
+    max-width: 650px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     z-index: 5;
     display: flex;
@@ -788,8 +765,7 @@
     justify-content: space-between;
     margin-top: 60px;
   }
-  
-  /* Layout for the menu columns */
+
   .menu-columnas {
     display: flex;
     flex-direction: row;
@@ -797,16 +773,14 @@
     width: 100%;
     gap: 20px;
   }
-  
-  /* Give equal width to each column */
+
   .menu-columna {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
-  
-  /* Main content panel containing the dual columns */
+
   .main-content-panel {
     display: flex;
     flex-direction: row;
@@ -815,43 +789,42 @@
     gap: 20px;
     padding: 20px;
   }
-  
-  /* Fix positioning of the A quién seguir section */
+
   .follow-suggestions-container {
     flex: 1;
-    max-width: 42%; /* MODIFICADO: Reducido de 45% a 42% */
+    max-width: 42%;
+   
   }
   
-  /* Fix positioning of the Posts populares section */
   .posts-populares-container {
     flex: 1;
-    max-width: 42%; /* MODIFICADO: Reducido de 45% a 42% */
+    max-width: 42%; 
   }
-  
-  /* Fix for the post button positioning */
-  .post-button {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;
-    z-index: 10;
-    width: auto;
-    height: auto;
-    padding: 15px 30px;
-    border-radius: 50px;
-  }
-  
-  /* Override the problematic positioning rules */
+
+.post-button {
+  position: static; 
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 50px;
+  margin-top: 10px;
+}
+
+
   .follow-suggestions {
     position: static;
     transform: none;
+    margin-right: 20px; 
   }
-  
+  .menu-columna.izquierda {
+    margin-left: -55px;
+}
+
+
   .posts-populares {
     position: static;
     margin-left: 0;
   }
   
-  /* Ensure content has proper spacing */
   .feed-content {
     display: flex;
     flex-direction: row;
@@ -861,7 +834,6 @@
   }
 }
 
-/* Custom adjustment for layout between tablet and desktop */
 @media (min-width: 900px) and (max-width: 1200px) {
   .menu-movil-panel {
     max-width: 90%;
@@ -871,15 +843,13 @@
   .feed-container {
     margin-top: 120px;
   }
-  
-  /* Make two-column layout for main content properly centered */
+
   .main-content-panel {
     max-width: 900px;
     margin: 0 auto;
   }
 }
 
-/* Ensure the layout preserves on specific screen sizes */
 @media (min-width: 769px) and (max-width: 900px) {
   .menu-movil-panel {
     width: 95%;
@@ -890,14 +860,12 @@
   }
 }
 
-/* Adjust feed-content layout for the responsive design */
 @media (min-width: 769px) and (max-width: 1200px) {
   .feed-content {
     flex-direction: column;
     align-items: center;
   }
   
-  /* Make posts-container take full width */
   .posts-container {
     width: 100%;
     max-width: 90%;

@@ -52,7 +52,7 @@ const PostsPopulares = () => {
   };
 
   return (
-    <div className="posts-section">
+    <div className="posts-populares">
       <h3>Posts populares</h3>
       {loading ? (
         Array.from({ length: 7 }).map((_, i) => (
