@@ -10,7 +10,7 @@ const PostsPopulares = () => {
   useEffect(() => {
     const fetchPopulares = async () => {
       try {
-        const res = await fetch("http://localhost:5000/posts");
+        const res = await fetch("/posts"); // Cambiado para usar ruta relativa
         const data = await res.json();
 
         const ordenados = data

@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./AQuienSeguir.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const AQuienSeguir = () => {
   const [sugerencias, setSugerencias] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
@@ -15,7 +13,7 @@ const AQuienSeguir = () => {
   useEffect(() => {
     const fetchSugerencias = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/social/sugerencias/${currentUser.id}`);
+        const res = await fetch(`/social/sugerencias/${currentUser.id}`);
         const data = await res.json();
         setSugerencias(data);
 
@@ -38,7 +36,7 @@ const AQuienSeguir = () => {
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/social`, {
+      const res = await fetch(`/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,51 +60,50 @@ const AQuienSeguir = () => {
     <div className="follow-suggestions">
       <h3>A quién seguir</h3>
       <div className="suggested-users">
-      {loading ? (
-  Array.from({ length: 5 }).map((_, i) => (
-    <div key={i} className="suggested-user loading-card">
-      <div className="suggested-user-info">
-      </div>
-    </div>
-  ))
-) : sugerencias.length === 0 ? (
-  <p>No hay sugerencias por ahora.</p>
-) : (
-  sugerencias.map((user) => (
-    <div
-      className="suggested-user"
-      key={user.id}
-      onClick={() => navigateToProfile(user.username)}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="suggested-user-info">
-        <img
-          className="suggested-profile-pic"
-          src={user.foto_perfil || defaultProfile}
-          alt="Foto de perfil"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = defaultProfile;
-          }}
-        />
-        <div className="suggested-names">
-          <p className="suggested-name">{user.nombre}</p>
-          <p className="suggested-username">@{user.username}</p>
-        </div>
-      </div>
-      <button
-        className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleFollow(user.id);
-        }}
-      >
-        {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
-      </button>
-    </div>
-  ))
-)}
-
+        {loading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="suggested-user loading-card">
+              <div className="suggested-user-info">
+              </div>
+            </div>
+          ))
+        ) : sugerencias.length === 0 ? (
+          <p>No hay sugerencias por ahora.</p>
+        ) : (
+          sugerencias.map((user) => (
+            <div
+              className="suggested-user"
+              key={user.id}
+              onClick={() => navigateToProfile(user.username)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="suggested-user-info">
+                <img
+                  className="suggested-profile-pic"
+                  src={user.foto_perfil || defaultProfile}
+                  alt="Foto de perfil"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = defaultProfile;
+                  }}
+                />
+                <div className="suggested-names">
+                  <p className="suggested-name">{user.nombre}</p>
+                  <p className="suggested-username">@{user.username}</p>
+                </div>
+              </div>
+              <button
+                className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFollow(user.id);
+                }}
+              >
+                {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
