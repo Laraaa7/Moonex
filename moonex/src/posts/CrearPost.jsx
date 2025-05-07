@@ -48,7 +48,7 @@ const CrearPost = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/crear-post', {
+      const response = await fetch('/crear-post', {  // Cambiado para Render
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -71,8 +71,8 @@ const CrearPost = () => {
         setPostBody('');
         // Redirigir al feed después de publicar exitosamente
         setTimeout(() => {
-          navigate('/feed'); // Redirección
-        }, 1000); // Pequeña pausa para mostrar mensaje
+          navigate('/feed');
+        }, 1000);
       } else {
         setMessage(data.error || 'Error al publicar');
         setMessageType('error');

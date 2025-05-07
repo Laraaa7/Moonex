@@ -29,8 +29,8 @@ const VerPost = () => {
     const fetchData = async () => {
       try {
         const [postRes, comentariosRes] = await Promise.all([
-          fetch(`http://localhost:5000/posts/${postId}`),
-          fetch(`http://localhost:5000/comentarios/${postId}`)
+          fetch(`/posts/${postId}`), // Cambiado para Render
+          fetch(`/comentarios/${postId}`) // Cambiado para Render
         ]);
 
         const postData = await postRes.json();
@@ -49,8 +49,8 @@ const VerPost = () => {
       if (!postId || !userId) return;
       try {
         const [likesRes, userLikesRes] = await Promise.all([
-          fetch(`http://localhost:5000/likes/${postId}`),
-          fetch(`http://localhost:5000/likes/usuario/${userId}`)
+          fetch(`/likes/${postId}`), // Cambiado para Render
+          fetch(`/likes/usuario/${userId}`) // Cambiado para Render
         ]);
 
         const likesData = await likesRes.json();
@@ -74,7 +74,7 @@ const VerPost = () => {
       setLiked(prev => !prev);
       setLikeCount(prev => liked ? prev - 1 : prev + 1);
 
-      const res = await fetch("http://localhost:5000/likes", {
+      const res = await fetch("/likes", { // Cambiado para Render
         method: liked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -96,7 +96,7 @@ const VerPost = () => {
     if (nuevoComentario.trim() === "" || !userId) return;
 
     try {
-      const res = await fetch("http://localhost:5000/comentarios", {
+      const res = await fetch("/comentarios", { // Cambiado para Render
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
