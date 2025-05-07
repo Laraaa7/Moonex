@@ -11,7 +11,7 @@ const VistaEnlace = ({ url }) => {
       try {
         console.log("Solicitando vista previa para:", url);
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/link-preview?url=${encodeURIComponent(url)}`);
+        const res = await fetch(`/link-preview?url=${encodeURIComponent(url)}`); // Cambiado a ruta relativa
         
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
@@ -64,7 +64,12 @@ const VistaEnlace = ({ url }) => {
     <a href={url} target="_blank" rel="noopener noreferrer" className="link-preview-card">
       {vista.image && (
         <div className="link-preview-image-container">
-          <img src={vista.image} alt="Vista previa" className="link-preview-image" onError={(e) => e.target.style.display = 'none'} />
+          <img
+            src={vista.image}
+            alt="Vista previa"
+            className="link-preview-image"
+            onError={(e) => (e.target.style.display = 'none')}
+          />
         </div>
       )}
       <div className="link-preview-content">
