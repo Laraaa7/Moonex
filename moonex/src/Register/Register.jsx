@@ -115,7 +115,7 @@ const Register = () => {
   
     // Envío al backend
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
+      const response = await fetch('/api/register', {  // CAMBIO aquí
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: userName, email, password })
@@ -134,6 +134,7 @@ const Register = () => {
       setMessage('Error de conexión con el servidor.');
     }
   };
+  
   
 
   return (

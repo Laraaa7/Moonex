@@ -10,16 +10,16 @@ const PostsUsuario = ({ usuarioId }) => {
 
   const navigate = useNavigate();
   const topRef = useRef(null);
-  
+
   useEffect(() => {
     if (!usuarioId) {
       setLoading(false);
       return;
     }
-    
+
     const fetchPosts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/posts");
+        const res = await fetch("/posts");  // CAMBIO aquí
         const all = await res.json();
         const filtered = all.filter(
           (post) => post.usuario_id === usuarioId || post.user_id === usuarioId
@@ -39,21 +39,21 @@ const PostsUsuario = ({ usuarioId }) => {
         setLoading(false);
       }
     };
-    
+
     fetchPosts();
   }, [usuarioId]);
-  
+
   const handleVerMas = () => {
     setVisibleCount((prev) => prev + 7);
   };
-  
+
   const handleVerMenos = () => {
     setVisibleCount(7);
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  
+
   const formatearTiempoPublicacion = (fechaString) => {
     const publicadaUTC = new Date(fechaString);
     const publicada = new Date(publicadaUTC.getTime() + 2 * 60 * 60 * 1000);
@@ -64,7 +64,7 @@ const PostsUsuario = ({ usuarioId }) => {
     const dias = Math.floor(horas / 24);
     const meses = Math.floor(dias / 30);
     const años = Math.floor(dias / 365);
-    
+
     if (diffSegundos < 60) return `${diffSegundos}s`;
     if (minutos < 60) return `${minutos}min`;
     if (horas < 24) return `${horas}h`;
@@ -72,11 +72,11 @@ const PostsUsuario = ({ usuarioId }) => {
     if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
     return `${años}año${años > 1 ? "s" : ""}`;
   };
-  
+
   return (
     <div className="posts-section">
       <h3 ref={topRef}>
-        { autorUsername
+        {autorUsername
           ? `Posts de @${autorUsername}`
           : `Posts de @${autorUsername}`}
       </h3>
@@ -108,7 +108,7 @@ const PostsUsuario = ({ usuarioId }) => {
               </div>
             ))}
           </div>
-          
+
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
             {visibleCount < allPosts.length && (
               <button className="ver-mas-btn" onClick={handleVerMas}>

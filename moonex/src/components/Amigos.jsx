@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "./Amigos.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const Amigos = ({ onClose }) => {
   const [amigos, setAmigos] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
@@ -17,14 +15,14 @@ const Amigos = ({ onClose }) => {
     const fetchAmigos = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${currentUser.id}`);
+        const res = await fetch(`/social/siguiendo/${currentUser.id}`);  // 👈 Cambiado aquí
         const seguidos = await res.json();
 
         const amigosMutuos = [];
         const nuevosEstados = {};
 
         for (const user of seguidos) {
-          const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
+          const checkRes = await fetch(`/social/check`, {  // 👈 Cambiado aquí
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -57,7 +55,7 @@ const Amigos = ({ onClose }) => {
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/social`, {
+      const res = await fetch(`/social`, {  // 👈 Cambiado aquí
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

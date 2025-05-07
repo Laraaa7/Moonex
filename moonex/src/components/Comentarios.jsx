@@ -10,7 +10,7 @@ const Comentarios = ({ postId, cerrarComentarios }) => {
     if (nuevoComentario.trim() === "" || !currentUser.id) return;
 
     try {
-      const res = await fetch("http://localhost:5000/comentarios", {
+      const res = await fetch("/comentarios", {  // Cambiado aquí
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -30,7 +30,6 @@ const Comentarios = ({ postId, cerrarComentarios }) => {
 
   return (
     <div className="comments-container" onClick={(e) => e.stopPropagation()}>
-      
       <div className="comments-divider"></div>
 
       <form className="comments-form" onSubmit={handleSubmit}>

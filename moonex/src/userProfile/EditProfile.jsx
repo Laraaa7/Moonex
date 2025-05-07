@@ -9,11 +9,11 @@ const EditProfile = ({ closeModal }) => {
   const [profileImage, setProfileImage] = useState(defaultProfile);
   const [nombre, setNombre] = useState("");
   const [username, setUsername] = useState("");
-  const [originalUsername, setOriginalUsername] = useState(""); 
+  const [originalUsername, setOriginalUsername] = useState("");
   const [nacimiento, setNacimiento] = useState("");
   const [ubicacion, setUbicacion] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const bannerInputRef = useRef(null);
   const profileInputRef = useRef(null);
@@ -55,9 +55,9 @@ const EditProfile = ({ closeModal }) => {
 
   const checkUsernameAvailability = async (newUsername) => {
     if (newUsername === originalUsername) return true;
-    
+
     try {
-      const response = await fetch(`http://localhost:5000/check-username?username=${newUsername}`);
+      const response = await fetch(`/check-username?username=${newUsername}`);
       return response.ok;
     } catch (error) {
       console.error("Error al verificar username:", error);
@@ -75,7 +75,7 @@ const EditProfile = ({ closeModal }) => {
     try {
       if (username !== originalUsername) {
         const isUsernameAvailable = await checkUsernameAvailability(username);
-        
+
         if (!isUsernameAvailable) {
           setError("El nombre de usuario ya está en uso.");
           setIsLoading(false);
@@ -83,7 +83,7 @@ const EditProfile = ({ closeModal }) => {
         }
       }
 
-      const response = await fetch(`http://localhost:5000/updateProfile/${storedUser.id}`, {
+      const response = await fetch(`/updateProfile/${storedUser.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -128,7 +128,6 @@ const EditProfile = ({ closeModal }) => {
             </div>
           </div>
 
-          {/* Ícono X para quitar banner */}
           {bannerImage !== defaultBanner && (
             <div className="remove-banner-icon" onClick={() => setBannerImage(defaultBanner)}>
               <FaTimes />
@@ -173,7 +172,7 @@ const EditProfile = ({ closeModal }) => {
           id="username"
           value={username}
           onChange={(e) => {
-            const cleanUsername = e.target.value.toLowerCase().trim().replace(/\s+/g, '');
+            const cleanUsername = e.target.value.toLowerCase().trim().replace(/\s+/g, "");
             setUsername(cleanUsername);
           }}
           maxLength={30}

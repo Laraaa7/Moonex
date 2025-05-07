@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "./Siguiendo.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const Siguiendo = ({ onClose }) => {
   const [siguiendo, setSiguiendo] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
@@ -19,7 +17,7 @@ const Siguiendo = ({ onClose }) => {
     const fetchSiguiendo = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${userId}`);
+        const res = await fetch(`/social/siguiendo/${userId}`);  // Cambiado aquí
         const data = await res.json();
         setSiguiendo(data);
 
@@ -38,11 +36,11 @@ const Siguiendo = ({ onClose }) => {
     if (userId) {
       fetchSiguiendo();
     }
-  }, [userId]); // Dependencia clara y válida
+  }, [userId]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/social`, {
+      const res = await fetch(`/social`, {   // Cambiado aquí
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,21 +85,21 @@ const Siguiendo = ({ onClose }) => {
                 onClick={() => navigateToProfile(user.username)}
                 style={{ cursor: "pointer" }}
               >
-              <div className="follower-info">
-                <img
-                  className="follower-avatar"
-                  src={user.foto_perfil || defaultProfile}
-                  alt="Foto de perfil"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = defaultProfile;
-                  }}
-                />
-                <div className="follower-text">
-                  <p className="follower-name">{user.nombre}</p>
-                  <p className="follower-username">@{user.username}</p>
+                <div className="follower-info">
+                  <img
+                    className="follower-avatar"
+                    src={user.foto_perfil || defaultProfile}
+                    alt="Foto de perfil"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultProfile;
+                    }}
+                  />
+                  <div className="follower-text">
+                    <p className="follower-name">{user.nombre}</p>
+                    <p className="follower-username">@{user.username}</p>
+                  </div>
                 </div>
-              </div>
 
                 <button
                   className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
