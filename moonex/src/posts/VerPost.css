@@ -364,15 +364,16 @@ max-height: calc(100vh - 120px);
 /* portrait movil */
 @media (max-width: 480px) {
   .verpost-content {
-    margin-top:100px ;
+    margin-top:110px ;
     padding: 10px;
     width: 84%;
+    margin-left: 10px;
   }
   
   .verpost-card {
     padding: 12px;
     width: 350px;
-    padding-right: 22px ;
+    padding-right: 5px ;
   }
   
   .comentario-header {
