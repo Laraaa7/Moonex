@@ -27,10 +27,10 @@
 
 .sidebar-left {
   width: 250px;
-  position: sticky;
+  position: fixed;
   top: 100px;
   height: fit-content;
-  display: none;
+  display: none; 
   margin-right: -250px;
 }
 
@@ -42,13 +42,13 @@
   top: 155px;
   right: calc(50% - 720px);
   z-index: 10;
-  display: none;
+  display: none; 
 }
 
 @media (min-width: 1201px) {
   .sidebar-left,
   .sidebar-right {
-    display: block;
+    display: block; 
   }
 }
 
@@ -58,7 +58,7 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 650px; 
+  max-width: 650px;
   margin: 0 auto;
 }
 
@@ -269,14 +269,6 @@
   }
 }
 
-.feed-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #0E1C49;
-  margin-top: 95px;
-  margin-bottom: 50px;
-}
 
 /* centrar el contenido */
 .feed-wrapper {
@@ -315,33 +307,16 @@
   display: none; 
 }
 
+
 @media (min-width: 1201px) {
   .sidebar-left,
   .sidebar-right {
-    display: block; 
+    display: block; /* Show on desktop */
   }
 }
 
-.posts-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
 
-.posts-card {
-  background-color: rgb(40, 55, 108); 
-  border-radius: 8px;
-  border: none;
-  padding: 15px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
-}
+
 
 /*mantener la imagen y texto alineados */
 .post-content-wrapper {
@@ -500,6 +475,7 @@
   cursor: pointer;
 }
 
+/* Estilos para la funcionalidad de likes */
 .likes-btn {
   display: flex;
   align-items: center;
@@ -555,6 +531,7 @@
   }
 }
 
+
 .posts-container {
   flex: 1;
   display: flex;
@@ -565,6 +542,7 @@
   margin: 0 auto;
 }
 
+/* Show the menu toggle button on screens below desktop */
 .menu-movil-toggle {
   display: flex;
   justify-content: flex-start;
@@ -572,6 +550,7 @@
   margin-top: -30px;
 }
 
+/* Only hide the mobile menu button on desktop */
 @media (min-width: 1201px) {
   .menu-movil-toggle {
     display: none;
@@ -589,7 +568,7 @@
 }
 
 
-/* landscape mobile y tablets pequeñas */
+/* landscape movil y tablets pequeñas */
 @media (max-width: 768px) {
   .feed-content {
     flex-direction: column;
@@ -626,14 +605,16 @@
     margin-top: 200px;
     margin-bottom: 50px;
   }
-
+  
+  /*Ajustes mejorados para el menu-movil-panel */
   .menu-movil-panel {
     width: 88% ;
     max-width: 100% ;
     padding: 15px 10px ;
     margin: 10px auto ;
   }
-
+  
+  /* Ajustes para los contenedores internos */
   .posts-populares-container {
     width: 85% ;
     max-width: 100%;
@@ -658,56 +639,61 @@
 }
 
 /* móvil */
+/* Corrección para posts populares en móvil */
 @media (max-width: 480px) {
-  .feed-container {
-    margin-top: 240px;
-  }
-  
+  /* Alineación centrada para el panel de posts populares */
   .menu-movil-panel {
     width: 85%;
-    max-width: 100% ;
-    padding: 12px 8px;
+    max-width: 100%;
+    margin-right: 42px;
   }
   
-  .posts-populares-container,
-  .follow-suggestions-container {
-    width: 80% ;
-    max-width: 90% ;
-  }
-  
-  .feed-content {
+  /* Arreglar el contenedor de posts populares */
+  .posts-populares-container {
+    width: 100%; /* Usar todo el ancho disponible del contenedor padre */
+    max-width: 100%;
     padding: 10px;
+    margin: 0 auto; /* Centrado horizontal */
   }
   
-  .posts-card {
-    padding: 12px;
-    width: 88%;
-    margin-left: 20px;
+  /* Corregir los elementos internos de posts populares */
+  .posts-populares-container a,
+  .post-popular-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    margin-bottom: 5px;
     box-sizing: border-box;
-    padding-right: 22px;
+    background-color: rgba(74, 95, 140, 0.3);
+    border-radius: 8px;
+    color: #DAE0EE;
+    text-decoration: none;
   }
   
-  .post-header {
-    align-items: flex-start;
-  }
-  
-  .post-userinfo {
+  /* Alineación del contador de días */
+  .post-popular-item {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
   }
   
-  .post-avatar {
-    width: 40px;
-    height: 40px;
+  /* Título del post */
+  .post-popular-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
-  .post-actions {
-    justify-content: space-around;
+  /* Contador de días alineado a la derecha pero con padding adecuado */
+  .post-popular-count {
+    margin-left: 10px;
+    color: #dae0eeb6;
+    font-size: 12px;
+    white-space: nowrap;
   }
-
 }
-
 /* Móviles pequeños */
 @media (max-width: 350px) {
   .post-userinfo {
@@ -765,7 +751,7 @@
     justify-content: space-between;
     margin-top: 60px;
   }
-
+  
   .menu-columnas {
     display: flex;
     flex-direction: row;
@@ -773,14 +759,14 @@
     width: 100%;
     gap: 20px;
   }
-
+  
   .menu-columna {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
-
+  
   .main-content-panel {
     display: flex;
     flex-direction: row;
@@ -795,12 +781,12 @@
     max-width: 42%;
    
   }
-  
+
   .posts-populares-container {
     flex: 1;
     max-width: 42%; 
   }
-
+  
 .post-button {
   position: static; 
   width: 100%;
@@ -808,7 +794,6 @@
   border-radius: 50px;
   margin-top: 10px;
 }
-
 
   .follow-suggestions {
     position: static;
@@ -824,7 +809,7 @@
     position: static;
     margin-left: 0;
   }
-  
+
   .feed-content {
     display: flex;
     flex-direction: row;
@@ -833,6 +818,7 @@
     margin-top: 20px;
   }
 }
+
 
 @media (min-width: 900px) and (max-width: 1200px) {
   .menu-movil-panel {
@@ -843,7 +829,8 @@
   .feed-container {
     margin-top: 120px;
   }
-
+  
+  
   .main-content-panel {
     max-width: 900px;
     margin: 0 auto;
@@ -865,7 +852,7 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   .posts-container {
     width: 100%;
     max-width: 90%;

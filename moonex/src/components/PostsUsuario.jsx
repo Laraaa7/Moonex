@@ -4,7 +4,7 @@ import "./PostsUsuario.css";
 
 const PostsUsuario = ({ usuarioId }) => {
   const [allPosts, setAllPosts] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(7);
+  const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
   const [autorUsername, setAutorUsername] = useState("");
 
@@ -44,11 +44,11 @@ const PostsUsuario = ({ usuarioId }) => {
   }, [usuarioId]);
 
   const handleVerMas = () => {
-    setVisibleCount((prev) => prev + 7);
+    setVisibleCount((prev) => prev + 6);
   };
 
   const handleVerMenos = () => {
-    setVisibleCount(7);
+    setVisibleCount(6);
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -82,7 +82,7 @@ const PostsUsuario = ({ usuarioId }) => {
       </h3>
       {loading ? (
         <>
-          {Array.from({ length: 7 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="post-card loading-card" />
           ))}
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
@@ -115,7 +115,7 @@ const PostsUsuario = ({ usuarioId }) => {
                 Ver más
               </button>
             )}
-            {visibleCount > 7 && (
+            {visibleCount > 6 && (
               <button className="ver-mas-btn" onClick={handleVerMenos}>
                 Ver menos
               </button>

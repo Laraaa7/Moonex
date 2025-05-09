@@ -26,19 +26,16 @@
 }
 
 .post-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   background-color: #8F9AB6;
   border: 1px solid #DAE0EE;
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px 20px;
+  height: 50px;
+  margin-bottom: 15px;
   color: #000120;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-  width: 270px;
-  box-sizing: border-box;
-  height: 90px;
+  transition: transform 0.2s ease;
+  text-align: center;
+  margin-right: 50px;
 }
 
 .posts-populares h3 {
@@ -79,6 +76,7 @@
   animation: pulse 1.5s infinite ease-in-out;
   height: 90px;
   margin-left: 1px;
+  width: 235px;
 }
 
 @keyframes pulse {
@@ -87,6 +85,7 @@
   100% { background-color: #9fa9c2; }
 }
 
+/* Original media queries */
 @media (max-width: 1200px) {
   .posts-populares {
     right: 20px;
@@ -112,8 +111,9 @@
   }
 }
 
-
+/* NEW SPECIFIC STYLE FOR TABLET RESOLUTION (769px - 1200px) */
 @media (min-width: 769px) and (max-width: 1200px) {
+  /* Override the existing styling for posts-populares in this resolution */
   .posts-populares {
     position: static;
     width: 85%;
@@ -124,30 +124,35 @@
     overflow-y: hidden;
     scrollbar-width: none;
   }
-
+  
+  /* Make sure the container in the feed is properly centered */
   .posts-populares-container {
     display: flex;
     justify-content: center;
     width: 70%;
     margin: 0 auto;
   }
-
+  
+  /* Adjust scroll container for this resolution */
   .posts-scroll-container {
     margin-left: 0;
     width: 100%;
     margin-left: -20px;
   }
-
+  
+  /* Ensure post cards are properly sized */
   .post-card {
     width: 100%;
     box-sizing: border-box;
   }
   
+  /* If inside menu-movil-panel, adjust for that context */
   .menu-movil-panel .posts-populares {
     margin: 0;
     max-width: 100%;
   }
   
+  /* Specific adjustment for main-content-panel layout */
   .main-content-panel .posts-populares-container {
     display: flex;
     justify-content: center;
