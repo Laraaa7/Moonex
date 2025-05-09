@@ -498,16 +498,16 @@
 
 @media (max-width: 480px) {
   .chat-sidebar {
-    width: 100px;
+    width: 230px;
   }
 
   .chat-sidebar.closed {
-    transform: translateX(-100px);
+    transform: translateX(-230px);
   }
 
   .chat-main.with-sidebar {
-    width: calc(100% - 100px);
-    margin-left: 100px;
+    width: calc(100% - 230px);
+    margin-left: 230px;
   }
 
   .messages {
@@ -518,5 +518,20 @@
   .message-image {
     max-width: 150px;
     max-height: 150px;
+  }
+
+  .chat-sidebar-name,
+  .chat-sidebar-username,
+  .chat-last-message {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;  
+    display: inline-block;
+  }
+
+  .chat-sidebar-info {
+    flex: 1;
+    min-width: 0;
   }
 }

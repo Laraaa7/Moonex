@@ -1,62 +1,66 @@
 .search-bar-wrapper {
-    position: static !important;
-    width: 250px;
-  }
-  
-  .search-results {
-    position: fixed !important; 
-    width: 250px;
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: #14273bc9;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    z-index: 2000; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 5px 0;
-  }
-  
+  position: static !important;
+  width: 300px; 
+}
 
-  .search-results .MuiListItem-root {
-    cursor: pointer;
-    padding: 8px 16px;
-    transition: background-color 0.2s ease;
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-results .MuiListItem-root:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .search-results .MuiListItemAvatar-root {
-    min-width: 40px;
-    margin-right: 12px;
-  }
-  
-  .search-results .MuiAvatar-root {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .search-results .MuiListItemText-root .MuiTypography-root {
-    display: block;
-    line-height: 1.2;
-  }
-  
-  .search-results .MuiListItemText-root .MuiTypography-body2 {
-    color: #aaa;
-    font-size: 13px;
-  }
-  
-  /* responsive */
-  @media (max-width: 480px) {
-    .search-bar-wrapper {
+.search-results {
+  position: fixed !important;
+  width: 300px; 
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden; 
+  background-color: #14273bc9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  z-index: 2000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 5px 0;
+  box-sizing: border-box;
+}
+
+/* Asegura que el texto nunca se salga */
+.search-results .MuiListItemText-root .MuiTypography-root {
+  display: block;
+  line-height: 1.2;
+  word-break: break-word; 
+  white-space: normal;   
+}
+
+.search-results .MuiListItem-root {
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.search-results .MuiListItem-root:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-results .MuiListItemAvatar-root {
+  min-width: 40px;
+  margin-right: 12px;
+}
+
+.search-results .MuiAvatar-root {
+  width: 40px;
+  height: 40px;
+}
+
+.search-results .MuiListItemText-root .MuiTypography-body2 {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* responsive */
+@media (max-width: 480px) {
+  .search-bar-wrapper {
       width: 100%;
-    }
-    .search-results {
+  }
+  .search-results {
       max-height: 250px;
       width: 90%;
-      left: 5% !important; 
-    }
+      left: 5% !important;
   }
+}

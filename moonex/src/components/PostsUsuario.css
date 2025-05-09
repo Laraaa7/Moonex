@@ -87,7 +87,7 @@
 }
 
 .ver-mas-btn {
-  padding: 8px 16px;
+  padding: 8px 50px;
   background-color: #2e3e5f93;
   color: #DAE0EE;
   border: 2px solid #DAE0EE;
@@ -97,7 +97,7 @@
   transition: all 0.2s ease;
   font-size: 14px;
   margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 9px;
 }
 
 .ver-mas-btn:hover {
@@ -174,15 +174,22 @@
     min-height: 250px;
   }
   
-  .post-card {
-    padding: 8px;
-    margin-bottom: 8px;
+  .ppost-card {
+    padding: 15px;
+    margin-bottom: 20px;
     width: 90%;
-    margin-left: 5px;
+    margin-left: -2px;
   }
   
   .post-titulo-fecha {
     flex-direction: row;
     gap: 2px;
+  }
+  .ver-mas-btn {
+    padding: 7px 100px;
+  }
+  .loading-card {
+    width: 90%;
+    margin-left: 10px;
   }
 }

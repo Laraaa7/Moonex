@@ -133,35 +133,53 @@
 
 
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        height: auto;
+    }
+
+    .logo {
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .logo img {
+        height: 60px; 
+    }
+
+    .search-bar-container {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        margin: 0;
     }
 
     .search-bar {
-        order: 2;
-        margin: 10px 0;
-    }
-    .search-bar-container {
-        position: relative;
-        margin-left: auto;
-        margin-right: 80px;
-      }
-      
-    .nav-links {
-        order: 1;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 10px;
-        margin-left: 20px;
+        width: 100%;
+        max-width: 160px;
     }
 
     .search-bar input {
         width: 100%;
-        max-width: 300px;
+        font-size: 13px; 
+        padding: 8px 12px; 
+    }
+    .nav-links {
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: 5px; 
+        gap: 20px; 
+        flex-wrap: nowrap;
+    }
+
+    .nav-links a {
+        padding: 8px 10px;
+        font-size: 14px; 
     }
 }
