@@ -29,6 +29,7 @@
   overflow: hidden;
   position: relative;
   flex: 1; 
+  height: 575px;
 }
 
 .banner {
@@ -106,21 +107,20 @@
 
 /* Aquí está el cambio principal - añadir espacio antes de la fecha */
 .profile-info .dob {
-  margin-top: 20px; /* Añade espacio entre username y fecha */
-  margin-bottom: 5px;
+  margin-top: 15px; /* Añade espacio entre username y fecha */
+  margin-bottom: 1px;
 }
 
 .profile-info .location {
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
-  padding: 20px;
+  padding: 10px;
   border-top: 1px solid #8F9AB6;
   width: 100%;
-  margin-top: 20px; /* Añadimos espacio arriba de la sección de stats */
 }
 
 .stats div {
