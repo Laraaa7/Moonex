@@ -657,13 +657,13 @@
     margin: 0 auto;
   }
 
-  /* Menú móvil toggle: sin cambios */
+  /* Menú móvil toggle */
   .menu-movil-toggle {
     padding: 10px;
     margin-top: -30px;
   }
 
-  /* Menú móvil panel: ancho total (igual que desktop) */
+  /* Menú móvil panel */
   .menu-movil-panel {
     width: 100%;
     padding: 0 10px;
@@ -671,7 +671,7 @@
     margin: 10px 0;
   }
 
-  /* Contenedores internos: que ocupen ancho completo */
+  /* Contenedores internos */
   .follow-suggestions-container,
   .posts-populares-container {
     width: 100%;
@@ -679,14 +679,13 @@
     margin-bottom: 15px;
   }
 
-  /* Botón Postear: igual que en desktop, no redondo */
   .post-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;          /* 🔥 Ancho completo */
-    padding: 15px;        /* Como desktop */
-    border-radius: 8px;   /* Normal, no círculo */
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px; 
     font-size: 16px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -700,25 +699,39 @@
     height: 42px;
   }
 
+  /* Aquí lo nuevo para que quede en 1 sola línea bien */
+  .post-userinfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+
   .post-nombre {
     font-size: 14px;
-    max-width: 130px;         /* 🔥 Para cortar nombres largos */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 45%;
+    min-width: 0;
+    padding-right: 5px;
   }
 
-  .post-title {
-    font-size: 14px;
+  .post-username {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 35%;
+    min-width: 0;
+    padding-right: 5px;
   }
 
-  .post-username,
   .post-time {
     font-size: 12px;
-    max-width: 130px;         /* 🔥 Igual que nombre */
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-shrink: 0; /* La fecha nunca se corta */
   }
 
   .post-actions {
@@ -730,7 +743,10 @@
     flex-direction: column;
     padding: 8px;
   }
+
+
 }
+
 
 
 
