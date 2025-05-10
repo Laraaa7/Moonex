@@ -638,62 +638,96 @@
   }
 }
 
-/* móvil */
-/* Corrección para posts populares en móvil */
 @media (max-width: 480px) {
-  /* Alineación centrada para el panel de posts populares */
-  .menu-movil-panel {
-    width: 85%;
-    max-width: 100%;
-    margin-right: 42px;
+  .feed-content {
+    padding: 10px 15px; /* Mantén margen lateral para que posts estén centrados */
   }
-  
-  /* Arreglar el contenedor de posts populares */
-  .posts-populares-container {
-    width: 100%; /* Usar todo el ancho disponible del contenedor padre */
-    max-width: 100%;
-    padding: 10px;
-    margin: 0 auto; /* Centrado horizontal */
-  }
-  
-  /* Corregir los elementos internos de posts populares */
-  .posts-populares-container a,
-  .post-popular-item {
-    display: block;
+
+  .posts-container {
     width: 100%;
-    text-align: left;
-    padding: 10px;
-    margin-bottom: 5px;
+    padding: 0 10px; /* Márgenes internos */
     box-sizing: border-box;
-    background-color: rgba(74, 95, 140, 0.3);
-    border-radius: 8px;
-    color: #DAE0EE;
-    text-decoration: none;
   }
-  
-  /* Alineación del contador de días */
-  .post-popular-item {
+
+  .posts-card {
+    padding: 14px;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto; /* Centrado */
+  }
+
+  /* Toggle del menú */
+  .menu-movil-toggle {
+    padding: 10px;
+    margin-top: -30px;
+  }
+
+  /* Panel del menú móvil */
+  .menu-movil-panel {
+    width: 100%;
+    padding: 0 15px; /* Misma lógica que los posts: 15px igual a la izquierda y derecha */
+    box-sizing: border-box;
+    margin: 1px 0;
+  }
+
+  .follow-suggestions-container,
+  .posts-populares-container {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+
+  /* Botón Postear: redondo como antes */
+  .post-button {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    width: 55px;         /* 🔥 Tamaño compacto */
+    height: 55px;
+    border-radius: 50%;  /* 🔥 Redondeado total */
+    padding: 0;
+    font-size: 20px;
+    margin: 0 auto;      /* Centrado debajo del menú */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
-  
-  /* Título del post */
-  .post-popular-title {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+  .post-button:hover {
+    transform: scale(1.05);
   }
-  
-  /* Contador de días alineado a la derecha pero con padding adecuado */
-  .post-popular-count {
-    margin-left: 10px;
-    color: #dae0eeb6;
+
+  /* Imagen y textos dentro de los posts */
+  .post-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .post-nombre {
+    font-size: 14px;
+  }
+
+  .post-title {
+    font-size: 14px;
+  }
+
+  .post-username,
+  .post-time {
     font-size: 12px;
-    white-space: nowrap;
+  }
+
+  .post-actions {
+    gap: 10px;
+  }
+
+  .link-preview-card {
+    flex-direction: column;
+    padding: 8px;
   }
 }
+
+
 /* Móviles pequeños */
 @media (max-width: 350px) {
   .post-userinfo {
@@ -711,6 +745,7 @@
     max-width: 95%;
   }
 }
+
 
 /* Ocultar sidebars en móviles y responsive */
 @media (max-width: 768px) {
