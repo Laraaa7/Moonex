@@ -197,16 +197,54 @@ html, body {
 
 
 /* Responsive para dispositivos móviles */
-@media (max-width: 768px) {
-  .crear-post-content {
-      padding: 15px;
-      margin-top: 20px;
-  }
-  .form-actions {
-      flex-direction: column;
-      align-items: stretch;
-  }
-  .publish-button, .cancel-button {
-      margin-top: 10px;
-  }
+@media (max-width: 480px) {
+.crear-post-content {
+    padding: 10px;
+    margin-top: 60px;
+    border-radius: 8px;
+}
+
+.crear-post-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 15px;
+}
+
+.post-title-input {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.ql-container {
+    min-height: 150px;
+    font-size: 14px;
+    border-radius: 0 0 10px 10px;
+}
+
+.ql-toolbar {
+    border-radius: 10px 10px 0 0;
+}
+
+.publish-button, .cancel-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+}
+
+.message {
+    width: 90%;
+    font-size: 14px;
+}
+
+.char-counter {
+    font-size: 12px;
+}
+
+.form-actions {
+    flex-direction: column;
+    align-items: stretch;
+}
 }

@@ -225,69 +225,6 @@
   }
 }
 
-/* Responsive Portrait */
-@media (max-width: 480px) {
-  .profile-container {
-    padding-top: 130px; 
-  }
-
-  .profile-content {
-    padding: 10px;
-    gap: 15px;
-  }
-
-  .profile-card {
-    width: 100%;
-    border-radius: 8px;
-  }
-
-  .banner {
-    height: 120px;
-  }
-
-  .profile-pic {
-    width: 90px;
-    height: 90px;
-    margin: -65px auto 10px auto;
-    font-size: 20px;
-    border-width: 2px;
-  }
-
-  .profile-info {
-    padding: 15px 10px;
-  }
-
-  .profile-info h2 {
-    padding-top: 10px;
-    margin-bottom: 4px; /* Menos espacio en móvil */
-  }
-  
-  .profile-info .dob {
-    margin-top: 15px; /* Menos espacio en móvil */
-  }
-
-  .stats {
-    padding: 10px 5px;
-  }
-
-  .stats div {
-    padding: 5px 10px;
-    margin-right: 10px;
-    flex: 1 1 33%;
-    min-width: 80px;
-  }
-
-  .stat-number {
-    font-size: 1rem;
-  }
-
-  .edit-profile-button {
-    top: -10px;
-    right: 5px;
-    font-size: 11px;
-    padding: 7px 10px;
-  }
-}
 
 /* Pantallas muy pequeñas */
 @media (max-width: 350px) {
@@ -317,5 +254,100 @@
   .edit-profile-button {
     font-size: 10px;
     padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding-top: 100px;
+    margin-top: 80px;
+  }
+
+  .profile-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .profile-card {
+    width: 95%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .banner {
+    height: 140px;
+  }
+
+  .profile-pic {
+    width: 90px;
+    height: 90px;
+    margin: -60px auto 10px auto;
+  }
+
+  .profile-info {
+    padding: 15px 10px;
+  }
+
+  .profile-info h2 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    padding-top: 6px;
+  }
+
+  .profile-info p {
+    font-size: 0.9rem;
+  }
+
+  .profile-info .dob {
+    margin-top: 14px;
+  }
+
+  .edit-profile-button {
+    top: 2px;
+    right: 6px;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 10px 5px;
+  }
+  
+  .stats div {
+    flex: 1 1 auto;
+    min-width: unset; 
+    padding: 5px;
+    text-align: center;
+    word-break: break-word; 
+  }
+  
+  .stat-number {
+    font-size: 0.95rem;
+  }
+  
+
+  .profile-content > div:last-child {
+    width: 95%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+
+  .posts-usuario-container {
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .posts-usuario-container .post-preview {
+    margin-bottom: 12px;
+    border-radius: 8px;
+    padding: 12px;
   }
 }
