@@ -29,6 +29,29 @@ const formatearTiempoChat = (fechaString) => {
   return `${anos}año${anos > 1 ? "s" : ""}`;
 };
 
+const formatearFechaMensaje = (fechaString) => {
+  const fecha = new Date(fechaString);
+  const ahora = new Date();
+
+  const esHoy = fecha.toDateString() === ahora.toDateString();
+
+  const ayer = new Date();
+  ayer.setDate(ayer.getDate() - 1);
+  const esAyer = fecha.toDateString() === ayer.toDateString();
+
+  if (esHoy) {
+    return fecha.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  } else if (esAyer) {
+    return "Ayer";
+  } else {
+    return fecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }
+};
+
 const ImageModal = ({ image, onClose }) => {
   const handleClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
@@ -190,6 +213,18 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (!username && conversaciones.length > 0) {
+      // Ordenar conversaciones por fecha de último mensaje (más reciente primero)
+      const ordenadas = [...conversaciones].sort((a, b) => 
+        new Date(b.fecha_envio) - new Date(a.fecha_envio)
+      );
+  
+      // Redirigir a la más reciente
+      navigate(`/chat/${ordenadas[0].username}`);
+    }
+  }, [username, conversaciones, navigate]);
+
   const triggerImageUpload = () => {
     document.getElementById("image-upload").click();
   };
@@ -331,45 +366,49 @@ const Chat = () => {
             <HiMenu size={24} color="white" />
           </button>
 
-          <div
-            className="chat-header-profile"
-            onClick={() => navigate(`/perfilDeUsuario/${receptorData?.username}`)}
-          >
-            <div className="chat-avatar">
-              <img
-                src={receptorData?.foto_perfil || pfpDefecto}
-                alt="avatar"
-                className="avatar-image"
-              />
-            </div>
-            <div className="chat-header-info">
-              <div className="chat-header-name">{receptorData?.nombre || "Usuario"}</div>
-              <div className="chat-header-username">@{receptorData?.username || ""}</div>
-            </div>
-          </div>
+          {receptorData && (
+  <div
+    className="chat-header-profile"
+    onClick={() => navigate(`/perfilDeUsuario/${receptorData.username}`)}
+  >
+    <div className="chat-avatar">
+      <img
+        src={receptorData.foto_perfil || pfpDefecto}
+        alt="avatar"
+        className="avatar-image"
+      />
+    </div>
+    <div className="chat-header-info">
+      <div className="chat-header-name">{receptorData.nombre}</div>
+      <div className="chat-header-username">@{receptorData.username}</div>
+    </div>
+  </div>
+)}
         </div>
 
         <div className="chat-messages">
           {messages.map((msg, index) => {
             const isSelf = msg.emisor_id === currentUser.id;
             return (
-              <div
-                key={index}
-                className={`message-container ${isSelf ? "self-message" : "other-message"}`}
-              >
-                <div className="messages">
-                  {msg.contenido && <p>{msg.contenido}</p>}
-                  {msg.imagenes?.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt="img"
-                      className="message-image"
-                      onClick={() => handleImageClick(img)}
-                      onError={(e) => (e.target.style.display = "none")}
-                    />
-                  ))}
-                </div>
+            <div
+  key={index}
+  className={`message-container ${isSelf ? "self-message" : "other-message"}`}
+>
+<div className="messages">
+  {msg.contenido && <p>{msg.contenido}</p>}
+  {msg.imagenes?.map((img, i) => (
+    <img
+      key={i}
+      src={img}
+      alt="img"
+      className="message-image"
+      onClick={() => handleImageClick(img)}
+      onError={(e) => (e.target.style.display = "none")}
+    />
+  ))}
+  <span className="message-time">{formatearFechaMensaje(msg.fecha_envio)}</span>
+</div>
+
               </div>
             );
           })}

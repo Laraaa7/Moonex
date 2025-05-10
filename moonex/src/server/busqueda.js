@@ -25,11 +25,11 @@ router.get("/", (req, res) => {
 
     // Buscar posts
     const sqlPosts = `
-    SELECT id, titulo
-    FROM publicaciones
-    WHERE titulo LIKE ?
-     ORDER BY fecha_publicacion ASC
-    LIMIT 10
+   SELECT id, titulo, fecha_publicacion
+      FROM publicaciones
+      WHERE titulo LIKE ?
+      ORDER BY fecha_publicacion DESC
+      LIMIT 10
   `;
   
 

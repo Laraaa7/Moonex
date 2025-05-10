@@ -450,6 +450,13 @@
   transform: translateX(-100%);
   width: 0;
 }
+.message-time {
+  display: block;
+  font-size: 0.75rem;
+  color: #ccc;
+  margin-top: 4px;
+  text-align: right;
+}
 
 /* Media query para móvil */
 @media (max-width: 768px) {
