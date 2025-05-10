@@ -331,6 +331,7 @@ right: calc(50% - 690px);
 max-height: calc(100vh - 120px);
 }
 
+
 @media (min-width: 1201px) {
   .sidebar-right-verpost {
     display: block;
@@ -372,7 +373,7 @@ max-height: calc(100vh - 120px);
   
   .verpost-card {
     padding: 12px;
-    width: 350px;
+    width: 320px;
     padding-right: 5px ;
   }
   
