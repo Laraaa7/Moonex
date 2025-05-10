@@ -640,37 +640,38 @@
 
 @media (max-width: 480px) {
   .feed-content {
-    padding: 10px 15px; /* Mantén margen lateral para que posts estén centrados */
+    padding: 10px; /* Márgenes normales */
   }
 
   .posts-container {
     width: 100%;
-    padding: 0 10px; /* Márgenes internos */
+    padding: 0 10px;
     box-sizing: border-box;
   }
 
   .posts-card {
     padding: 14px;
-    border-radius: 10px;
+    border-radius: 8px;
     width: 100%;
     box-sizing: border-box;
-    margin: 0 auto; /* Centrado */
+    margin: 0 auto;
   }
 
-  /* Toggle del menú */
+  /* Menú móvil toggle: sin cambios */
   .menu-movil-toggle {
     padding: 10px;
     margin-top: -30px;
   }
 
-  /* Panel del menú móvil */
+  /* Menú móvil panel: ancho total (igual que desktop) */
   .menu-movil-panel {
     width: 100%;
-    padding: 0 15px; /* Misma lógica que los posts: 15px igual a la izquierda y derecha */
+    padding: 0 10px;
     box-sizing: border-box;
-    margin: 1px 0;
+    margin: 10px 0;
   }
 
+  /* Contenedores internos: que ocupen ancho completo */
   .follow-suggestions-container,
   .posts-populares-container {
     width: 100%;
@@ -678,27 +679,22 @@
     margin-bottom: 15px;
   }
 
-  /* Botón Postear: redondo como antes */
+  /* Botón Postear: igual que en desktop, no redondo */
   .post-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 55px;         /* 🔥 Tamaño compacto */
-    height: 55px;
-    border-radius: 50%;  /* 🔥 Redondeado total */
-    padding: 0;
-    font-size: 20px;
-    margin: 0 auto;      /* Centrado debajo del menú */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    width: 100%;          /* 🔥 Ancho completo */
+    padding: 15px;        /* Como desktop */
+    border-radius: 8px;   /* Normal, no círculo */
+    font-size: 16px;
+    margin: 0 auto;
+    box-sizing: border-box;
     cursor: pointer;
     transition: all 0.3s ease;
   }
 
-  .post-button:hover {
-    transform: scale(1.05);
-  }
-
-  /* Imagen y textos dentro de los posts */
+  /* Imagen y textos en los posts */
   .post-avatar {
     width: 42px;
     height: 42px;
@@ -706,6 +702,10 @@
 
   .post-nombre {
     font-size: 14px;
+    max-width: 130px;         /* 🔥 Para cortar nombres largos */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .post-title {
@@ -715,53 +715,23 @@
   .post-username,
   .post-time {
     font-size: 12px;
+    max-width: 130px;         /* 🔥 Igual que nombre */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .post-actions {
     gap: 10px;
   }
 
+  /* Link preview ajustada */
   .link-preview-card {
     flex-direction: column;
     padding: 8px;
   }
 }
 
-
-/* Móviles pequeños */
-@media (max-width: 350px) {
-  .post-userinfo {
-    flex-wrap: wrap;
-  }
-  
-  .menu-movil-panel {
-    width: 85%;
-    padding: 8px ;
-  }
-  
-  .posts-populares-container,
-  .follow-suggestions-container {
-    width: 95%;
-    max-width: 95%;
-  }
-}
-
-
-/* Ocultar sidebars en móviles y responsive */
-@media (max-width: 768px) {
-  .sidebar-left,
-  .sidebar-right {
-    display: none ;
-  }
-
-  .menu-movil-toggle {
-    display: flex;
-  }
-
-  .menu-movil-panel {
-    display: flex;
-  }
-}
 
 
 @media (min-width: 769px) and (max-width: 1200px) {
@@ -825,7 +795,7 @@
 .post-button {
   position: static; 
   width: 100%;
-  padding: 15px 20px;
+  padding: 20px 20px;
   border-radius: 50px;
   margin-top: 10px;
 }
