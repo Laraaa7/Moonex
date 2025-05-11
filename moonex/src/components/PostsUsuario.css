@@ -192,4 +192,9 @@
     width: 90%;
     margin-left: 10px;
   }
+  .posts-scroll-container {
+    padding-left: 25px;
+    width: 100%;
+    margin: 0 auto;
+  }
 }
