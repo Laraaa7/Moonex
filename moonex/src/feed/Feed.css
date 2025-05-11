@@ -668,7 +668,7 @@
     width: 100%;
     padding: 0 10px;
     box-sizing: border-box;
-    margin: 10px 0;
+    margin: 10px -3px;
   }
 
   /* Contenedores internos */
