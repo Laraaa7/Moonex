@@ -173,23 +173,32 @@
     padding: 15px 10px;
     min-height: 250px;
   }
-  
+
   .ppost-card {
     padding: 15px;
     margin-bottom: 20px;
-    width: 90%;
-    margin-left: -2px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto; 
   }
-  
+
   .post-titulo-fecha {
     flex-direction: row;
     gap: 2px;
   }
+
   .ver-mas-btn {
     padding: 7px 100px;
   }
+
   .loading-card {
     width: 90%;
     margin-left: 10px;
+  }
+
+  .posts-scroll-container {
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
