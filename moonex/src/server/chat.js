@@ -45,7 +45,7 @@ const setupChat = (server) => {
                 // Procesar todos los resultados de una vez en lugar de iterar
                 const processedResults = results.map(result => ({
                     ...result,
-                    imagenes: result.imagenes ? JSON.parse(result.imagenes) : [] 
+                    imagenes: result.imagenes ? JSON.parse(result.imagenes) : []
                 }));
 
                 console.log(`Mensajes cargados correctamente: ${processedResults.length}`);
@@ -101,6 +101,25 @@ const setupChat = (server) => {
                 } else {
                     io.emit('new message', messageWithId);
                 }
+            });
+        });
+
+        // Recibir y eliminar mensaje
+        socket.on('delete message', (messageId) => {
+            console.log(`Eliminando mensaje con ID: ${messageId}`);
+
+            const deleteMessageQuery = `
+                DELETE FROM mensajes WHERE id = ?
+            `;
+
+            db.query(deleteMessageQuery, [messageId], (err, result) => {
+                if (err) {
+                    console.error(" Error al eliminar el mensaje:", err.message);
+                    return;
+                }
+
+                console.log("Mensaje eliminado de la base de datos:", messageId);
+                io.emit('message deleted', messageId); // Emitir a todos los clientes que el mensaje ha sido eliminado
             });
         });
 
