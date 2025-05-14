@@ -14,6 +14,7 @@
   import FeedPage from './pages/FeedPage';
   import LoginPage from './Login/Login';
   import RegisPage from './Register/Register';
+  import NotificacionesPage from './pages/NotificacionesPage';
   import { AuthContextProvider } from './context/AuthContext';
   import PrivateRoute from './components/PrivateRoute';
 
@@ -36,7 +37,8 @@
             <Route path="/perfil" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
             <Route path="/crearPost" element={<PrivateRoute><CrearPostPage /></PrivateRoute>} />
             <Route path="/verPost/:id" element={<PrivateRoute><VerPostPage /></PrivateRoute>} />
-            
+            <Route path="/notificaciones" element={<PrivateRoute><NotificacionesPage /></PrivateRoute>} />
+
             {/* Ruta de perfil de usuario dinámica */}
             <Route path="/perfilDeUsuario/:userId" element={<PrivateRoute><UserProfilePage /></PrivateRoute>} />
             
