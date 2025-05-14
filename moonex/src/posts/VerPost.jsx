@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Barranav from "../components/Barranav";
-import { FaRegComment } from "react-icons/fa";
+import { FaRegComment, FaReply } from "react-icons/fa";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import VistaEnlace from "../components/VistaEnlace";
 import ImageGrid from "../components/ImageGrid";
@@ -10,6 +10,7 @@ import AQuienSeguir from "../components/AQuienSeguir";
 import PostButton from "../components/PostButton";
 import PostsUsuario from "../components/PostsUsuario";
 import defaultProfile from "../img/PfpDefecto.png";
+import Respuestas from "../components/Respuestas";
 import "./VerPost.css";
 
 const VerPost = () => {
@@ -21,6 +22,11 @@ const VerPost = () => {
   const [nuevoComentario, setNuevoComentario] = useState("");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [comentarioLikes, setComentarioLikes] = useState({});
+  const [mostrarFormularioRespuesta, setMostrarFormularioRespuesta] = useState({});
+  const [mostrarRespuestas, setMostrarRespuestas] = useState({});
+  const [respuestasTexto, setRespuestasTexto] = useState({});
+  const [conteoRespuestas, setConteoRespuestas] = useState({});
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = currentUser?.id;
@@ -29,13 +35,11 @@ const VerPost = () => {
     const fetchData = async () => {
       try {
         const [postRes, comentariosRes] = await Promise.all([
-          fetch(`/posts/${postId}`), // Cambiado para Render
-          fetch(`/comentarios/${postId}`) // Cambiado para Render
+          fetch(`/posts/${postId}`),
+          fetch(`/comentarios/${postId}`)
         ]);
-
         const postData = await postRes.json();
         const comentariosData = await comentariosRes.json();
-
         setPost(postData);
         setComentarios(comentariosData);
       } catch (error) {
@@ -49,13 +53,11 @@ const VerPost = () => {
       if (!postId || !userId) return;
       try {
         const [likesRes, userLikesRes] = await Promise.all([
-          fetch(`/likes/${postId}`), // Cambiado para Render
-          fetch(`/likes/usuario/${userId}`) // Cambiado para Render
+          fetch(`/likes/${postId}`),
+          fetch(`/likes/usuario/${userId}`)
         ]);
-
         const likesData = await likesRes.json();
         const userLikedPosts = await userLikesRes.json();
-
         setLikeCount(likesData.length || 0);
         setLiked(userLikedPosts.includes(Number(postId)));
       } catch (err) {
@@ -67,27 +69,69 @@ const VerPost = () => {
     fetchLikes();
   }, [postId, userId]);
 
-  const manejarLike = async () => {
-    if (!userId) return navigate("/login");
+  useEffect(() => {
+    if (comentarios.length > 0 && userId) {
+      fetchLikesComentarios();
+      fetchConteoRespuestas();
+    }
+  }, [comentarios, userId]);
+
+  const fetchLikesComentarios = async () => {
+    try {
+      const [usuarioLikesRes, conteoRes] = await Promise.all([
+        fetch(`/comentarios/likes/usuario/${userId}`),
+        fetch(`/comentarios/likes/conteo`)
+      ]);
+      const usuarioLikes = await usuarioLikesRes.json();
+      const conteos = await conteoRes.json();
+
+      const map = {};
+      comentarios.forEach(c => {
+        map[c.id] = {
+          liked: usuarioLikes.some(l => l.comentario_id === c.id),
+          count: conteos.find(cnt => cnt.comentario_id === c.id)?.count || 0
+        };
+      });
+      setComentarioLikes(map);
+    } catch (err) {
+      console.error("Error al cargar likes de comentarios:", err);
+    }
+  };
+
+  const fetchConteoRespuestas = async () => {
+    try {
+      const res = await fetch(`/comentarios/conteo`);
+      const data = await res.json();
+      const map = {};
+      data.forEach(item => {
+        map[item.comentario_id.toString()] = item.count;
+      });
+      setConteoRespuestas(map);
+    } catch (err) {
+      console.error("Error al obtener conteo de respuestas:", err);
+    }
+  };
+
+  const manejarLikeComentario = async (comentarioId) => {
+    const isLiked = comentarioLikes[comentarioId]?.liked || false;
+    const count = comentarioLikes[comentarioId]?.count || 0;
+
+    setComentarioLikes(prev => ({
+      ...prev,
+      [comentarioId]: {
+        liked: !isLiked,
+        count: isLiked ? count - 1 : count + 1
+      }
+    }));
 
     try {
-      setLiked(prev => !prev);
-      setLikeCount(prev => liked ? prev - 1 : prev + 1);
-
-      const res = await fetch("/likes", { // Cambiado para Render
-        method: liked ? "DELETE" : "POST",
+      await fetch(`/comentarios/likes`, {
+        method: isLiked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          usuario_id: userId,
-          publicacion_id: postId
-        })
+        body: JSON.stringify({ usuario_id: userId, comentario_id: comentarioId })
       });
-
-      if (!res.ok) throw new Error("Error al gestionar like");
     } catch (err) {
-      console.error("Error al dar/quitar like:", err);
-      setLiked(prev => !prev);
-      setLikeCount(prev => liked ? prev + 1 : prev - 1);
+      console.error("Error al cambiar like de comentario:", err);
     }
   };
 
@@ -96,7 +140,7 @@ const VerPost = () => {
     if (nuevoComentario.trim() === "" || !userId) return;
 
     try {
-      const res = await fetch("/comentarios", { // Cambiado para Render
+      const res = await fetch(`/comentarios`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,7 +153,7 @@ const VerPost = () => {
       if (!res.ok) throw new Error("Error al comentar");
 
       const nuevo = await res.json();
-      setComentarios((prev) => [
+      setComentarios(prev => ([
         ...prev,
         {
           id: nuevo.id,
@@ -119,39 +163,49 @@ const VerPost = () => {
           contenido: nuevoComentario,
           fecha: new Date().toISOString(),
         },
-      ]);
-
+      ]));
       setNuevoComentario("");
     } catch (error) {
       console.error("Error al enviar comentario:", error);
     }
   };
 
-  const extraerURLs = (html) => {
-    if (!html) return [];
-    const hrefMatches = [...html.matchAll(/href=["'](https?:\/\/[^"']+)["']/g)].map(m => m[1]);
-    const plainMatches = [...html.matchAll(/(?:^|\s|>)(https?:\/\/[^\s<>"']+)(?=\s|<|$)/g)].map(m => m[1]);
-    return [...new Set([...hrefMatches, ...plainMatches])];
-  };
+  const enviarRespuestaComentario = async (comentarioId) => {
+    const texto = respuestasTexto[comentarioId]?.trim();
+    if (!texto) return;
 
-  const procesarContenido = (contenido) => {
-    if (!contenido) return "";
-    const sinImagenes = contenido.replace(/<img[^>]*>/g, "");
-    const urls = extraerURLs(sinImagenes);
-    return urls.reduce((text, url) => text.replace(url, ""), sinImagenes);
-  };
+    try {
+      const res = await fetch(`/respuestas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuario_id: userId,
+          comentario_id: comentarioId,
+          contenido: texto,
+        }),
+      });
 
-  const obtenerImagenesPost = (post) => {
-    if (!post || (!post.contenido && post.imagen)) return post?.imagen ? [post.imagen] : [];
-    const imgRegex = /<img[^>]+src=["']([^"']+)["']/g;
-    const imgs = [];
-    let match;
-    while ((match = imgRegex.exec(post.contenido)) !== null) {
-      if (!match[1].includes("defaultProfile") && !match[1].includes("avatar")) {
-        imgs.push(match[1]);
-      }
+      if (!res.ok) throw new Error("Error al responder");
+
+      setRespuestasTexto(prev => ({ ...prev, [comentarioId]: "" }));
+      setMostrarFormularioRespuesta(prev => ({ ...prev, [comentarioId]: false }));
+      fetchConteoRespuestas();
+    } catch (err) {
+      console.error("Error al enviar respuesta:", err);
     }
-    return imgs.length > 0 ? imgs : post.imagen ? [post.imagen] : [];
+  };
+
+  const formatearTiempo = (fecha) => {
+    const publicada = new Date(fecha);
+    const ahora = new Date();
+    const diff = Math.floor((ahora - publicada) / 1000);
+    if (diff < 60) return `${diff}s`;
+    const min = Math.floor(diff / 60);
+    if (min < 60) return `${min}min`;
+    const h = Math.floor(min / 60);
+    if (h < 24) return `${h}h`;
+    const d = Math.floor(h / 24);
+    return `${d}d`;
   };
 
   const navigateToProfile = (username, userIdParam) => {
@@ -163,147 +217,145 @@ const VerPost = () => {
     }
   };
 
-  const formatearTiempoPublicacion = (fechaString) => {
-    const publicada = new Date(fechaString);
-    if (isNaN(publicada)) return "Fecha inválida";
-
-    const ahora = new Date();
-    const diffSegundos = Math.floor((ahora - publicada) / 1000);
-
-    if (diffSegundos < 60) return `${diffSegundos}s`;
-    const minutos = Math.floor(diffSegundos / 60);
-    if (minutos < 60) return `${minutos}min`;
-    const horas = Math.floor(minutos / 60);
-    if (horas < 24) return `${horas}h`;
-    const dias = Math.floor(horas / 24);
-    if (dias < 30) return `${dias}d`;
-    const meses = Math.floor(dias / 30);
-    if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
-    const anos = Math.floor(dias / 365);
-    return `${anos}año${anos > 1 ? "s" : ""}`;
+  const extraerURLs = (html) => {
+    if (!html) return [];
+    const hrefMatches = [...html.matchAll(/href=["'](https?:\/\/[^"']+)["']/g)].map(m => m[1]);
+    const plainMatches = [...html.matchAll(/(?:^|\s|>)(https?:\/\/[^\s<>"]+)(?=\s|<|$)/g)].map(m => m[1]);
+    return [...new Set([...hrefMatches, ...plainMatches])];
   };
 
-  const suggestedUsers = [
-    { id: 1, username: "Usuario1" },
-    { id: 2, username: "Usuario2" },
-    { id: 3, username: "Usuario3" },
-    { id: 4, username: "Usuario4" },
-    { id: 5, username: "Usuario5" },
-  ];
+  const procesarContenido = (contenido) => {
+    if (!contenido) return "";
+    const sinImagenes = contenido.replace(/<img[^>]*>/g, "");
+    const urls = extraerURLs(sinImagenes);
+    return urls.reduce((text, url) => text.replace(url, ""), sinImagenes);
+  };
+
+  const obtenerImagenesPost = (post) => {
+    if (!post) return [];
+    const imgRegex = /<img[^>]+src=["']([^"']+)["']/g;
+    const imgs = [];
+    let match;
+    while ((match = imgRegex.exec(post.contenido)) !== null) {
+      imgs.push(match[1]);
+    }
+    return imgs.length > 0 ? imgs : post.imagen ? [post.imagen] : [];
+  };
 
   if (loading) {
     return (
       <div className="verpost-container">
         <Barranav />
         <div className="verpost-content">
-          <div className="rueda-contenedor"><div className="rueda"></div></div>
+          <div className="rueda-contenedor"><div className="rueda" /></div>
         </div>
       </div>
     );
   }
-
-  if (!post) {
-    return (
-      <div className="verpost-container">
-        <Barranav />
-        <div className="verpost-content">
-          <div className="verpost-error">Post no encontrado.</div>
-        </div>
-      </div>
-    );
-  }
-
-  const urls = extraerURLs(post.contenido);
-  const contenidoProcesado = procesarContenido(post.contenido);
-  const imagenesPost = obtenerImagenesPost(post);
 
   return (
     <div className="verpost-container">
       <Barranav />
       <div className="verpost-wrapper">
         <div className="sidebar-left-verpost">
-          <AQuienSeguir suggestedUsers={suggestedUsers} />
+          <AQuienSeguir suggestedUsers={[]} />
           <PostButton />
         </div>
-
         <div className="verpost-content">
           <div className="verpost-card">
-            <div className="post-content-wrapper">
-              <div className="post-text">
-                <div className="post-header">
-                  <img
-                    src={post.foto_perfil || defaultProfile}
-                    alt="Perfil"
-                    className="post-avatar"
-                    onClick={() => navigateToProfile(post.username, post.usuario_id)}
-                  />
-                  <div
-                    className="post-userinfo"
-                    onClick={() => navigateToProfile(post.username, post.usuario_id)}
-                  >
-                    <h3 className="post-nombre">{post.nombre}</h3>
-                    <h4 className="post-username">@{post.username}</h4>
-                    <span className="post-time">· {formatearTiempoPublicacion(post.fecha_publicacion)}</span>
-                  </div>
-                </div>
+            <div className="post-header">
+              <img
+                src={post.foto_perfil || defaultProfile}
+                className="post-avatar"
+                alt=""
+                onClick={() => navigateToProfile(post.username, post.usuario_id)}
+              />
+              <div className="post-userinfo" onClick={() => navigateToProfile(post.username, post.usuario_id)}>
+                <h3 className="post-nombre">{post.nombre}</h3>
+                <h4 className="post-username">@{post.username}</h4>
+                <span className="post-time">· {formatearTiempo(post.fecha_publicacion)}</span>
+              </div>
+            </div>
 
-                <h5 className="post-title">{post.titulo}</h5>
+            <h5 className="post-title">{post.titulo}</h5>
+            <div className="post-content" dangerouslySetInnerHTML={{ __html: procesarContenido(post.contenido) }} />
+            {extraerURLs(post.contenido).map((url, i) => <VistaEnlace key={i} url={url} />)}
+            {obtenerImagenesPost(post).length > 0 && <ImageGrid images={obtenerImagenesPost(post)} />}
 
-                <div
-                  className="post-content"
-                  dangerouslySetInnerHTML={{ __html: contenidoProcesado }}
+            <div className="post-actions">
+              <span className={`likes-btn ${liked ? "liked" : ""}`}>
+                {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />} {likeCount}
+              </span>
+              <span className="comentarios-btn">
+                <FaRegComment /> {comentarios.length}
+              </span>
+            </div>
+
+            <div className="comentarios-section">
+              <h4 className="comentarios-titulo">Comentarios</h4>
+              <form onSubmit={agregarComentario} className="comentario-form">
+                <input
+                  type="text"
+                  className="comentario-input"
+                  placeholder="Escribe un comentario..."
+                  value={nuevoComentario}
+                  onChange={(e) => setNuevoComentario(e.target.value)}
                 />
-                {urls.map((url, i) => <VistaEnlace key={i} url={url} />)}
-                {imagenesPost.length > 0 && <ImageGrid images={imagenesPost} />}
-              </div>
+                <button type="submit" className="comentario-submit">Comentar</button>
+              </form>
 
-              <div className="post-actions">
-                <span className={`likes-btn ${liked ? "liked" : ""}`} onClick={manejarLike}>
-                  {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />}
-                  {likeCount}
-                </span>
-                <span className="comentarios-btn"><FaRegComment /> {comentarios.length}</span>
-              </div>
-
-              <div className="comentarios-section">
-                <h4 className="comentarios-titulo">Comentarios</h4>
-                <form className="comentario-form" onSubmit={agregarComentario}>
-                  <input
-                    type="text"
-                    placeholder="Escribe un comentario..."
-                    value={nuevoComentario}
-                    onChange={(e) => setNuevoComentario(e.target.value)}
-                    className="comentario-input"
-                  />
-                  <button type="submit" className="comentario-submit">Comentar</button>
-                </form>
-                <div className="comentarios-lista">
-                  {comentarios.length === 0 ? (
-                    <p className="no-comentarios">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
-                  ) : (
-                    comentarios.map((comentario) => (
-                      <div key={comentario.id} className="comentario-item">
-                        <div className="comentario-header">
-                          <img
-                            src={
-                              comentario.foto_perfil?.startsWith("data:") || comentario.foto_perfil?.startsWith("http")
-                                ? comentario.foto_perfil
-                                : defaultProfile
-                            }
-                            alt="avatar"
-                            className="comentario-avatar"
-                          />
-                          <div className="comentario-userinfo">
-                            <span className="comentario-nombre">{comentario.nombre}</span>
-                            <span className="comentario-username">@{comentario.username}</span>
-                            <span className="comentario-fecha">· {formatearTiempoPublicacion(comentario.fecha)}</span>
-                          </div>
+              <div className="comentarios-lista">
+                {comentarios.length === 0 ? (
+                  <p className="no-comentarios">Aún no hay comentarios.</p>
+                ) : (
+                  comentarios.map((comentario) => (
+                    <div key={comentario.id} className="comentario-item">
+                      <div className="comentario-header">
+                        <img
+                          src={comentario.foto_perfil || defaultProfile}
+                          alt="avatar"
+                          className="comentario-avatar"
+                        />
+                        <div className="comentario-userinfo">
+                          <span className="comentario-nombre">{comentario.nombre}</span>
+                          <span className="comentario-username">@{comentario.username}</span>
+                          <span className="comentario-fecha">· {formatearTiempo(comentario.fecha)}</span>
                         </div>
-                        <div className="comentario-texto">{comentario.contenido}</div>
                       </div>
-                    ))
-                  )}
-                </div>
+                      <div className="comentario-texto">{comentario.contenido}</div>
+
+                      <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+                        <span
+                          className={`comentario-like-btn ${comentarioLikes[comentario.id]?.liked ? "liked" : ""}`}
+                          onClick={() => manejarLikeComentario(comentario.id)}
+                        >
+                          {comentarioLikes[comentario.id]?.liked ? <MdFavorite className="like-icon-small active" /> : <MdFavoriteBorder className="like-icon-small" />} {comentarioLikes[comentario.id]?.count || 0}
+                        </span>
+                        <span className="comentario-responder" onClick={() => setMostrarFormularioRespuesta(prev => ({ ...prev, [comentario.id]: !prev[comentario.id] }))}><FaReply /> Responder</span>
+                        <span className="comentario-toggle" onClick={() => setMostrarRespuestas(prev => ({ ...prev, [comentario.id]: !prev[comentario.id] }))}>
+                          {mostrarRespuestas[comentario.id] ? "Ocultar respuestas" : `Ver respuestas (${conteoRespuestas[comentario.id.toString()] || 0})`}
+                        </span>
+                      </div>
+
+                      {mostrarFormularioRespuesta[comentario.id] && (
+                        <form onSubmit={(e) => { e.preventDefault(); enviarRespuestaComentario(comentario.id); }} className="respuesta-form">
+                          <input
+                            type="text"
+                            value={respuestasTexto[comentario.id] || ""}
+                            onChange={(e) => setRespuestasTexto(prev => ({ ...prev, [comentario.id]: e.target.value }))}
+                            placeholder="Escribe una respuesta..."
+                            className="respuesta-input"
+                          />
+                          <button type="submit" className="respuesta-submit">Enviar</button>
+                        </form>
+                      )}
+
+                      {mostrarRespuestas[comentario.id] && (
+                        <Respuestas comentarioId={comentario.id} currentUser={currentUser} />
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

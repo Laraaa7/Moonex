@@ -146,5 +146,122 @@ router.get('/comentarios/count/:postId', (req, res) => {
   });
 });
 
+// Dar like a un comentario
+router.post('/comentarios/likes', (req, res) => {
+  const { usuario_id, comentario_id } = req.body;
+
+  if (!usuario_id || !comentario_id) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  const sql = `
+    INSERT IGNORE INTO likes_comentarios (usuario_id, comentario_id)
+    VALUES (?, ?)
+  `;
+
+  db.query(sql, [usuario_id, comentario_id], (err) => {
+    if (err) {
+      console.error('Error al dar like al comentario:', err);
+      return res.status(500).json({ error: 'Error al dar like' });
+    }
+
+    res.status(201).json({ success: true });
+  });
+});
+
+// Quitar like a un comentario
+router.delete('/comentarios/likes', (req, res) => {
+  const { usuario_id, comentario_id } = req.body;
+
+  const sql = `
+    DELETE FROM likes_comentarios
+    WHERE usuario_id = ? AND comentario_id = ?
+  `;
+
+  db.query(sql, [usuario_id, comentario_id], (err) => {
+    if (err) {
+      console.error('Error al quitar like al comentario:', err);
+      return res.status(500).json({ error: 'Error al quitar like' });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+// Obtener likes de un usuario (comentarios que ha dado like)
+router.get('/comentarios/likes/usuario/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  const sql = `
+    SELECT comentario_id FROM likes_comentarios WHERE usuario_id = ?
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Error al obtener likes del usuario:', err);
+      return res.status(500).json({ error: 'Error al obtener likes' });
+    }
+
+    res.json(results);
+  });
+});
+
+// Obtener conteo de likes por comentario
+router.get('/comentarios/likes/conteo', (req, res) => {
+  const sql = `
+    SELECT comentario_id, COUNT(*) AS count
+    FROM likes_comentarios
+    GROUP BY comentario_id
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al contar likes por comentario:', err);
+      return res.status(500).json({ error: 'Error al contar likes' });
+    }
+
+    res.json(results);
+  });
+});
+
+// Remover like a comentario (POST en lugar de DELETE)
+router.post('/comentarios/likes/remover', (req, res) => {
+  const { usuario_id, comentario_id } = req.body;
+
+  const sql = `
+    DELETE FROM likes_comentarios
+    WHERE usuario_id = ? AND comentario_id = ?
+  `;
+
+  db.query(sql, [usuario_id, comentario_id], (err) => {
+    if (err) {
+      console.error('Error al quitar like al comentario:', err);
+      return res.status(500).json({ error: 'Error al quitar like' });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+// Obtener conteo de respuestas por comentario
+router.get('/comentarios/conteo', (req, res) => {
+  const sql = `
+SELECT comentario_id, COUNT(*) AS count
+FROM respuestas
+WHERE comentario_id IS NOT NULL
+GROUP BY comentario_id
+
+`;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al contar respuestas:', err);
+      return res.status(500).json({ error: 'Error al contar respuestas' });
+    }
+
+    res.json(results);
+  });
+});
+
 module.exports = router;
 

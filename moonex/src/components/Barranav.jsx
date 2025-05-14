@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaBell } from "react-icons/fa"; 
 import { useNavigate } from "react-router-dom";
 import "./Barranav.css";
 import MoonexLogo from "../img/MoonexLogo.png";
 import { UserAuth } from "../context/AuthContext";
-import SearchBar from "./SearchBar";  
+import SearchBar from "./SearchBar";
 
 const Barranav = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,7 +36,7 @@ const Barranav = () => {
       </div>
 
       <div className="search-bar-container">
-        <SearchBar /> 
+        <SearchBar />
       </div>
 
       <div className="nav-links">
@@ -44,22 +44,36 @@ const Barranav = () => {
         <a href="/chat">Chats</a>
         <a href="/crearpost">Postear</a>
 
+        {/* Notificaciones */}
+        <IconButton
+          className="notification-icon"
+          onClick={() => navigate("/notificaciones")}
+        >
+          <FaBell size={22} color="white" />
+        </IconButton>
+
+        {/* Menú de usuario */}
         <div className="user-menu">
           <IconButton onClick={handleMenuOpen} className="user-icon">
             <FaUserCircle size={28} color="white" />
           </IconButton>
           <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleMenuClose}
-          slotProps={{
-            paper: {
-              className: 'custom-menu'
-            }
-          }}
-          disableScrollLock
-        >
-            <MenuItem onClick={() => { navigate('/perfil'); handleMenuClose(); }}>
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            slotProps={{
+              paper: {
+                className: "custom-menu",
+              },
+            }}
+            disableScrollLock
+          >
+            <MenuItem
+              onClick={() => {
+                navigate("/perfil");
+                handleMenuClose();
+              }}
+            >
               Ver Perfil
             </MenuItem>
             <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>

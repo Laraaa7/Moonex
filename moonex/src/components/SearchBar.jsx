@@ -33,9 +33,9 @@ const SearchBar = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        inputRef.current && 
+        inputRef.current &&
         !inputRef.current.contains(event.target) &&
-        resultsRef.current && 
+        resultsRef.current &&
         !resultsRef.current.contains(event.target)
       ) {
         setResults([]);
@@ -68,7 +68,7 @@ const SearchBar = () => {
 
       const fetchResults = async () => {
         try {
-          const res = await fetch(`/api/busqueda?query=${encodeURIComponent(query)}`); // CAMBIO aquí
+          const res = await fetch(`/api/busqueda?query=${encodeURIComponent(query)}`);
           if (!res.ok) {
             console.error("Error al buscar:", res.statusText);
             return;
