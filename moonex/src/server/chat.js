@@ -4,9 +4,9 @@ const db = require('./db');
 const setupChat = (server) => {
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:3000",
+            origin: ["http://localhost:3000", "https://moonex.onrender.com"],
             methods: ["GET", "POST"],
-            // Añadir compresión para transferencia más rápida
+            credentials: true,
             perMessageDeflate: true
         },
         // Websocket para mejor rendimiento
