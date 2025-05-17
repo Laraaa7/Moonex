@@ -9,19 +9,20 @@ const Seguidores = ({ onClose }) => {
   const [estadoBotones, setEstadoBotones] = useState({});
   const [isLoading, setIsLoading] = useState(true); 
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchSeguidores = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(`/social/seguidores/${currentUser.id}`);  // Cambiado aquí
+        const res = await fetch(`${API_URL}/social/seguidores/${currentUser.id}`);
         const data = await res.json();
         setSeguidores(data);
 
         const estados = {};
         for (const user of data) {
-          const checkRes = await fetch(`/social/check`, {   // Cambiado aquí
+          const checkRes = await fetch(`${API_URL}/social/check`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -44,11 +45,11 @@ const Seguidores = ({ onClose }) => {
     if (currentUser?.id) {
       fetchSeguidores();
     }
-  }, [currentUser?.id]);
+  }, [currentUser?.id, API_URL]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`/social`, {  // Cambiado aquí
+      const res = await fetch(`${API_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

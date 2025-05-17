@@ -11,9 +11,12 @@ import PostButton from "../components/PostButton";
 import PostsUsuario from "../components/PostsUsuario";
 import defaultProfile from "../img/PfpDefecto.png";
 import Respuestas from "../components/Respuestas";
+
+
 import "./VerPost.css";
 
 const VerPost = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { id: postId } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -35,8 +38,8 @@ const VerPost = () => {
     const fetchData = async () => {
       try {
         const [postRes, comentariosRes] = await Promise.all([
-          fetch(`/posts/${postId}`),
-          fetch(`/comentarios/${postId}`)
+          fetch(`${API_URL}/posts/${postId}`),
+          fetch(`${API_URL}/comentarios/${postId}`)
         ]);
         const postData = await postRes.json();
         const comentariosData = await comentariosRes.json();
@@ -53,8 +56,8 @@ const VerPost = () => {
       if (!postId || !userId) return;
       try {
         const [likesRes, userLikesRes] = await Promise.all([
-          fetch(`/likes/${postId}`),
-          fetch(`/likes/usuario/${userId}`)
+          fetch(`${API_URL}/likes/${postId}`),
+          fetch(`${API_URL}/likes/usuario/${userId}`)
         ]);
         const likesData = await likesRes.json();
         const userLikedPosts = await userLikesRes.json();
@@ -79,8 +82,8 @@ const VerPost = () => {
   const fetchLikesComentarios = async () => {
     try {
       const [usuarioLikesRes, conteoRes] = await Promise.all([
-        fetch(`/comentarios/likes/usuario/${userId}`),
-        fetch(`/comentarios/likes/conteo`)
+        fetch(`${API_URL}/comentarios/likes/usuario/${userId}`),
+        fetch(`${API_URL}/comentarios/likes/conteo`)
       ]);
       const usuarioLikes = await usuarioLikesRes.json();
       const conteos = await conteoRes.json();
@@ -100,7 +103,7 @@ const VerPost = () => {
 
   const fetchConteoRespuestas = async () => {
     try {
-      const res = await fetch(`/comentarios/conteo`);
+      const res = await fetch(`${API_URL}/comentarios/conteo`);
       const data = await res.json();
       const map = {};
       data.forEach(item => {
@@ -125,7 +128,7 @@ const VerPost = () => {
     }));
 
     try {
-      await fetch(`/comentarios/likes`, {
+      await fetch(`${API_URL}/comentarios/likes`, {
         method: isLiked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario_id: userId, comentario_id: comentarioId })
@@ -140,7 +143,7 @@ const VerPost = () => {
     if (nuevoComentario.trim() === "" || !userId) return;
 
     try {
-      const res = await fetch(`/comentarios`, {
+      const res = await fetch(`${API_URL}/comentarios`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -175,7 +178,7 @@ const VerPost = () => {
     if (!texto) return;
 
     try {
-      const res = await fetch(`/respuestas`, {
+      const res = await fetch(`${API_URL}/respuestas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

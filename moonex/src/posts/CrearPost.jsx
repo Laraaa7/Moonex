@@ -12,6 +12,8 @@ const CrearPost = () => {
   const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");
     temp.innerHTML = html;
@@ -48,7 +50,7 @@ const CrearPost = () => {
     }
 
     try {
-      const response = await fetch('/crear-post', {  // Cambiado para Render
+      const response = await fetch(`${API_URL}/crear-post`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,7 +71,6 @@ const CrearPost = () => {
         setMessageType('success');
         setPostTitle('');
         setPostBody('');
-        // Redirigir al feed después de publicar exitosamente
         setTimeout(() => {
           navigate('/feed');
         }, 1000);

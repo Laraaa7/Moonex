@@ -18,6 +18,8 @@ const Profile = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -31,7 +33,7 @@ const Profile = () => {
 
   const fetchStats = async (userId) => {
     try {
-      const res = await fetch(`/social/estadisticas/${userId}`);  // Cambiado aquí
+      const res = await fetch(`${API_URL}/social/estadisticas/${userId}`);
       if (!res.ok) throw new Error("Error al obtener estadísticas");
       const data = await res.json();
       setStats({

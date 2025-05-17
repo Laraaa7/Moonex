@@ -12,6 +12,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
   const [likes, setLikes] = useState({});
   const [mostrarRespuestas, setMostrarRespuestas] = useState({});
   const userId = currentUser?.id;
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (comentarioId) cargarTodo();
@@ -19,7 +20,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
 
   const cargarTodo = async () => {
     try {
-      const res = await fetch(`/respuestas/comentario/${comentarioId}`);
+      const res = await fetch(`${API_URL}/respuestas/comentario/${comentarioId}`);
       const data = await res.json();
       setRespuestas(data);
       const subresMap = await cargarSubrespuestasRecursivo(data);
@@ -37,7 +38,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     const stack = [...lista];
     while (stack.length > 0) {
       const actual = stack.pop();
-      const res = await fetch(`/respuestas/subrespuestas/${actual.id}`);
+      const res = await fetch(`${API_URL}/respuestas/subrespuestas/${actual.id}`);
       const hijos = await res.json();
       if (hijos.length > 0) {
         map[actual.id] = hijos;
@@ -50,8 +51,8 @@ const Respuestas = ({ comentarioId, currentUser }) => {
   const fetchLikes = async (respuestasList) => {
     try {
       const [usuarioLikesRes, conteoRes] = await Promise.all([
-        fetch(`/respuestas/likes/usuario/${userId}`),
-        fetch(`/respuestas/likes/conteo`)
+        fetch(`${API_URL}/respuestas/likes/usuario/${userId}`),
+        fetch(`${API_URL}/respuestas/likes/conteo`)
       ]);
       const usuarioLikes = await usuarioLikesRes.json();
       const conteos = await conteoRes.json();
@@ -79,7 +80,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
       }
     }));
     try {
-      await fetch(`/respuestas/likes`, {
+      await fetch(`${API_URL}/respuestas/likes`, {
         method: isLiked ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario_id: userId, respuesta_id: respuestaId })
@@ -97,7 +98,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     const texto = textoRespuestas[padreId]?.trim();
     if (!texto) return;
     try {
-      await fetch(`/respuestas`, {
+      await fetch(`${API_URL}/respuestas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

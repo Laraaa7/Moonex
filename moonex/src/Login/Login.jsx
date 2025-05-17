@@ -8,6 +8,8 @@ import appleLogo from '../img/apple.png';
 import './Login.css';
 
 const Login = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -71,7 +73,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch('/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

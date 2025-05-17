@@ -7,6 +7,7 @@ import { auth, provider } from '../api/firebase.config';
 import { OAuthProvider, signInWithPopup } from 'firebase/auth';
 import './Register.css';
 
+
 const Register = () => {
   const [formData, setFormData] = useState({
     userName: '',
@@ -14,6 +15,8 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [message, setMessage] = useState('');
@@ -115,7 +118,7 @@ const Register = () => {
   
     // Envío al backend
     try {
-      const response = await fetch('/api/register', {  // CAMBIO aquí
+      const response = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: userName, email, password })
