@@ -45,7 +45,7 @@ function Feed() {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/posts");
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/posts`);
         const data = await res.json();
         setAllPosts(data);
 
@@ -72,7 +72,7 @@ function Feed() {
 
       try {
         console.log(`Obteniendo likes para usuario ${currentUser.id}`);
-        const res = await fetch(`/likes/usuario/${currentUser.id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/likes/usuario/${currentUser.id}`);
 
         if (!res.ok) {
           const text = await res.text();
@@ -161,7 +161,7 @@ function Feed() {
     if (!currentUser?.id) return;
 
     try {
-      const res = await fetch("/comentarios", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/comentarios`,  {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -216,7 +216,7 @@ function Feed() {
       });
 
       if (isLiked) {
-        await fetch("/likes", {
+        await fetch(`${process.env.REACT_APP_API_URL}/likes`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -225,7 +225,7 @@ function Feed() {
           })
         });
       } else {
-        await fetch("/likes", {
+        await fetch(`${process.env.REACT_APP_API_URL}/likes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
