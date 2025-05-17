@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import "./Siguiendo.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const Siguiendo = ({ onClose }) => {
   const [siguiendo, setSiguiendo] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = currentUser?.id;
@@ -18,7 +19,7 @@ const Siguiendo = ({ onClose }) => {
     const fetchSiguiendo = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_URL}/social/siguiendo/${userId}`);
+        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${userId}`);
         const data = await res.json();
         setSiguiendo(data);
 
@@ -37,11 +38,11 @@ const Siguiendo = ({ onClose }) => {
     if (userId) {
       fetchSiguiendo();
     }
-  }, [userId, API_URL]);
+  }, [userId]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_URL}/social`, {
+      const res = await fetch(`${API_BASE_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

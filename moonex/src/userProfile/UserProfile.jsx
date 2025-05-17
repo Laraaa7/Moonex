@@ -8,6 +8,8 @@ import "./UserProfile.css";
 import defaultBanner from "../img/bannerDefecto.jpg";
 import defaultProfile from "../img/PfpDefecto.png";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const UserProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -17,8 +19,6 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId: username } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "Fecha desconocida";
@@ -32,17 +32,15 @@ const UserProfile = () => {
       setError(null);
 
       try {
-        const res = await fetch(`${API_URL}/usuarios/username/${username}`);
+        const res = await fetch(`${API_BASE_URL}/usuarios/username/${username}`);
         const data = await res.json();
 
-        if (!res.ok || !data?.id) {
-          throw new Error("Usuario no encontrado");
-        }
+        if (!res.ok || !data?.id) throw new Error("Usuario no encontrado");
 
         setUserData(data);
 
         try {
-          const statsRes = await fetch(`${API_URL}/social/estadisticas/${data.id}`);
+          const statsRes = await fetch(`${API_BASE_URL}/social/estadisticas/${data.id}`);
           const statsData = await statsRes.json();
           setStats({
             seguidores: statsData.seguidores ?? 0,
@@ -55,7 +53,7 @@ const UserProfile = () => {
 
         if (currentUser.id) {
           try {
-            const followRes = await fetch(`${API_URL}/social/check`, {
+            const followRes = await fetch(`${API_BASE_URL}/social/check`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -78,7 +76,7 @@ const UserProfile = () => {
     };
 
     fetchData();
-  }, [username, currentUser.id, API_URL]);
+  }, [username, currentUser.id]);
 
   const handleFollowToggle = async () => {
     if (!currentUser?.id || !userData?.id) {
@@ -97,7 +95,7 @@ const UserProfile = () => {
           : Math.max(0, prev.seguidores - 1),
       }));
 
-      const res = await fetch(`${API_URL}/social`, {
+      const res = await fetch(`${API_BASE_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -17,6 +17,7 @@
   import NotificacionesPage from './pages/NotificacionesPage';
   import { AuthContextProvider } from './context/AuthContext';
   import PrivateRoute from './components/PrivateRoute';
+  import VerificarCorreo from './pages/VerificarCorreo';
 
   const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -44,6 +45,8 @@
             
             {/* Mantener la ruta genérica para compatibilidad */}
             <Route path="/perfilDeUsuario" element={<PrivateRoute><UserProfilePage /></PrivateRoute>} />
+            {/*Verificacion de correo electronico*/}
+            <Route path="/verify-email" element={<VerificarCorreo />} />
           </Routes>
         </Router>
       </AuthContextProvider>

@@ -9,6 +9,8 @@ import defaultProfile from "../img/PfpDefecto.png";
 import EditProfile from "../userProfile/EditProfile";
 import PostsUsuario from "../components/PostsUsuario";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const Profile = () => {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSeguidores, setShowSeguidores] = useState(false);
@@ -17,8 +19,6 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -33,7 +33,7 @@ const Profile = () => {
 
   const fetchStats = async (userId) => {
     try {
-      const res = await fetch(`${API_URL}/social/estadisticas/${userId}`);
+      const res = await fetch(`${API_BASE_URL}/social/estadisticas/${userId}`);
       if (!res.ok) throw new Error("Error al obtener estadísticas");
       const data = await res.json();
       setStats({

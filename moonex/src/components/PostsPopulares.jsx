@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PostsPopulares.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const PostsPopulares = () => {
   const [postsPopulares, setPostsPopulares] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchPopulares = async () => {
@@ -32,7 +33,7 @@ const PostsPopulares = () => {
     };
 
     fetchPopulares();
-  }, [API_URL]);
+  }, []);
 
   const formatearTiempo = (fechaString) => {
     const publicadaUTC = new Date(fechaString);

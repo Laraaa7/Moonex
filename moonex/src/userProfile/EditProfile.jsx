@@ -3,19 +3,20 @@ import "./EditProfile.css";
 import defaultBanner from "../img/bannerDefecto.jpg";
 import defaultProfile from "../img/PfpDefecto.png";
 import { FaTimes, FaCamera } from "react-icons/fa";
+import imageCompression from "browser-image-compression";
 
 const EditProfile = ({ closeModal }) => {
-  const API_URL = process.env.REACT_APP_API_URL;
-
   const [bannerImage, setBannerImage] = useState(defaultBanner);
   const [profileImage, setProfileImage] = useState(defaultProfile);
   const [nombre, setNombre] = useState("");
   const [username, setUsername] = useState("");
-  const [originalUsername, setOriginalUsername] = useState("");
+  const [originalUsername, setOriginalUsername] = useState(""); 
   const [nacimiento, setNacimiento] = useState("");
   const [ubicacion, setUbicacion] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
+  
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const bannerInputRef = useRef(null);
   const profileInputRef = useRef(null);
@@ -46,18 +47,28 @@ const EditProfile = ({ closeModal }) => {
     }
   };
 
-  const handleProfileChange = (e) => {
+  const handleProfileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setProfileImage(e.target.result);
-      reader.readAsDataURL(file);
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1.5,
+          maxWidthOrHeight: 600,
+          useWebWorker: true,
+        });
+        const reader = new FileReader();
+        reader.onload = (e) => setProfileImage(e.target.result);
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error al comprimir imagen de perfil:", error);
+      }
     }
   };
+  
 
   const checkUsernameAvailability = async (newUsername) => {
     if (newUsername === originalUsername) return true;
-
+    
     try {
       const response = await fetch(`${API_URL}/check-username?username=${newUsername}`);
       return response.ok;
@@ -77,7 +88,7 @@ const EditProfile = ({ closeModal }) => {
     try {
       if (username !== originalUsername) {
         const isUsernameAvailable = await checkUsernameAvailability(username);
-
+        
         if (!isUsernameAvailable) {
           setError("El nombre de usuario ya está en uso.");
           setIsLoading(false);
@@ -130,6 +141,7 @@ const EditProfile = ({ closeModal }) => {
             </div>
           </div>
 
+          {/* Ícono X para quitar banner */}
           {bannerImage !== defaultBanner && (
             <div className="remove-banner-icon" onClick={() => setBannerImage(defaultBanner)}>
               <FaTimes />
@@ -174,7 +186,7 @@ const EditProfile = ({ closeModal }) => {
           id="username"
           value={username}
           onChange={(e) => {
-            const cleanUsername = e.target.value.toLowerCase().trim().replace(/\s+/g, "");
+            const cleanUsername = e.target.value.toLowerCase().trim().replace(/\s+/g, '');
             setUsername(cleanUsername);
           }}
           maxLength={30}

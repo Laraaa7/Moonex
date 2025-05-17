@@ -9,399 +9,272 @@
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.5s ease-in-out;
-  }
+}
 
-  .register-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  
-  /* Lado izquierdo */
-  .register-left {
-    flex: 1;
-    background-color: #DAE0EE; 
-    color: #0E1C49;
-    display: flex;  
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem;
-    text-align: center; 
-  }
-  
-  .register-left h2 {
-    font-size: 2rem;
-   margin-top:5px;
-  }
-  
-  .register-logo {
-    width: 280px;
-    margin-bottom: 1rem;
-  }
-  
-  .switch-button {
-    padding: 0.7rem 1.3rem;
-    border-radius: 10px;
-    background-color: #ffffff;
-    color: #0E1C49;
-    font-weight: bold;
-    border: 1px solid #0E1C49;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .switch-button:hover {
-    background-color: #0E1C49;
-    color: #ffffff;
-  }
-  
-  /* Lado derecho con paleta personalizada */
-  .register-right {
-    flex: 1;
-    background-color: #4A5F8C;
-    color: #DAE0EE;
-    padding: 3rem 5rem;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-  }
-  
+.register-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #0E1C49;
+}
 
-  
-  .register-right h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.2rem;
-  }
-  
-  .register-form {
-    width: 100%;
-    max-width: 350px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-  
-  .register-form label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #ffffff;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-  }
-  
-  .register-form input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: transparent;
-    color: #0E1C49;
-  }
-  
-  .register-form button {
-    padding: 0.9rem;
-    background-color: #000120;
-    color: #DAE0EE;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .register-form button:hover {
-    background-color: #8F9AB6;
-  }
-  
-  .message {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    text-align: center;
-  }
-  .password-label {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #ffffff;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-  }
-  
-  .password-label input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: transparent;
-    color: #0E1C49;
-    padding-right: 2rem;
-  }
-  
-  .toggle-eye {
-    position: absolute;
-    right: 15px;
-    font-size: 1.3rem;
-    color: #4A5F8C;
-    cursor: pointer;
-  }
-  
-  
+/* Lado izquierdo */
+.register-left {
+  flex: 1;
+  background-color: #DAE0EE;
+  color: #0E1C49;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.register-left h2 {
+  font-size: 2rem;
+  margin-top: 5px;
+}
+
+.register-logo {
+  width: 280px;
+  margin-bottom: 1rem;
+}
+
+.switch-button {
+  padding: 0.7rem 1.3rem;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #0E1C49;
+  font-weight: bold;
+  border: 1px solid #0E1C49;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  margin: 0 auto;
+  display: block;
+  margin-top: 1rem;
+}
+
+.switch-button:hover {
+  background-color: #0E1C49;
+  color: #ffffff;
+}
+
+/* Lado derecho con paleta personalizada */
+.register-right {
+  flex: 1;
+  background-color: #4A5F8C;
+  color: #DAE0EE;
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-right h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.register-form {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.register-form label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.register-form label:focus-within {
+  box-shadow: 0 0 0 2px rgba(74, 95, 140, 0.2);
+  border: 2px solid #0E1C49;
+}
+
+.register-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #0E1C49;
+}
+
+.register-form button {
+  padding: 0.9rem;
+  background-color: #0E1C49;
+  color: #DAE0EE;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-form button:hover {
+  background-color: #8F9AB6;
+}
+
+.message {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* NUEVO: estilos para mensajes de éxito y error */
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeInMessage 0.4s ease-in-out;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeInMessage 0.4s ease-in-out;
+}
+
+.password-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  /*padding: 0.75rem 1rem;*/
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.password-label input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #0E1C49;
+  padding-right: 2.5rem;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 15px;
+  font-size: 1.3rem;
+  color: #4A5F8C;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .register-container {
-    display: flex;
-    width: 95%;
-    max-width: 900px;
-    height: 600px;
-    margin: 60px auto;
-    background-color: #ffffff;
-    border-radius: 25px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  .register-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #0E1C49;
-  }
-  
-
-  /* Lado izquierdo */
-  .register-left {
-    flex: 1;
-    background-color: #DAE0EE;
-    color: #0E1C49;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem;
-    text-align: center;
+    height: auto;
+    width: 90%;
+    max-height: none;
+    margin: 20px auto;
+    border-radius: 15px;
+    overflow: auto;
   }
-  
-  .register-left h2 {
-    font-size: 2rem;
-    margin-top: 5px;
-  }
-  
-  .register-logo {
-    width: 280px;
-    margin-bottom: 1rem;
-  }
-  
-  .switch-button {
-    padding: 0.7rem 1.3rem;
-    border-radius: 10px;
-    background-color: #ffffff;
-    color: #0E1C49;
-    font-weight: bold;
-    border: 1px solid #0E1C49;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
-    margin: 0 auto;
-    display: block;
-    margin-top: 1rem;
-  }
-  
-  .switch-button:hover {
-    background-color: #0E1C49;
-    color: #ffffff;
-  }
-  
-  /* Lado derecho con paleta personalizada */
+
+  .register-left,
   .register-right {
-    flex: 1;
-    background-color: #4A5F8C;
-    color: #DAE0EE;
-    padding: 3rem 4rem;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .register-right h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.2rem;
-  }
-  
-  .register-form {
+    flex: none;
     width: 100%;
-    max-width: 350px;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .register-left {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
-  }
-  
-  .register-form label {
-    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background-color: #ffffff;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+    justify-content: center;
+    padding-bottom: 1rem;
   }
-  
-  .register-form label:focus-within {
-    box-shadow: 0 0 0 2px rgba(74, 95, 140, 0.2);
-    border: 2px solid #0E1C49;
-  }
-  
-  .register-form input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: transparent;
-    color: #0E1C49;
-  }
-  
-  .register-form button {
-    padding: 0.9rem;
-    background-color: #0E1C49;
-    color: #DAE0EE;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .register-form button:hover {
-    background-color: #8F9AB6;
-  }
-  
-  .message {
+
+  .register-logo {
+    width: 180px;
+    margin-bottom: 1rem;
     margin-top: 1rem;
-    font-size: 0.95rem;
-    text-align: center;
   }
-  
+
+  .register-left h2 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .switch-button {
+    width: 80%;
+    padding: 0.7rem;
+    margin: 1rem auto;
+  }
+
+  .register-right {
+    padding: 2rem;
+  }
+
+  .register-right h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .register-form {
+    max-width: 100%;
+    gap: 1rem;
+  }
+
+  .register-form label,
+  .register-form input,
+  .register-form button,
   .password-label {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #ffffff;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-  }
-  
-  .password-label input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: transparent;
-    color: #0E1C49;
-    padding-right: 2.5rem;
-  }
-  
-  .toggle-eye {
-    position: absolute;
-    right: 15px;
-    font-size: 1.3rem;
-    color: #4A5F8C;
-    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
   }
 
+  .register-form button {
+    margin-top: 0.5rem;
+  }
+}
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .register-container {
-      flex-direction: column;
-      height: auto;
-      width: 90%;
-      max-height: none;
-      margin: 20px auto;
-      border-radius: 15px;
-      overflow: auto;
-    }
-  
-    .register-left,
-    .register-right {
-      flex: none;
-      width: 100%;
-      padding: 2rem;
-      box-sizing: border-box;
-    }
-  
-    .register-left {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 1rem;
-    }
-  
-    .register-logo {
-      width: 180px;
-      margin-bottom: 1rem;
-      margin-top: 1rem;
-    }
-  
-    .register-left h2 {
-      font-size: 1.5rem;
-      margin: 0.5rem 0;
-    }
-  
-    .switch-button {
-      width: 80%;
-      padding: 0.7rem;
-      margin: 1rem auto;
-    }
-  
-    .register-right {
-      padding: 2rem;
-    }
-  
-    .register-right h2 {
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-    }
-  
-    .register-form {
-      max-width: 100%;
-      gap: 1rem;
-    }
-  
-    .register-form label,
-    .register-form input,
-    .register-form button,
-    .password-label {
-      width: 100%;
-      box-sizing: border-box;
-    }
-    
-    .register-form button {
-      margin-top: 0.5rem;
-    }
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
-  
-  /* Fade-in animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

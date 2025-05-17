@@ -4,6 +4,8 @@ import { FaReply } from "react-icons/fa";
 import defaultProfile from "../img/PfpDefecto.png";
 import "./Respuestas.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Respuestas = ({ comentarioId, currentUser }) => {
   const [respuestas, setRespuestas] = useState([]);
   const [subrespuestas, setSubrespuestas] = useState({});
@@ -12,7 +14,6 @@ const Respuestas = ({ comentarioId, currentUser }) => {
   const [likes, setLikes] = useState({});
   const [mostrarRespuestas, setMostrarRespuestas] = useState({});
   const userId = currentUser?.id;
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (comentarioId) cargarTodo();
@@ -142,20 +143,33 @@ const Respuestas = ({ comentarioId, currentUser }) => {
       </div>
       <div className="respuesta-texto">{respuesta.contenido}</div>
       <div className="respuesta-actions">
-        <span className={`respuesta-like-btn ${likes[respuesta.id]?.liked ? "liked" : ""}`} onClick={() => manejarLike(respuesta.id)}>
-          {likes[respuesta.id]?.liked ? <MdFavorite className="like-icon-small active" /> : <MdFavoriteBorder className="like-icon-small" />} {likes[respuesta.id]?.count || 0}
+        <span
+          className={`respuesta-like-btn ${likes[respuesta.id]?.liked ? "liked" : ""}`}
+          onClick={() => manejarLike(respuesta.id)}
+        >
+          {likes[respuesta.id]?.liked
+            ? <MdFavorite className="like-icon-small active" />
+            : <MdFavoriteBorder className="like-icon-small" />} {likes[respuesta.id]?.count || 0}
         </span>
         <span className="respuesta-reply-btn" onClick={() => toggleForm(respuesta.id)}>
           <FaReply className="reply-icon-small" /> Responder
         </span>
         {subrespuestas[respuesta.id]?.length > 0 && (
           <span className="respuesta-toggle-sub" onClick={() => toggleMostrarRespuestas(respuesta.id)}>
-            {mostrarRespuestas[respuesta.id] ? "Ocultar respuestas" : `Ver respuestas (${subrespuestas[respuesta.id].length})`}
+            {mostrarRespuestas[respuesta.id]
+              ? "Ocultar respuestas"
+              : `Ver respuestas (${subrespuestas[respuesta.id].length})`}
           </span>
         )}
       </div>
       {mostrarForm[respuesta.id] && (
-        <form onSubmit={(e) => { e.preventDefault(); enviarRespuesta(respuesta.id, true); }} className="respuesta-form">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            enviarRespuesta(respuesta.id, true);
+          }}
+          className="respuesta-form"
+        >
           <input
             type="text"
             placeholder="Escribe una respuesta..."
@@ -174,7 +188,11 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     </div>
   );
 
-  return <div className="respuestas-container">{respuestas.map((respuesta) => renderRespuesta(respuesta))}</div>;
+  return (
+    <div className="respuestas-container">
+      {respuestas.map((respuesta) => renderRespuesta(respuesta))}
+    </div>
+  );
 };
 
 export default Respuestas;

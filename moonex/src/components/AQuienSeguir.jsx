@@ -3,18 +3,19 @@ import { useNavigate } from "react-router-dom";
 import "./AQuienSeguir.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const AQuienSeguir = () => {
   const [sugerencias, setSugerencias] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
   const [loading, setLoading] = useState(true);
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchSugerencias = async () => {
       try {
-        const res = await fetch(`${API_URL}/social/sugerencias/${currentUser.id}`);
+        const res = await fetch(`${API_BASE_URL}/social/sugerencias/${currentUser.id}`);
         const data = await res.json();
         setSugerencias(data);
 
@@ -33,11 +34,11 @@ const AQuienSeguir = () => {
     if (currentUser?.id) {
       fetchSugerencias();
     }
-  }, [currentUser?.id, API_URL]);
+  }, [currentUser?.id]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_URL}/social`, {
+      const res = await fetch(`${API_BASE_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +65,7 @@ const AQuienSeguir = () => {
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="suggested-user loading-card">
-              <div className="suggested-user-info" />
+              <div className="suggested-user-info"></div>
             </div>
           ))
         ) : sugerencias.length === 0 ? (

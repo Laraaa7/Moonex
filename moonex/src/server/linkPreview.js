@@ -11,8 +11,7 @@ router.get('/link-preview', async (req, res) => {
   }
   
   try {
-    
-    // Fetch the webpage content with a timeout
+
     const response = await axios.get(url, { 
       timeout: 10000,
       headers: {
@@ -22,8 +21,7 @@ router.get('/link-preview', async (req, res) => {
     
     const html = response.data;
     const $ = cheerio.load(html);
-    
-    // Extract metadata with fallbacks
+
     const metadata = {
       title: $('meta[property="og:title"]').attr('content') || 
              $('title').text() || 
@@ -39,8 +37,7 @@ router.get('/link-preview', async (req, res) => {
       siteName: $('meta[property="og:site_name"]').attr('content') || 
                new URL(url).hostname
     };
-    
-    // If image URL is relative, convert to absolute
+
     if (metadata.image && !metadata.image.startsWith('http')) {
       const urlObj = new URL(url);
       metadata.image = `${urlObj.protocol}//${urlObj.host}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;

@@ -1,134 +1,133 @@
 const express = require('express');
-const db = require('./db'); // ajusta según tu estructura
+const db = require('./db');
 const router = express.Router();
 
-// Crear respuesta (a comentario o a otra respuesta)
-router.post('/', (req, res) => {
-    const { usuario_id, comentario_id, respuesta_padre_id, contenido } = req.body;
-  
-    if (!usuario_id || !contenido || (!comentario_id && !respuesta_padre_id)) {
-      return res.status(400).json({ error: 'Datos incompletos' });
+// Crear respuesta
+router.post('/', async (req, res) => {
+  const { usuario_id, comentario_id, respuesta_padre_id, contenido } = req.body;
+
+  if (!usuario_id || !contenido || (!comentario_id && !respuesta_padre_id)) {
+    return res.status(400).json({ error: 'Datos incompletos' });
+  }
+
+  try {
+    let comentarioIdFinal = comentario_id;
+
+    if (!comentario_id && respuesta_padre_id) {
+      const [rows] = await db.query(`SELECT comentario_id FROM respuestas WHERE id = ?`, [respuesta_padre_id]);
+      if (rows.length === 0) {
+        return res.status(404).json({ error: 'Respuesta padre no encontrada' });
+      }
+      comentarioIdFinal = rows[0].comentario_id;
     }
-  
-    const insertarRespuesta = (comentarioIdFinal) => {
-      const sql = `
-        INSERT INTO respuestas (usuario_id, comentario_id, respuesta_padre_id, contenido)
-        VALUES (?, ?, ?, ?)
-      `;
-      db.query(sql, [usuario_id, comentarioIdFinal, respuesta_padre_id || null, contenido], (err, result) => {
-        if (err) {
-          console.error('Error al insertar respuesta:', err);
-          return res.status(500).json({ error: 'Error al insertar respuesta' });
-        }
-        res.status(201).json({ id: result.insertId });
-      });
-    };
-  
-    if (comentario_id) {
-      // Es respuesta directa a comentario
-      insertarRespuesta(comentario_id);
-    } else {
-      // Es respuesta a una respuesta, buscamos el comentario_id del padre
-      const buscarSql = `SELECT comentario_id FROM respuestas WHERE id = ?`;
-      db.query(buscarSql, [respuesta_padre_id], (err, results) => {
-        if (err || results.length === 0) {
-          console.error('Error al buscar comentario_id del padre:', err);
-          return res.status(500).json({ error: 'Error al obtener comentario_id del padre' });
-        }
-        const comentarioIdFinal = results[0].comentario_id;
-        insertarRespuesta(comentarioIdFinal);
-      });
-    }
-  });
-  
+
+    const [result] = await db.query(`
+      INSERT INTO respuestas (usuario_id, comentario_id, respuesta_padre_id, contenido)
+      VALUES (?, ?, ?, ?)
+    `, [usuario_id, comentarioIdFinal, respuesta_padre_id || null, contenido]);
+
+    res.status(201).json({ id: result.insertId });
+  } catch (err) {
+    console.error('Error al insertar respuesta:', err);
+    res.status(500).json({ error: 'Error al insertar respuesta' });
+  }
+});
 
 // Obtener respuestas de un comentario (nivel 1)
-router.get('/comentario/:comentarioId', (req, res) => {
-  const { comentarioId } = req.params;
+router.get('/comentario/:comentarioId', async (req, res) => {
+  try {
+    const { comentarioId } = req.params;
+    const [results] = await db.query(`
+      SELECT r.*, u.username, u.nombre, u.foto_perfil
+      FROM respuestas r
+      JOIN usuarios u ON r.usuario_id = u.id
+      WHERE r.comentario_id = ? AND r.respuesta_padre_id IS NULL
+      ORDER BY r.fecha_respuesta ASC
+    `, [comentarioId]);
 
-  const sql = `
-    SELECT r.*, u.username, u.nombre, u.foto_perfil
-    FROM respuestas r
-    JOIN usuarios u ON r.usuario_id = u.id
-    WHERE r.comentario_id = ? AND r.respuesta_padre_id IS NULL
-    ORDER BY r.fecha_respuesta ASC
-  `;
-
-  db.query(sql, [comentarioId], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener respuestas' });
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener respuestas' });
+  }
 });
 
 // Obtener subrespuestas (respuestas a respuestas)
-router.get('/subrespuestas/:respuestaPadreId', (req, res) => {
-  const { respuestaPadreId } = req.params;
+router.get('/subrespuestas/:respuestaPadreId', async (req, res) => {
+  try {
+    const { respuestaPadreId } = req.params;
+    const [results] = await db.query(`
+      SELECT r.*, u.username, u.nombre, u.foto_perfil
+      FROM respuestas r
+      JOIN usuarios u ON r.usuario_id = u.id
+      WHERE r.respuesta_padre_id = ?
+      ORDER BY r.fecha_respuesta ASC
+    `, [respuestaPadreId]);
 
-  const sql = `
-    SELECT r.*, u.username, u.nombre, u.foto_perfil
-    FROM respuestas r
-    JOIN usuarios u ON r.usuario_id = u.id
-    WHERE r.respuesta_padre_id = ?
-    ORDER BY r.fecha_respuesta ASC
-  `;
-
-  db.query(sql, [respuestaPadreId], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener subrespuestas' });
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener subrespuestas' });
+  }
 });
 
 // Dar like a una respuesta
-router.post('/likes', (req, res) => {
+router.post('/likes', async (req, res) => {
   const { usuario_id, respuesta_id } = req.body;
   if (!usuario_id || !respuesta_id) return res.status(400).json({ error: 'Datos incompletos' });
 
-  const checkSql = `SELECT * FROM respuestas_likes WHERE usuario_id = ? AND respuesta_id = ?`;
-  db.query(checkSql, [usuario_id, respuesta_id], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al verificar like' });
-    if (results.length > 0) return res.status(409).json({ error: 'Like duplicado' });
+  try {
+    const [exists] = await db.query(
+      `SELECT * FROM respuestas_likes WHERE usuario_id = ? AND respuesta_id = ?`,
+      [usuario_id, respuesta_id]
+    );
+    if (exists.length > 0) return res.status(409).json({ error: 'Like duplicado' });
 
-    const insertSql = `INSERT INTO respuestas_likes (usuario_id, respuesta_id) VALUES (?, ?)`;
-    db.query(insertSql, [usuario_id, respuesta_id], (err2) => {
-      if (err2) return res.status(500).json({ error: 'Error al dar like' });
-      res.status(201).json({ success: true });
-    });
-  });
+    await db.query(
+      `INSERT INTO respuestas_likes (usuario_id, respuesta_id) VALUES (?, ?)`,
+      [usuario_id, respuesta_id]
+    );
+
+    res.status(201).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al dar like' });
+  }
 });
 
 // Quitar like
-router.delete('/likes', (req, res) => {
+router.delete('/likes', async (req, res) => {
   const { usuario_id, respuesta_id } = req.body;
   if (!usuario_id || !respuesta_id) return res.status(400).json({ error: 'Datos incompletos' });
 
-  const sql = `DELETE FROM respuestas_likes WHERE usuario_id = ? AND respuesta_id = ?`;
-  db.query(sql, [usuario_id, respuesta_id], (err) => {
-    if (err) return res.status(500).json({ error: 'Error al quitar like' });
+  try {
+    await db.query(`DELETE FROM respuestas_likes WHERE usuario_id = ? AND respuesta_id = ?`, [usuario_id, respuesta_id]);
     res.status(200).json({ success: true });
-  });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al quitar like' });
+  }
 });
 
 // Obtener likes por usuario
-router.get('/likes/usuario/:userId', (req, res) => {
-  const { userId } = req.params;
-  const sql = `SELECT respuesta_id FROM respuestas_likes WHERE usuario_id = ?`;
-  db.query(sql, [userId], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener likes' });
+router.get('/likes/usuario/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const [results] = await db.query(`SELECT respuesta_id FROM respuestas_likes WHERE usuario_id = ?`, [userId]);
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener likes' });
+  }
 });
 
 // Conteo de likes por respuesta
-router.get('/likes/conteo', (req, res) => {
-  const sql = `
-    SELECT respuesta_id, COUNT(*) as count
-    FROM respuestas_likes
-    GROUP BY respuesta_id
-  `;
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al contar likes' });
+router.get('/likes/conteo', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT respuesta_id, COUNT(*) as count
+      FROM respuestas_likes
+      GROUP BY respuesta_id
+    `);
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al contar likes' });
+  }
 });
 
 module.exports = router;

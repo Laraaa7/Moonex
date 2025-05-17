@@ -5,14 +5,14 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import './CrearPost.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const CrearPost = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");

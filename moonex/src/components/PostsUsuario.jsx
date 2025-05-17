@@ -2,14 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PostsUsuario.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const PostsUsuario = ({ usuarioId }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
   const [autorUsername, setAutorUsername] = useState("");
+
   const navigate = useNavigate();
   const topRef = useRef(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (!usuarioId) {
@@ -41,7 +43,7 @@ const PostsUsuario = ({ usuarioId }) => {
     };
 
     fetchPosts();
-  }, [usuarioId, API_URL]);
+  }, [usuarioId]);
 
   const handleVerMas = () => {
     setVisibleCount((prev) => prev + 6);
@@ -76,12 +78,12 @@ const PostsUsuario = ({ usuarioId }) => {
   return (
     <div className="posts-section">
       <h3 ref={topRef}>
-        {autorUsername ? `Posts de @${autorUsername}` : `Posts de este usuario`}
+        {autorUsername ? `Posts de @${autorUsername}` : `Posts del usuario`}
       </h3>
       {loading ? (
         <>
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="post-card loading-card" />
+            <div key={i} className="ppost-card loading-card" />
           ))}
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
             <button className="ver-mas-btn loading-btn" disabled>
@@ -95,7 +97,7 @@ const PostsUsuario = ({ usuarioId }) => {
             {allPosts.slice(0, visibleCount).map((post) => (
               <div
                 key={post.id}
-                className="post-card"
+                className="ppost-card"
                 onClick={() => navigate(`/verPost/${post.id}`)}
                 style={{ cursor: "pointer" }}
               >

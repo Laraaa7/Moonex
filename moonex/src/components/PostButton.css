@@ -1,12 +1,12 @@
 .post-button-container {
   position: fixed;
-  top: 600px;
+  top: 620px;
   left: calc(50% - 745px);
   width: 315px;
   display: flex;
   justify-content: center;
   z-index: 10;
-  height: 100px;
+  height: 70px;
 }
 
 .post-button {

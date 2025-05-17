@@ -28,6 +28,8 @@ function Feed() {
   const postsPerPage = 5;
   const observer = useRef();
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   const [menuAbierto, setMenuAbierto] = useState(false);
   const toggleMenu = () => setMenuAbierto((prev) => !prev);
 
@@ -45,10 +47,10 @@ function Feed() {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/posts`);
+        const res = await fetch(`${API_BASE_URL}/posts`);
         const data = await res.json();
         setAllPosts(data);
-
+        
         // Inicializar contadores de likes
         const counts = {};
         data.forEach(post => {
@@ -66,44 +68,45 @@ function Feed() {
   }, []);
 
   // Obtener los likes del usuario actual
-  useEffect(() => {
-    const fetchUserLikes = async () => {
-      if (!currentUser?.id) return;
+  useEffect(() => {const fetchUserLikes = async () => {
+    if (!currentUser?.id) return;
+  
+    try {
+      console.log(`Obteniendo likes para usuario ${currentUser.id}`);
+      const res = await fetch(`${API_BASE_URL}/likes/usuario/${currentUser.id}`);
 
-      try {
-        console.log(`Obteniendo likes para usuario ${currentUser.id}`);
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/likes/usuario/${currentUser.id}`);
-
-        if (!res.ok) {
-          const text = await res.text();
-          console.error(`Error ${res.status}: ${text}`);
-          throw new Error(`Error al obtener likes: ${res.status}`);
-        }
-
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await res.text();
-          console.error(`Respuesta no es JSON: ${text}`);
-          throw new Error("La respuesta no es JSON");
-        }
-
-        const likedPostIds = await res.json();
-
-        const likedMap = {};
-        likedPostIds.forEach(postId => {
-          likedMap[postId] = true;
-        });
-
-        setLikedPosts(likedMap);
-      } catch (err) {
-        console.error("Error al obtener likes del usuario:", err);
+      
+      if (!res.ok) {
+        const text = await res.text();
+        console.error(`Error ${res.status}: ${text}`);
+        throw new Error(`Error al obtener likes: ${res.status}`);
       }
-    };
-
+      
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error(`Respuesta no es JSON: ${text}`);
+        throw new Error("La respuesta no es JSON");
+      }
+      
+      const likedPostIds = await res.json();
+  
+      const likedMap = {};
+      likedPostIds.forEach(postId => {
+        likedMap[postId] = true;
+      });
+  
+      setLikedPosts(likedMap);
+    } catch (err) {
+      console.error("Error al obtener likes del usuario:", err);
+    }
+  };
+  
     if (currentUser) {
       fetchUserLikes();
     }
   }, [currentUser]);
+  
 
   useEffect(() => {
     if (!loadingPosts) {
@@ -161,7 +164,7 @@ function Feed() {
     if (!currentUser?.id) return;
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/comentarios`,  {
+      const res = await fetch(`${API_BASE_URL}/comentarios`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,9 +187,10 @@ function Feed() {
     }
   };
 
+  // Función para dar/quitar like
   const handleLike = async (postId, e) => {
     e.stopPropagation();
-
+    
     if (!currentUser?.id) {
       navigate("/login");
       return;
@@ -194,7 +198,7 @@ function Feed() {
 
     try {
       const isLiked = likedPosts[postId];
-
+      
       setLikedPosts(prev => ({
         ...prev,
         [postId]: !isLiked
@@ -202,21 +206,25 @@ function Feed() {
       setLikeCounts(prev => {
         const current = prev[postId] ?? 0;
         const nuevoConteo = isLiked ? Math.max(0, current - 1) : current + 1;
-
+      
+      
+        // Actualiza también el array de posts
         setPosts(prevPosts =>
           prevPosts.map(post =>
             post.id === postId ? { ...post, likes_count: nuevoConteo } : post
           )
         );
-
+      
         return {
           ...prev,
           [postId]: nuevoConteo
         };
       });
+      
 
       if (isLiked) {
-        await fetch(`${process.env.REACT_APP_API_URL}/likes`, {
+        // Quitar like
+        await fetch(`${API_BASE_URL}/likes`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -225,7 +233,8 @@ function Feed() {
           })
         });
       } else {
-        await fetch(`${process.env.REACT_APP_API_URL}/likes`, {
+        // Dar like
+        await fetch(`${API_BASE_URL}/likes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -235,12 +244,13 @@ function Feed() {
         });
       }
     } catch (err) {
+      // Revertir cambios en caso de error
       console.error("Error al gestionar like:", err);
       setLikedPosts(prev => ({
         ...prev,
         [postId]: !prev[postId]
       }));
-
+      
       setLikeCounts(prev => ({
         ...prev,
         [postId]: prev[postId] + (likedPosts[postId] ? 1 : -1)

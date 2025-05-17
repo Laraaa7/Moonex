@@ -26,3 +26,106 @@ button {
 button:hover {
   background-color: #21a1f1;
 }
+/* Centrado global */
+.App {
+  background-color: #0e1c49;
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Contenedor de los logos (texto a la izquierda) */
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 1.5rem;
+  flex-direction: row-reverse; /* esto pone el logo de luna a la derecha */
+}
+
+/* Logo luna girando en 3D */
+.App-logo {
+  width: 100px;
+  height: auto;
+  animation: spin3D 6s infinite linear;
+}
+
+/* Logo texto quieto */
+.App-logo-texto {
+  width: 160px;
+  height: auto;
+}
+
+/* Animación 3D de giro */
+@keyframes spin3D {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Título principal */
+.titulo {
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Slogan */
+.slogan {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #cbd5e1;
+}
+
+/* Créditos */
+.creditos {
+  font-size: 1rem;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+/* Botón principal */
+.btn-main {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: #61dafb;
+  color: #0e1c49;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-main:hover {
+  background-color: #21a1f1;
+}
+
+/* Responsive: ajustar tamaños en pantallas pequeñas */
+@media (max-width: 600px) {
+  .App-logo {
+    width: 70px;
+  }
+
+  .App-logo-texto {
+    width: 120px;
+  }
+
+  .titulo {
+    font-size: 2rem;
+  }
+
+  .btn-main {
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+}
