@@ -20,6 +20,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const resultsRef = useRef(null);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const positionResults = () => {
     if (inputRef.current && resultsRef.current) {
@@ -68,7 +69,7 @@ const SearchBar = () => {
 
       const fetchResults = async () => {
         try {
-          const res = await fetch(`/api/busqueda?query=${encodeURIComponent(query)}`);
+          const res = await fetch(`${API_URL}/api/busqueda?query=${encodeURIComponent(query)}`);
           if (!res.ok) {
             console.error("Error al buscar:", res.statusText);
             return;
@@ -89,7 +90,7 @@ const SearchBar = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query]);
+  }, [query, API_URL]);
 
   const handleSelect = (item) => {
     if (item.type === "usuario") {
@@ -168,9 +169,7 @@ const SearchBar = () => {
               ) : (
                 <>
                   <ListItemAvatar>
-                    <Avatar>
-                      📝
-                    </Avatar>
+                    <Avatar>📝</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={

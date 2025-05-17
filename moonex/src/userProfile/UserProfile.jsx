@@ -18,6 +18,8 @@ const UserProfile = () => {
   const { userId: username } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "Fecha desconocida";
     const date = new Date(dateString);
@@ -30,8 +32,7 @@ const UserProfile = () => {
       setError(null);
 
       try {
-        // Obtener datos del usuario
-        const res = await fetch(`/usuarios/username/${username}`);
+        const res = await fetch(`${API_URL}/usuarios/username/${username}`);
         const data = await res.json();
 
         if (!res.ok || !data?.id) {
@@ -40,9 +41,8 @@ const UserProfile = () => {
 
         setUserData(data);
 
-        // Obtener estadísticas
         try {
-          const statsRes = await fetch(`/social/estadisticas/${data.id}`);
+          const statsRes = await fetch(`${API_URL}/social/estadisticas/${data.id}`);
           const statsData = await statsRes.json();
           setStats({
             seguidores: statsData.seguidores ?? 0,
@@ -53,10 +53,9 @@ const UserProfile = () => {
           setStats({ seguidores: 0, siguiendo: 0, amigos: 0 });
         }
 
-        // Comprobar estado de seguimiento
         if (currentUser.id) {
           try {
-            const followRes = await fetch(`/social/check`, {
+            const followRes = await fetch(`${API_URL}/social/check`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -79,7 +78,7 @@ const UserProfile = () => {
     };
 
     fetchData();
-  }, [username, currentUser.id]);
+  }, [username, currentUser.id, API_URL]);
 
   const handleFollowToggle = async () => {
     if (!currentUser?.id || !userData?.id) {
@@ -98,7 +97,7 @@ const UserProfile = () => {
           : Math.max(0, prev.seguidores - 1),
       }));
 
-      const res = await fetch(`/social`, {
+      const res = await fetch(`${API_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

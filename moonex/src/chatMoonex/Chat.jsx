@@ -11,6 +11,7 @@ import "./Chat.css";
 const SOCKET_URL = "/";
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Función para formatear el tiempo de los mensajes
 const formatearTiempoChat = (fechaString) => {
@@ -141,7 +142,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchReceiverData = async () => {
       try {
-        const res = await fetch(`/usuarios/username/${username}`);
+        const res = await fetch(`${API_URL}/usuarios/username/${username}`);
         const data = await res.json();
         setReceptorId(data.id);
         setReceptorData(data);
@@ -156,7 +157,7 @@ const Chat = () => {
   }, [username]);
 
   useEffect(() => {
-    const newSocket = io(SOCKET_URL);
+    const newSocket = io(API_URL);
     setSocket(newSocket);
 
     newSocket.on("chat history", (history) => {
@@ -203,7 +204,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchConversaciones = async () => {
       try {
-        const res = await fetch(`/api/conversaciones/${currentUser.id}`);
+        const res = await fetch(`${API_URL}/api/conversaciones/${currentUser.id}`);
         const data = await res.json();
         setConversaciones(data);
       } catch (err) {

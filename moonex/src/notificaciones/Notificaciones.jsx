@@ -11,9 +11,11 @@ const Notificaciones = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     if (user?.id) {
-      fetch(`/api/notificaciones/${user.id}`) // URL corregida para Render
+      fetch(`${API_URL}/api/notificaciones/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
           setNotificaciones(data);
@@ -24,7 +26,7 @@ const Notificaciones = () => {
           setLoading(false);
         });
     }
-  }, [user?.id]);
+  }, [user?.id, API_URL]);
 
   const renderTexto = (n) => {
     switch (n.tipo) {

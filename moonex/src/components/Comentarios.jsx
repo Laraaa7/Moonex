@@ -4,13 +4,14 @@ import "./Comentarios.css";
 const Comentarios = ({ postId, cerrarComentarios }) => {
   const [nuevoComentario, setNuevoComentario] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (nuevoComentario.trim() === "" || !currentUser.id) return;
 
     try {
-      const res = await fetch("/comentarios", {  // Cambiado aquí
+      const res = await fetch(`${API_URL}/comentarios`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -21,8 +22,9 @@ const Comentarios = ({ postId, cerrarComentarios }) => {
       });
 
       if (!res.ok) throw new Error("Error al comentar");
+
       setNuevoComentario("");
-      cerrarComentarios(); // cerrar el modal tras comentar
+      cerrarComentarios(); // Cierra el panel tras comentar
     } catch (error) {
       console.error("Error al enviar comentario:", error);
     }

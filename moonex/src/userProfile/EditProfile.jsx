@@ -5,6 +5,8 @@ import defaultProfile from "../img/PfpDefecto.png";
 import { FaTimes, FaCamera } from "react-icons/fa";
 
 const EditProfile = ({ closeModal }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [bannerImage, setBannerImage] = useState(defaultBanner);
   const [profileImage, setProfileImage] = useState(defaultProfile);
   const [nombre, setNombre] = useState("");
@@ -57,7 +59,7 @@ const EditProfile = ({ closeModal }) => {
     if (newUsername === originalUsername) return true;
 
     try {
-      const response = await fetch(`/check-username?username=${newUsername}`);
+      const response = await fetch(`${API_URL}/check-username?username=${newUsername}`);
       return response.ok;
     } catch (error) {
       console.error("Error al verificar username:", error);
@@ -83,7 +85,7 @@ const EditProfile = ({ closeModal }) => {
         }
       }
 
-      const response = await fetch(`/updateProfile/${storedUser.id}`, {
+      const response = await fetch(`${API_URL}/updateProfile/${storedUser.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

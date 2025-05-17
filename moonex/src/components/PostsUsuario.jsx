@@ -7,9 +7,9 @@ const PostsUsuario = ({ usuarioId }) => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
   const [autorUsername, setAutorUsername] = useState("");
-
   const navigate = useNavigate();
   const topRef = useRef(null);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (!usuarioId) {
@@ -19,7 +19,7 @@ const PostsUsuario = ({ usuarioId }) => {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/posts");  // CAMBIO aquí
+        const res = await fetch(`${API_URL}/posts`);
         const all = await res.json();
         const filtered = all.filter(
           (post) => post.usuario_id === usuarioId || post.user_id === usuarioId
@@ -41,7 +41,7 @@ const PostsUsuario = ({ usuarioId }) => {
     };
 
     fetchPosts();
-  }, [usuarioId]);
+  }, [usuarioId, API_URL]);
 
   const handleVerMas = () => {
     setVisibleCount((prev) => prev + 6);
@@ -76,9 +76,7 @@ const PostsUsuario = ({ usuarioId }) => {
   return (
     <div className="posts-section">
       <h3 ref={topRef}>
-        {autorUsername
-          ? `Posts de @${autorUsername}`
-          : `Posts de @${autorUsername}`}
+        {autorUsername ? `Posts de @${autorUsername}` : `Posts de este usuario`}
       </h3>
       {loading ? (
         <>
@@ -103,7 +101,9 @@ const PostsUsuario = ({ usuarioId }) => {
               >
                 <div className="post-titulo-fecha">
                   <h4>{post.titulo}</h4>
-                  <span className="post-fecha">· {formatearTiempoPublicacion(post.fecha_publicacion)}</span>
+                  <span className="post-fecha">
+                    · {formatearTiempoPublicacion(post.fecha_publicacion)}
+                  </span>
                 </div>
               </div>
             ))}

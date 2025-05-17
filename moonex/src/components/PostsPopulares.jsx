@@ -6,11 +6,12 @@ const PostsPopulares = () => {
   const [postsPopulares, setPostsPopulares] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchPopulares = async () => {
       try {
-        const res = await fetch("/posts"); // Cambiado para usar ruta relativa
+        const res = await fetch(`${API_URL}/posts`);
         const data = await res.json();
 
         const ordenados = data
@@ -31,7 +32,7 @@ const PostsPopulares = () => {
     };
 
     fetchPopulares();
-  }, []);
+  }, [API_URL]);
 
   const formatearTiempo = (fechaString) => {
     const publicadaUTC = new Date(fechaString);

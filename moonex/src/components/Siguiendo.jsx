@@ -9,6 +9,7 @@ const Siguiendo = ({ onClose }) => {
   const [estadoBoton, setEstadoBoton] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = currentUser?.id;
@@ -17,7 +18,7 @@ const Siguiendo = ({ onClose }) => {
     const fetchSiguiendo = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/social/siguiendo/${userId}`);  // Cambiado aquí
+        const res = await fetch(`${API_URL}/social/siguiendo/${userId}`);
         const data = await res.json();
         setSiguiendo(data);
 
@@ -36,11 +37,11 @@ const Siguiendo = ({ onClose }) => {
     if (userId) {
       fetchSiguiendo();
     }
-  }, [userId]);
+  }, [userId, API_URL]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`/social`, {   // Cambiado aquí
+      const res = await fetch(`${API_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
