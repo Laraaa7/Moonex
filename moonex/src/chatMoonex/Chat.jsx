@@ -8,7 +8,7 @@ import { FaTimes } from "react-icons/fa";
 import pfpDefecto from "../img/PfpDefecto.png";
 import "./Chat.css";
 
-const SOCKET_URL = "/";
+const SOCKET_URL = process.env.REACT_APP_API_URL;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 const API_URL = process.env.REACT_APP_API_URL;
@@ -157,7 +157,11 @@ const Chat = () => {
   }, [username]);
 
   useEffect(() => {
-    const newSocket = io(API_URL);
+    const newSocket = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+    
     setSocket(newSocket);
 
     newSocket.on("chat history", (history) => {
