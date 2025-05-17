@@ -11,12 +11,9 @@ import PostButton from "../components/PostButton";
 import PostsUsuario from "../components/PostsUsuario";
 import defaultProfile from "../img/PfpDefecto.png";
 import Respuestas from "../components/Respuestas";
-
-
 import "./VerPost.css";
 
 const VerPost = () => {
-  const API_URL = process.env.REACT_APP_API_URL;
   const { id: postId } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -30,6 +27,8 @@ const VerPost = () => {
   const [mostrarRespuestas, setMostrarRespuestas] = useState({});
   const [respuestasTexto, setRespuestasTexto] = useState({});
   const [conteoRespuestas, setConteoRespuestas] = useState({});
+ 
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = currentUser?.id;
@@ -114,6 +113,7 @@ const VerPost = () => {
       console.error("Error al obtener conteo de respuestas:", err);
     }
   };
+  
 
   const manejarLikeComentario = async (comentarioId) => {
     const isLiked = comentarioLikes[comentarioId]?.liked || false;
@@ -156,7 +156,7 @@ const VerPost = () => {
       if (!res.ok) throw new Error("Error al comentar");
 
       const nuevo = await res.json();
-      setComentarios(prev => ([
+      setComentarios(prev => [
         ...prev,
         {
           id: nuevo.id,
@@ -166,7 +166,7 @@ const VerPost = () => {
           contenido: nuevoComentario,
           fecha: new Date().toISOString(),
         },
-      ]));
+      ]);
       setNuevoComentario("");
     } catch (error) {
       console.error("Error al enviar comentario:", error);
@@ -264,6 +264,7 @@ const VerPost = () => {
           <AQuienSeguir suggestedUsers={[]} />
           <PostButton />
         </div>
+
         <div className="verpost-content">
           <div className="verpost-card">
             <div className="post-header">
@@ -281,13 +282,21 @@ const VerPost = () => {
             </div>
 
             <h5 className="post-title">{post.titulo}</h5>
-            <div className="post-content" dangerouslySetInnerHTML={{ __html: procesarContenido(post.contenido) }} />
-            {extraerURLs(post.contenido).map((url, i) => <VistaEnlace key={i} url={url} />)}
-            {obtenerImagenesPost(post).length > 0 && <ImageGrid images={obtenerImagenesPost(post)} />}
+            <div
+              className="post-content"
+              dangerouslySetInnerHTML={{ __html: procesarContenido(post.contenido) }}
+            />
+            {extraerURLs(post.contenido).map((url, i) => (
+              <VistaEnlace key={i} url={url} />
+            ))}
+            {obtenerImagenesPost(post).length > 0 && (
+              <ImageGrid images={obtenerImagenesPost(post)} />
+            )}
 
             <div className="post-actions">
               <span className={`likes-btn ${liked ? "liked" : ""}`}>
-                {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />} {likeCount}
+                {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />}
+                {likeCount}
               </span>
               <span className="comentarios-btn">
                 <FaRegComment /> {comentarios.length}
@@ -332,20 +341,57 @@ const VerPost = () => {
                           className={`comentario-like-btn ${comentarioLikes[comentario.id]?.liked ? "liked" : ""}`}
                           onClick={() => manejarLikeComentario(comentario.id)}
                         >
-                          {comentarioLikes[comentario.id]?.liked ? <MdFavorite className="like-icon-small active" /> : <MdFavoriteBorder className="like-icon-small" />} {comentarioLikes[comentario.id]?.count || 0}
+                          {comentarioLikes[comentario.id]?.liked ? (
+                            <MdFavorite className="like-icon-small active" />
+                          ) : (
+                            <MdFavoriteBorder className="like-icon-small" />
+                          )}
+                          {comentarioLikes[comentario.id]?.count || 0}
                         </span>
-                        <span className="comentario-responder" onClick={() => setMostrarFormularioRespuesta(prev => ({ ...prev, [comentario.id]: !prev[comentario.id] }))}><FaReply /> Responder</span>
-                        <span className="comentario-toggle" onClick={() => setMostrarRespuestas(prev => ({ ...prev, [comentario.id]: !prev[comentario.id] }))}>
-                          {mostrarRespuestas[comentario.id] ? "Ocultar respuestas" : `Ver respuestas (${conteoRespuestas[comentario.id.toString()] || 0})`}
+                        <span
+                          className="comentario-responder"
+                          onClick={() =>
+                            setMostrarFormularioRespuesta(prev => ({
+                              ...prev,
+                              [comentario.id]: !prev[comentario.id],
+                            }))
+                          }
+                        >
+                          <FaReply /> Responder
                         </span>
+                        <span
+                        className="comentario-toggle"
+                        onClick={() =>
+                          setMostrarRespuestas(prev => ({
+                            ...prev,
+                            [comentario.id]: !prev[comentario.id],
+                          }))
+                        }
+                      >
+                        {mostrarRespuestas[comentario.id]
+                          ? "Ocultar respuestas"
+                          : `Ver respuestas (${conteoRespuestas[comentario.id.toString()] || 0})`}
+                      </span>
+
                       </div>
 
                       {mostrarFormularioRespuesta[comentario.id] && (
-                        <form onSubmit={(e) => { e.preventDefault(); enviarRespuestaComentario(comentario.id); }} className="respuesta-form">
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            enviarRespuestaComentario(comentario.id);
+                          }}
+                          className="respuesta-form"
+                        >
                           <input
                             type="text"
                             value={respuestasTexto[comentario.id] || ""}
-                            onChange={(e) => setRespuestasTexto(prev => ({ ...prev, [comentario.id]: e.target.value }))}
+                            onChange={(e) =>
+                              setRespuestasTexto((prev) => ({
+                                ...prev,
+                                [comentario.id]: e.target.value,
+                              }))
+                            }
                             placeholder="Escribe una respuesta..."
                             className="respuesta-input"
                           />

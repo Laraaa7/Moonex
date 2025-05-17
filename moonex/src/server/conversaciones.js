@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('./db');
 
 // Obtener lista de conversaciones únicas de un usuario con último mensaje
-router.get('/:userId', (req, res) => {
+router.get('/:userId', async (req, res) => {
   const userId = parseInt(req.params.userId);
 
   const query = `
@@ -39,13 +39,13 @@ router.get('/:userId', (req, res) => {
     ORDER BY m.fecha_envio DESC
   `;
 
-  db.query(query, [userId, userId, userId], (err, results) => {
-    if (err) {
-      console.error("Error al obtener conversaciones:", err.message);
-      return res.status(500).json({ error: "Error del servidor" });
-    }
+  try {
+    const [results] = await db.query(query, [userId, userId, userId]);
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Error al obtener conversaciones:", err.message);
+    res.status(500).json({ error: "Error del servidor" });
+  }
 });
 
 module.exports = router;

@@ -8,10 +8,9 @@ import { FaTimes } from "react-icons/fa";
 import pfpDefecto from "../img/PfpDefecto.png";
 import "./Chat.css";
 
-const SOCKET_URL = process.env.REACT_APP_API_URL;
+const SOCKET_URL = "http://localhost:5000";
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
-const API_URL = process.env.REACT_APP_API_URL;
 
 // Función para formatear el tiempo de los mensajes
 const formatearTiempoChat = (fechaString) => {
@@ -30,6 +29,7 @@ const formatearTiempoChat = (fechaString) => {
   if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
   return `${anos}año${anos > 1 ? "s" : ""}`;
 };
+
 
 // Función para formatear la fecha de los mensajes
 const formatearFechaMensaje = (fechaString) => {
@@ -86,7 +86,11 @@ const Chat = () => {
   const [receptorData, setReceptorData] = useState(null);
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // Estado para mostrar el modal de confirmación
+  const [mensajeRespondido, setMensajeRespondido] = useState(null);
 
+  const SOCKET_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   // Función para formatear las imágenes
   const formatImageSrc = (imageString) => {
     if (!imageString) return "";
@@ -157,7 +161,7 @@ const Chat = () => {
   }, [username]);
 
   useEffect(() => {
-    const newSocket = io(API_URL, {
+    const newSocket = io(SOCKET_URL, {
       transports: ["websocket"],
       withCredentials: true,
     });
@@ -301,13 +305,16 @@ const Chat = () => {
         contenido: newMessage,
         imagenes: imagePreviews,
         fecha_envio: new Date().toISOString(),
+        responde_a: mensajeRespondido ? mensajeRespondido.id : null,
       };
+      
 
       if (JSON.stringify(message).length > 5 * 1024 * 1024) {
         throw new Error("El mensaje es demasiado grande para enviar");
       }
 
       socket.emit("new message", message);
+      setMensajeRespondido(null);
       setNewMessage("");
       setImagePreviews([]);
     } catch (error) {
@@ -341,7 +348,10 @@ const Chat = () => {
     setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== messageToDelete)); 
     setShowDeleteConfirm(false); // Cerrar el modal de confirmación
   };
-
+  const obtenerMensajeOriginal = (id) => {
+    return messages.find((m) => m.id === id);
+  };
+  
   const cancelDeleteMessage = () => {
     setShowDeleteConfirm(false); // Cerrar el modal sin eliminar
   };
@@ -417,43 +427,110 @@ const Chat = () => {
         </div>
 
         <div className="chat-messages">
-          {messages.map((msg, index) => {
-            const isSelf = msg.emisor_id === currentUser.id;
-            return (
-              <div
-                key={index}
-                className={`message-container ${isSelf ? "self-message" : "other-message"}`}
-              >
-                <div className="messages">
-                  {msg.contenido && <p>{msg.contenido}</p>}
-                  {msg.imagenes?.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt="img"
-                      className="message-image"
-                      onClick={() => handleImageClick(img)}
-                      onError={(e) => (e.target.style.display = "none")}
-                    />
-                  ))}
-                  <span className="message-time">
-                    {formatearFechaMensaje(msg.fecha_envio)}
-                  </span>
+  {messages.map((msg, index) => {
+    const isSelf = msg.emisor_id === currentUser.id;
+    return (
+      <div
+        key={index}
+        className={`message-container ${isSelf ? "self-message" : "other-message"}`}
+      >
+        <div className="messages">
+        {msg.responde_a && (
+  <div className="mensaje-original-preview">
+    <span className="mensaje-original-label">Respondiendo a</span>
+    {obtenerMensajeOriginal(msg.responde_a)?.contenido && (
+      <div className="mensaje-original-texto">
+        {obtenerMensajeOriginal(msg.responde_a).contenido}
+      </div>
+    )}
+    {obtenerMensajeOriginal(msg.responde_a)?.imagenes?.length > 0 && (
+      <img
+        src={obtenerMensajeOriginal(msg.responde_a).imagenes[0]}
+        alt="respuesta"
+        className="mensaje-original-imagen"
+        onClick={() =>
+          handleImageClick(obtenerMensajeOriginal(msg.responde_a).imagenes[0])
+        }
+      />
+    )}
+  </div>
+)}
 
-                  {isSelf && (
-                    <button
-                      className="delete-message-button"
-                      onClick={() => handleDeleteMessage(msg.id)}
-                    >
-                      <FaTimes size={14} />
-                    </button>
-                  )}
+          {msg.contenido && <p>{msg.contenido}</p>}
+          {msg.imagenes?.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt="img"
+              className="message-image"
+              onClick={() => handleImageClick(img)}
+              onError={(e) => (e.target.style.display = "none")}
+            />
+          ))}
+
+          <span className="message-time">
+            {formatearFechaMensaje(msg.fecha_envio)}
+          </span>
+          <div className="message-options-container">
+            <button
+              className="message-options-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMessageToDelete((prev) => (prev === msg.id ? null : msg.id));
+              }}
+            >
+              ⋯
+            </button>
+
+            {messageToDelete === msg.id && (
+              <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
+                {isSelf && (
+                  <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
+                    🗑️ Eliminar
+                  </div>
+                )}
+                <div
+                  className="message-option"
+                  onClick={() => {
+                    setMensajeRespondido(msg);
+                    setMessageToDelete(null); // Cerrar el menú
+                  }}
+                >
+                  💬 Responder
                 </div>
               </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
+            )}
+          </div>
         </div>
+      </div>
+    );
+  })}
+  <div ref={messagesEndRef} />
+</div>
+        {mensajeRespondido && (
+  <div className="respuesta-preview">
+    <div className="respuesta-contenido">
+      <span className="respuesta-label">Respondiendo a:</span>
+      {mensajeRespondido.contenido ? (
+        <p className="respuesta-texto">{mensajeRespondido.contenido}</p>
+      ) : mensajeRespondido.imagenes?.length ? (
+        <img
+          src={mensajeRespondido.imagenes[0]}
+          alt="respuesta"
+          className="respuesta-imagen"
+        />
+      ) : (
+        <p className="respuesta-texto">Mensaje sin contenido</p>
+      )}
+    </div>
+    <button
+      className="respuesta-cerrar"
+      onClick={() => setMensajeRespondido(null)}
+    >
+      <FaTimes size={14} />
+    </button>
+  </div>
+)}
 
         {imagePreviews.length > 0 && (
           <div className="image-preview">
@@ -516,16 +593,21 @@ const Chat = () => {
 
       {/* Modal de confirmación para eliminar mensaje */}
       {showDeleteConfirm && (
-        <div className="delete-confirmation-modal">
-          <div className="delete-confirmation-overlay">
-            <div className="delete-confirmation-content">
-              <p>¿Estás seguro de que deseas eliminar este mensaje?</p>
-              <button className="delete-confirm-button" onClick={confirmDeleteMessage}>Eliminar</button>
-              <button className="cancel-delete-button" onClick={cancelDeleteMessage}>Cancelar</button>
-            </div>
-          </div>
+  <div className="modal-overlay" onClick={cancelDeleteMessage}>
+    <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="delete-confirmation-box">
+        <h4>¿Eliminar mensaje?</h4>
+        <p>Esta acción no se puede deshacer.</p>
+        <div className="modal-buttons">
+          <button className="cancel-button" onClick={cancelDeleteMessage}>Cancelar</button>
+          <button className="confirm-button" onClick={confirmDeleteMessage}>Eliminar</button>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };

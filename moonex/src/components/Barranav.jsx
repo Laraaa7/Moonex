@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import { FaUserCircle, FaBell } from "react-icons/fa"; 
+import { FaUserCircle, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Barranav.css";
 import MoonexLogo from "../img/MoonexLogo.png";
@@ -44,15 +44,10 @@ const Barranav = () => {
         <a href="/chat">Chats</a>
         <a href="/crearpost">Postear</a>
 
-        {/* Notificaciones */}
-        <IconButton
-          className="notification-icon"
-          onClick={() => navigate("/notificaciones")}
-        >
+        <IconButton className="notification-icon" onClick={() => navigate("/notificaciones")}>
           <FaBell size={22} color="white" />
         </IconButton>
 
-        {/* Menú de usuario */}
         <div className="user-menu">
           <IconButton onClick={handleMenuOpen} className="user-icon">
             <FaUserCircle size={28} color="white" />
@@ -68,12 +63,7 @@ const Barranav = () => {
             }}
             disableScrollLock
           >
-            <MenuItem
-              onClick={() => {
-                navigate("/perfil");
-                handleMenuClose();
-              }}
-            >
+            <MenuItem onClick={() => { navigate("/perfil"); handleMenuClose(); }}>
               Ver Perfil
             </MenuItem>
             <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>

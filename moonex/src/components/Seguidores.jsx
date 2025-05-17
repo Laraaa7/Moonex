@@ -4,25 +4,26 @@ import { useNavigate } from "react-router-dom";
 import "./Seguidores.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const Seguidores = ({ onClose }) => {
   const [seguidores, setSeguidores] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL;
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchSeguidores = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(`${API_URL}/social/seguidores/${currentUser.id}`);
+        const res = await fetch(`${API_BASE_URL}/social/seguidores/${currentUser.id}`);
         const data = await res.json();
         setSeguidores(data);
 
         const estados = {};
         for (const user of data) {
-          const checkRes = await fetch(`${API_URL}/social/check`, {
+          const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -45,11 +46,11 @@ const Seguidores = ({ onClose }) => {
     if (currentUser?.id) {
       fetchSeguidores();
     }
-  }, [currentUser?.id, API_URL]);
+  }, [currentUser?.id]);
 
   const toggleFollow = async (usuarioId) => {
     try {
-      const res = await fetch(`${API_URL}/social`, {
+      const res = await fetch(`${API_BASE_URL}/social`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

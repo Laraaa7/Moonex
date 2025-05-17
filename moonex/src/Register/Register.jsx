@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../img/logo.png';
 import googleLogo from '../img/google.png';
-import appleLogo from '../img/apple.png';
 import { auth, provider } from '../api/firebase.config';
-import { OAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import './Register.css';
-
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +13,11 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
-  const API_URL = process.env.REACT_APP_API_URL;
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
-
+  const API_URL = process.env.REACT_APP_API_URL;
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -34,111 +30,81 @@ const Register = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      localStorage.setItem('token', user.accessToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      navigate('/feed');
-    } catch (error) {
-      console.error("Error en el registro con Google:", error);
-      setMessage('Error al registrarse con Google');
-    }
-  };
 
-  const handleAppleRegister = async () => {
-    const provider = new OAuthProvider('apple.com');
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const credential = OAuthProvider.credentialFromResult(result);
-      const token = credential?.idToken;
-      const user = result.user;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      navigate('/feed');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/register/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email || user.providerData[0]?.email || '',
+          nombre: user.displayName,
+          foto_perfil: user.photoURL,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/feed');
+      } else {
+        setMessage({ text: data.error || 'Error al registrarse con Google', type: 'error' });
+      }
     } catch (error) {
-      console.error("Error al registrarse con Apple:", error);
-      setMessage('Error al registrarse con Apple');
+      console.error('Error en el registro con Google:', error);
+      setMessage({ text: 'Error al registrarse con Google', type: 'error' });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const { userName, email, password, confirmPassword } = formData;
-  
-    // Validación: nombre de usuario
-    if (!userName) {
-      setMessage("El nombre de usuario es obligatorio.");
+
+    if (!userName || userName.length < 4 || !/^[a-z0-9_]+$/.test(userName)) {
+      setMessage({ text: "Nombre de usuario inválido.", type: "error" });
       return;
     }
-    if (userName.length < 4) {
-      setMessage("El nombre de usuario debe tener al menos 4 caracteres.");
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setMessage({ text: "Correo inválido.", type: "error" });
       return;
     }
-    if (!/^[a-z0-9_]+$/.test(userName)) {
-      setMessage("El nombre de usuario solo puede contener letras minúsculas, números y guión bajo.");
+
+    if (!password || password.length < 10 || password.length > 100 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+      setMessage({ text: "Contraseña inválida.", type: "error" });
       return;
     }
-  
-    // Validación: email
-    if (!email) {
-      setMessage("El correo electrónico es obligatorio.");
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setMessage("El formato del correo electrónico no es válido.");
-      return;
-    }
-  
-    // Validación: contraseña
-    if (!password) {
-      setMessage("La contraseña es obligatoria.");
-      return;
-    }
-    if (password.length < 10 || password.length > 100) {
-      setMessage("La contraseña debe tener entre 10 y 100 caracteres.");
-      return;
-    }
-    if (!/[A-Z]/.test(password)) {
-      setMessage("La contraseña debe incluir al menos una letra mayúscula.");
-      return;
-    }
-    if (!/\d/.test(password)) {
-      setMessage("La contraseña debe incluir al menos un número.");
-      return;
-    }
-  
-    // Validación: confirmación de contraseña
-    if (!confirmPassword) {
-      setMessage("Debes confirmar tu contraseña.");
-      return;
-    }
+
     if (password !== confirmPassword) {
-      setMessage("Las contraseñas no coinciden.");
+      setMessage({ text: "Las contraseñas no coinciden.", type: "error" });
       return;
     }
-  
-    // Envío al backend
+
     try {
-      const response = await fetch(`${API_URL}/api/register`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: userName, email, password })
       });
-  
+
       const data = await response.json();
-  
-      if (response.status === 201 || response.status === 200) {
-        localStorage.removeItem('token');
-        navigate('/login');
+
+      if (response.ok) {
+        setMessage({
+          text: 'Registro exitoso. Verifica tu correo antes de iniciar sesión.',
+          type: 'success'
+        });
+        setTimeout(() => navigate('/login'), 4000);
       } else {
-        setMessage(data.error || 'Error al registrarse');
+        setMessage({ text: data.error || 'Error al registrarse.', type: 'error' });
       }
     } catch (error) {
-      console.error('Error en el registro:', error);
-      setMessage('Error de conexión con el servidor.');
+      console.error('Error en el registro (catch):', error);
+      setMessage({ text: 'Error de conexión con el servidor.', type: 'error' });
     }
   };
-  
-  
 
   return (
     <div className="register-wrapper">
@@ -150,9 +116,6 @@ const Register = () => {
           <div className="login-buttons">
             <button className="btn-social" onClick={handleGoogleRegister}>
               <img src={googleLogo} alt="Google" /> Registrarse con Google
-            </button>
-            <button className="btn-social" onClick={handleAppleRegister}>
-              <img src={appleLogo} alt="Apple" /> Registrarse con Apple
             </button>
           </div>
 
@@ -171,24 +134,18 @@ const Register = () => {
             <label>
               <i className='bx bx-user'></i>
               <input
-                  type="text"
-                  name="userName"
-                  placeholder="Nombre Usuario"
-                  value={formData.userName}
-                  onChange={(e) => {
-                    let valor = e.target.value;
-                    
-                    valor = valor.replace(/[^a-z0-9_]/g, '');
-                    valor = valor.slice(0, 30);
-                  
-                    setFormData({ ...formData, userName: valor });
-                  }}
-                  required
-                  maxLength={30}
-                  minLength={6}
-                />
-
-
+                type="text"
+                name="userName"
+                placeholder="Nombre Usuario"
+                value={formData.userName}
+                onChange={(e) => {
+                  let valor = e.target.value;
+                  valor = valor.replace(/[^a-z0-9_]/g, '');
+                  valor = valor.slice(0, 30);
+                  setFormData({ ...formData, userName: valor });
+                }}
+                required
+              />
             </label>
 
             <label>
@@ -212,8 +169,6 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                maxLength={100}
-                minLength={10}
               />
               <i
                 className={`bx ${showPassword ? 'bx-hide' : 'bx-show'} toggle-eye`}
@@ -230,8 +185,6 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                maxLength={100}
-                minLength={10}
               />
               <i
                 className={`bx ${showConfirm ? 'bx-hide' : 'bx-show'} toggle-eye`}
@@ -241,7 +194,12 @@ const Register = () => {
 
             <button type="submit">Registrarse</button>
           </form>
-          {message && <p className="message">{message}</p>}
+
+          {message.text && (
+            <p className={`message ${message.type}`}>
+              {message.text}
+            </p>
+          )}
         </div>
       </div>
     </div>

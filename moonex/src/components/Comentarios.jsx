@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import "./Comentarios.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Comentarios = ({ postId, cerrarComentarios }) => {
   const [nuevoComentario, setNuevoComentario] = useState("");
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,9 +23,8 @@ const Comentarios = ({ postId, cerrarComentarios }) => {
       });
 
       if (!res.ok) throw new Error("Error al comentar");
-
       setNuevoComentario("");
-      cerrarComentarios(); // Cierra el panel tras comentar
+      cerrarComentarios(); // cerrar el modal tras comentar
     } catch (error) {
       console.error("Error al enviar comentario:", error);
     }

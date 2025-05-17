@@ -16,7 +16,9 @@ import {getAuth, GoogleAuthProvider} from "firebase/auth";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
+// AÑADIR ESTOS SCOPE PARA FORZARLO
+provider.addScope('email');
+provider.addScope('profile');
 
 // Exporta lo que necesites
 export { auth, provider };

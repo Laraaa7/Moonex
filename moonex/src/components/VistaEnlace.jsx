@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from "react";
-import "./VistaEnlace.css";
+import "./VistaEnlace.css"; 
+
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const VistaEnlace = ({ url }) => {
   const [vista, setVista] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_URL = process.env.REACT_APP_API_URL;
-
   useEffect(() => {
     const obtenerVista = async () => {
       try {
         console.log("Solicitando vista previa para:", url);
         setLoading(true);
-
-        const res = await fetch(`${API_URL}/link-preview?url=${encodeURIComponent(url)}`);
-
+        const res = await fetch(`${API_BASE_URL}/link-preview?url=${encodeURIComponent(url)}`);
+        
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
-
+        
         const data = await res.json();
         console.log("Datos recibidos:", data);
-
+        
         if (data.title || data.description || data.image) {
           setVista(data);
         } else {
@@ -39,8 +38,9 @@ const VistaEnlace = ({ url }) => {
     if (url && isValidUrl(url)) {
       obtenerVista();
     }
-  }, [url, API_URL]);
+  }, [url]);
 
+  // Función para validar URLs
   const isValidUrl = (string) => {
     try {
       new URL(string);
@@ -70,7 +70,7 @@ const VistaEnlace = ({ url }) => {
             src={vista.image}
             alt="Vista previa"
             className="link-preview-image"
-            onError={(e) => (e.target.style.display = "none")}
+            onError={(e) => (e.target.style.display = 'none')}
           />
         </div>
       )}

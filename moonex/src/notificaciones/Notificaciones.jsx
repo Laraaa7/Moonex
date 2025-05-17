@@ -5,13 +5,13 @@ import Barranav from "../components/Barranav";
 import defaultProfile from "../img/PfpDefecto.png";
 import ScrollArriba from "../components/ScrollArriba";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Notificaciones = () => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (user?.id) {
@@ -26,7 +26,7 @@ const Notificaciones = () => {
           setLoading(false);
         });
     }
-  }, [user?.id, API_URL]);
+  }, [user?.id]);
 
   const renderTexto = (n) => {
     switch (n.tipo) {

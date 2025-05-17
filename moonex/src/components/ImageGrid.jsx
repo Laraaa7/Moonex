@@ -72,7 +72,7 @@ const ImageGrid = ({ images }) => {
         >
           <img
             src={image}
-            alt="" // ✅ Corregido para evitar warning de ESLint
+            alt="" 
             style={getImageStyle(index, totalImages)}
             className="post-grid-image"
           />

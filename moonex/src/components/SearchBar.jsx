@@ -14,18 +14,19 @@ import { useNavigate } from "react-router-dom";
 import "./SearchBar.css";
 import defaultProfile from "../img/PfpDefecto.png";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const resultsRef = useRef(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const positionResults = () => {
     if (inputRef.current && resultsRef.current) {
       const rect = inputRef.current.getBoundingClientRect();
-      resultsRef.current.style.top = `${rect.bottom + 5}px`; 
+      resultsRef.current.style.top = `${rect.bottom + 5}px`;
       resultsRef.current.style.left = `${rect.left}px`;
       resultsRef.current.style.width = `${rect.width}px`;
     }
@@ -90,7 +91,7 @@ const SearchBar = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query, API_URL]);
+  }, [query]);
 
   const handleSelect = (item) => {
     if (item.type === "usuario") {
