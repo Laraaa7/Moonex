@@ -27,13 +27,13 @@ router.get('/', async (req, res) => {
     const yaVerificado = rows[0].verificado === 1;
 
     if (yaVerificado) {
-      return res.status(200).json({ mensaje: 'Correo verificado correctamente. Ya puedes iniciar sesión.' });
+      return res.send('Correo verificado correctamente. Ya puedes iniciar sesión.');
     }
 
   
     await db.query('UPDATE usuarios SET verificado = 1 WHERE id = ?', [userId]);
 
-    return res.status(400).json({ mensaje: 'Token inválido o expirado.' });
+    return res.send('Correo verificado correctamente. Ya puedes iniciar sesión.');
   } catch (err) {
     console.error('Error al verificar correo:', err.message);
     return res.status(400).send('Token inválido o expirado.');
