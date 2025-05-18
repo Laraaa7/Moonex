@@ -95,7 +95,7 @@ router.post('/google', async (req, res) => {
 
   } catch (error) {
     console.error('Error en registro con Google:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error al registrarse con Google. Este correo ya está en uso.' });
   }
 });
 

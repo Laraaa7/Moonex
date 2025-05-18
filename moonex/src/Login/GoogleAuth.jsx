@@ -14,7 +14,13 @@ export const AuthContextProvider = ({ children }) => {
 
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    try {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Logs out the user by removing the local storage token and user data
+   * and by calling the signOut function from the Firebase auth SDK
+   * @returns {Promise<void>} The promise returned from the signOut function
+   */
+/*******  7b0c0ae0-d3db-4c32-afcd-15182275299d  *******/    try {
       const result = await signInWithPopup(auth, provider);
       return result.user; // Devuelve el usuario de Firebase
     } catch (error) {
