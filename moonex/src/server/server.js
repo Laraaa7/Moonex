@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
 // Rutas de API
 app.use('/api/register', registerRoutes);
 app.use('/login', loginRoutes);
-app.use('/verify-email', verifyEmailRoute);
+app.use('/api/verify-email', verifyEmailRoute);
 app.use('/usuarios', updateProfileRoutes);
 app.use('/', updateProfileRoutes);
 app.use('/likes', likesRoutes);
