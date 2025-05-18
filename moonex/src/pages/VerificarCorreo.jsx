@@ -21,17 +21,18 @@ const VerificarCorreo = () => {
 
     const verificar = async () => {
       try {
-        const res = await fetch(`${API_URL}/verify-email?token=${token}`);
-        const text = await res.text();
+        const res = await fetch(`${API_URL}/api/verify-email?token=${token}`);
+const data = await res.json(); // ⬅ Aquí va esta línea
 
-        if (res.ok) {
-          setEstado('exito');
-          setMensaje(text);
-          setTimeout(() => navigate('/login'), 4000);
-        } else {
-          setEstado('error');
-          setMensaje(text);
-        }
+if (res.ok) {
+  setEstado('exito');
+  setMensaje(data.mensaje); // ⬅ Y esta también
+  setTimeout(() => navigate('/login'), 4000);
+} else {
+  setEstado('error');
+  setMensaje(data.mensaje);
+}
+
       } catch (err) {
         setEstado('error');
         setMensaje('Error al verificar tu correo.');
