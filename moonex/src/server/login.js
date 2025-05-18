@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
 
   } catch (error) {
     console.error('Error en login manual:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error al iniciar sesión' });
   }
 });
 
@@ -86,7 +86,7 @@ router.post('/google', async (req, res) => {
     res.json({ token, user: usuario });
   } catch (error) {
     console.error('Error en login con Google:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error al iniciar sesión con Google. Este correo ya está en uso. Usa otra cuenta diferente' });
   }
 });
 
