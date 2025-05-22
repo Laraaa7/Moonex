@@ -14,10 +14,13 @@ const previewRoutes = require('./linkPreview');
 const likesRoutes = require('./likes');
 const socialRoutes = require('./social');
 const conversacionesRoutes = require('./conversaciones');
-const busquedaRouter = require("./busqueda");
+const busquedaRouter = require('./busqueda');
 const respuestasRoutes = require('./respuestas');
 const notificacionesRoutes = require('./notificaciones');
 const verifyEmailRoute = require('./verifyEmail');
+
+const recuperarRoutes = require('./recuperar');
+const resetPasswordRoutes = require('./resetPassword');
 
 const app = express();
 const server = http.createServer(app);
@@ -47,6 +50,9 @@ app.use('/api/conversaciones', conversacionesRoutes);
 app.use('/api/busqueda', busquedaRouter);
 app.use('/respuestas', respuestasRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
+
+app.use('/api/auth/recuperar', recuperarRoutes);
+app.use('/auth/reset-password', resetPasswordRoutes);
 
 // Ruta de prueba
 app.get('/api', (req, res) => {

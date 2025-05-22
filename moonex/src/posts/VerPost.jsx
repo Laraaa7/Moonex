@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil"; 
 import Barranav from "../components/Barranav";
 import { FaRegComment, FaReply } from "react-icons/fa";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
@@ -16,6 +18,7 @@ import "./VerPost.css";
 const VerPost = () => {
   const { id: postId } = useParams();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 480px)");
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [comentarios, setComentarios] = useState([]);
@@ -27,7 +30,11 @@ const VerPost = () => {
   const [mostrarRespuestas, setMostrarRespuestas] = useState({});
   const [respuestasTexto, setRespuestasTexto] = useState({});
   const [conteoRespuestas, setConteoRespuestas] = useState({});
- 
+  const [showOpciones, setShowOpciones] = useState(false);
+  const [showModalEliminar, setShowModalEliminar] = useState(false);
+  const [comentarioOpcionesAbiertas, setComentarioOpcionesAbiertas] = useState({});
+  const [comentarioAEliminar, setComentarioAEliminar] = useState(null);
+
   const API_URL = process.env.REACT_APP_API_URL;
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -50,6 +57,8 @@ const VerPost = () => {
         setLoading(false);
       }
     };
+
+
 
     const fetchLikes = async () => {
       if (!postId || !userId) return;
@@ -78,6 +87,23 @@ const VerPost = () => {
     }
   }, [comentarios, userId]);
 
+  const manejarLikePublicacion = async () => {
+    if (!userId || !postId) return;
+  
+    setLiked((prev) => !prev);
+    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+  
+    try {
+      await fetch(`${API_URL}/likes`, {
+        method: liked ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario_id: userId, publicacion_id: postId }),
+      });
+    } catch (err) {
+      console.error("Error al dar/quitar like a la publicación:", err);
+    }
+  };
+  
   const fetchLikesComentarios = async () => {
     try {
       const [usuarioLikesRes, conteoRes] = await Promise.all([
@@ -90,9 +116,10 @@ const VerPost = () => {
       const map = {};
       comentarios.forEach(c => {
         map[c.id] = {
-          liked: usuarioLikes.some(l => l.comentario_id === c.id),
+          liked: usuarioLikes.includes(c.id),
           count: conteos.find(cnt => cnt.comentario_id === c.id)?.count || 0
         };
+        
       });
       setComentarioLikes(map);
     } catch (err) {
@@ -157,7 +184,6 @@ const VerPost = () => {
 
       const nuevo = await res.json();
       setComentarios(prev => [
-        ...prev,
         {
           id: nuevo.id,
           username: currentUser.username,
@@ -165,14 +191,32 @@ const VerPost = () => {
           foto_perfil: currentUser.foto_perfil,
           contenido: nuevoComentario,
           fecha: new Date().toISOString(),
+          usuario_id: userId, 
         },
+        ...prev,
       ]);
+      
+      
       setNuevoComentario("");
     } catch (error) {
       console.error("Error al enviar comentario:", error);
     }
   };
 
+  const eliminarComentario = async (comentarioId) => {
+    try {
+      const res = await fetch(`${API_URL}/comentarios/${comentarioId}`, {
+        method: "DELETE",
+      });
+  
+      if (!res.ok) throw new Error("Error al eliminar comentario");
+  
+      setComentarios(prev => prev.filter(c => c.id !== comentarioId));
+    } catch (err) {
+      console.error("Error al eliminar comentario:", err);
+    }
+  };
+  
   const enviarRespuestaComentario = async (comentarioId) => {
     const texto = respuestasTexto[comentarioId]?.trim();
     if (!texto) return;
@@ -245,6 +289,22 @@ const VerPost = () => {
     return imgs.length > 0 ? imgs : post.imagen ? [post.imagen] : [];
   };
 
+  const handleEliminarPost = async () => {
+    try {
+      const res = await fetch(`${API_URL}/posts/${postId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        navigate("/feed"); 
+      } else {
+        console.error("No se pudo eliminar la publicación");
+      }
+    } catch (err) {
+      console.error("Error al eliminar la publicación:", err);
+    }
+  };
+  
+  
   if (loading) {
     return (
       <div className="verpost-container">
@@ -259,6 +319,38 @@ const VerPost = () => {
   return (
     <div className="verpost-container">
       <Barranav />
+      {isMobile && <BarraSuperiorMovil />}
+      {showModalEliminar && (
+      <div className="modal-overlay">
+        <div className="ddelete-confirmation-modal">
+          <h4>¿Eliminar publicación?</h4>
+          <p>Esta acción es permanente y no se puede deshacer.</p>
+          <div className="modal-buttons">
+            <button className="cancel-button" onClick={() => setShowModalEliminar(false)}>Cancelar</button>
+            <button className="confirm-button" onClick={handleEliminarPost}>Eliminar</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+{comentarioAEliminar && (
+  <div className="modal-overlay">
+    <div className="ddelete-confirmation-modal">
+      <h4>¿Eliminar comentario?</h4>
+      <p>Esta acción es permanente y no se puede deshacer.</p>
+      <div className="modal-buttons">
+        <button className="cancel-button" onClick={() => setComentarioAEliminar(null)}>Cancelar</button>
+        <button className="confirm-button" onClick={async () => {
+          await eliminarComentario(comentarioAEliminar);
+          setComentarioAEliminar(null);
+        }}>
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       <div className="verpost-wrapper">
         <div className="sidebar-left-verpost">
           <AQuienSeguir suggestedUsers={[]} />
@@ -267,19 +359,34 @@ const VerPost = () => {
 
         <div className="verpost-content">
           <div className="verpost-card">
-            <div className="post-header">
-              <img
-                src={post.foto_perfil || defaultProfile}
-                className="post-avatar"
-                alt=""
-                onClick={() => navigateToProfile(post.username, post.usuario_id)}
-              />
-              <div className="post-userinfo" onClick={() => navigateToProfile(post.username, post.usuario_id)}>
-                <h3 className="post-nombre">{post.nombre}</h3>
-                <h4 className="post-username">@{post.username}</h4>
-                <span className="post-time">· {formatearTiempo(post.fecha_publicacion)}</span>
-              </div>
+          <div className="post-header">
+          <img
+            src={post.foto_perfil || defaultProfile}
+            className="post-avatar"
+            alt=""
+            onClick={() => navigateToProfile(post.username, post.usuario_id)}
+          />
+          <div
+            className="post-userinfo"
+            onClick={() => navigateToProfile(post.username, post.usuario_id)}
+          >
+            <h3 className="post-nombre">{post.nombre}</h3>
+            <h4 className="post-username">@{post.username}</h4>
+            <span className="post-time">· {formatearTiempo(post.fecha_publicacion)}</span>
+          </div>
+
+          {userId === post.usuario_id && (
+            <div className="post-options-container">
+              <span className="post-options-btn" onClick={() => setShowOpciones(!showOpciones)}>⋯</span>
+              {showOpciones && (
+                <div className="post-options-dropdown">
+                  <button onClick={() => setShowModalEliminar(true)}>Eliminar publicación</button>
+                </div>
+              )}
             </div>
+          )}
+        </div>
+
 
             <h5 className="post-title">{post.titulo}</h5>
             <div
@@ -294,10 +401,11 @@ const VerPost = () => {
             )}
 
             <div className="post-actions">
-              <span className={`likes-btn ${liked ? "liked" : ""}`}>
-                {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />}
-                {likeCount}
-              </span>
+            <span className={`likes-btn ${liked ? "liked" : ""}`} onClick={manejarLikePublicacion}>
+            {liked ? <MdFavorite className="like-icon active" /> : <MdFavoriteBorder className="like-icon" />}
+            {likeCount}
+          </span>
+
               <span className="comentarios-btn">
                 <FaRegComment /> {comentarios.length}
               </span>
@@ -321,19 +429,33 @@ const VerPost = () => {
                   <p className="no-comentarios">Aún no hay comentarios.</p>
                 ) : (
                   comentarios.map((comentario) => (
+                    
                     <div key={comentario.id} className="comentario-item">
-                      <div className="comentario-header">
-                        <img
-                          src={comentario.foto_perfil || defaultProfile}
-                          alt="avatar"
-                          className="comentario-avatar"
-                        />
-                        <div className="comentario-userinfo">
-                          <span className="comentario-nombre">{comentario.nombre}</span>
-                          <span className="comentario-username">@{comentario.username}</span>
-                          <span className="comentario-fecha">· {formatearTiempo(comentario.fecha)}</span>
-                        </div>
-                      </div>
+              <div className="comentario-header">
+  <img
+    src={comentario.foto_perfil || defaultProfile}
+    alt="avatar"
+    className="comentario-avatar"
+  />
+
+  <div className="comentario-header-content">
+    <div className="comentario-userinfo">
+      <span className="comentario-nombre">{comentario.nombre}</span>
+      <span className="comentario-username">@{comentario.username}</span>
+      <span className="comentario-fecha">· {formatearTiempo(comentario.fecha)}</span>
+    </div>
+
+    {userId === comentario.usuario_id && (
+      <span
+        className="comentario-eliminar comentario-accion-pequena"
+        onClick={() => setComentarioAEliminar(comentario.id)}
+      >
+        Eliminar
+      </span>
+    )}
+  </div>
+</div>
+
                       <div className="comentario-texto">{comentario.contenido}</div>
 
                       <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
@@ -349,18 +471,19 @@ const VerPost = () => {
                           {comentarioLikes[comentario.id]?.count || 0}
                         </span>
                         <span
-                          className="comentario-responder"
-                          onClick={() =>
-                            setMostrarFormularioRespuesta(prev => ({
-                              ...prev,
-                              [comentario.id]: !prev[comentario.id],
-                            }))
-                          }
-                        >
-                          <FaReply /> Responder
-                        </span>
-                        <span
-                        className="comentario-toggle"
+                        className="comentario-responder comentario-accion-pequena"
+                        onClick={() =>
+                          setMostrarFormularioRespuesta(prev => ({
+                            ...prev,
+                            [comentario.id]: !prev[comentario.id],
+                          }))
+                        }
+                      >
+                        <FaReply /> Responder
+                      </span>
+
+                      <span
+                        className="comentario-toggle comentario-accion-pequena"
                         onClick={() =>
                           setMostrarRespuestas(prev => ({
                             ...prev,
@@ -368,12 +491,10 @@ const VerPost = () => {
                           }))
                         }
                       >
-                        {mostrarRespuestas[comentario.id]
-                          ? "Ocultar respuestas"
-                          : `Ver respuestas (${conteoRespuestas[comentario.id.toString()] || 0})`}
+                        {mostrarRespuestas[comentario.id] ? "Ocultar respuestas" : "Ver respuestas"}
                       </span>
 
-                      </div>
+                                            </div>
 
                       {mostrarFormularioRespuesta[comentario.id] && (
                         <form

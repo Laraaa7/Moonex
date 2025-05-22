@@ -1,51 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const db = require("./db"); 
+const db = require("./db");
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const { query } = req.query;
 
   if (!query) {
     return res.status(400).json({ error: "Falta el parámetro query" });
   }
 
-  // Buscar usuarios
-  const sqlUsuarios = `
-  SELECT id, nombre, username, foto_perfil
-  FROM usuarios
-  WHERE nombre LIKE ? OR username LIKE ?
-  LIMIT 10
-`;
+  try {
+    console.log("Ejecutando búsqueda de usuarios...");
+    // Buscar usuarios
+    const [usuarios] = await db.query(
+      `
+        SELECT id, nombre, username, foto_perfil
+        FROM usuarios
+        WHERE nombre LIKE ? OR username LIKE ?
+        LIMIT 10
+      `,
+      [`%${query}%`, `%${query}%`]
+    );
 
-  db.query(sqlUsuarios, [`%${query}%`, `%${query}%`], (errUsuarios, usuarios) => {
-    if (errUsuarios) {
-      console.error("Error buscando usuarios:", errUsuarios);
-      return res.status(500).json({ error: "Error buscando usuarios" });
-    }
-
+    console.log("Ejecutando búsqueda de posts...");
     // Buscar posts
-    const sqlPosts = `
-      SELECT id, titulo, fecha_publicacion
-      FROM publicaciones
-      WHERE titulo LIKE ?
-      ORDER BY fecha_publicacion DESC
-      LIMIT 10
+    const [posts] = await db.query(
+      `
+        SELECT id, titulo, fecha_publicacion
+        FROM publicaciones
+        WHERE titulo LIKE ?
+        ORDER BY fecha_publicacion DESC
+        LIMIT 10
+      `,
+      [`%${query}%`]
+    );
 
-  `;
-  
+    res.json({ usuarios, posts });
 
-    db.query(sqlPosts, [`%${query}%`], (errPosts, posts) => {
-      if (errPosts) {
-        console.error("Error buscando posts:", errPosts);
-        return res.status(500).json({ error: "Error buscando posts" });
-      }
-
-      res.json({
-        usuarios,
-        posts,
-      });
-    });
-  });
+  } catch (error) {
+    console.error("Error durante la búsqueda:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
 });
 
 module.exports = router;

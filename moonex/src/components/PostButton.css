@@ -16,7 +16,7 @@
   gap: 8px;
   background-color: #4a5f8c93;
   color: #DAE0EE;
-  padding: 10px 20px;
+  padding: 36px 20px;
   border-radius: 80px;
   font-weight: bold;
   font-size: 14px;
@@ -25,6 +25,7 @@
   width: 100%;
   font-size: 19px;
   border: 2px solid #DAE0EE;
+  margin-top: 0px;
 }
 
 .post-button:hover {
@@ -68,3 +69,12 @@
     margin: 20px auto;
   }
 }
+
+@media screen and (min-width: 1430px) and (max-width: 1450px) and (min-height: 890px) and (max-height: 910px) {
+  .post-button-container {
+    width: 315px !important; /* Ancho del botón */
+    left: calc(50% - 695px); /* Más a la derecha que -190px */
+  }
+}
+
+

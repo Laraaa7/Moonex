@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Barranav from "../components/Barranav";
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil";
+import { useMediaQuery } from "@mui/material";
 import Comentarios from "../components/Comentarios";
 import AQuienSeguir from "../components/AQuienSeguir";
 import ScrollArriba from "../components/ScrollArriba";
@@ -17,6 +19,7 @@ import "./Feed.css";
 
 function Feed() {
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 480px)");
   const [allPosts, setAllPosts] = useState([]);
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
@@ -27,6 +30,7 @@ function Feed() {
   const [likeCounts, setLikeCounts] = useState({});
   const postsPerPage = 5;
   const observer = useRef();
+  
 
   const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -292,28 +296,8 @@ function Feed() {
   return (
     <div className="feed-container">
       <Barranav />
-
-      {/* Botón menú para todos los tamaños excepto desktop */}
-      <div className="menu-movil-toggle">
-        <button className="menu-movil-btn" onClick={toggleMenu}>
-          <FaBars />
-        </button>
-      </div>
-
-      {/* Panel desplegable lateral en todos los tamaños excepto desktop */}
-      {menuAbierto && (
-        <div className="menu-movil-panel">
-          <div className="menu-columnas">
-            <div className="menu-columna izquierda">
-              <AQuienSeguir suggestedUsers={suggestedUsers} />
-            </div>
-            <div className="menu-columna derecha">
-              <PostsPopulares />
-              <PostButton />
-            </div>
-          </div>
-        </div>
-      )}
+      {isMobile && <BarraSuperiorMovil />} {/* Barra superior para dispositivos móviles */}
+     
 
       <div className="feed-wrapper">
         {/* Sidebar izquierdo solo visible en desktop (>1200px) */}

@@ -259,8 +259,9 @@
 
 @media (max-width: 480px) {
   .profile-container {
-    padding-top: 100px;
+    padding-top: 0px;
     margin-top: 80px;
+    margin-bottom: 70px;
   }
 
   .profile-content {
@@ -305,7 +306,7 @@
   }
 
   .edit-profile-button {
-    top: 2px;
+    top: -10px;
     right: 6px;
     font-size: 11px;
     padding: 6px 10px;

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 import "./Notificaciones.css";
 import Barranav from "../components/Barranav";
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil"; 
 import defaultProfile from "../img/PfpDefecto.png";
 import ScrollArriba from "../components/ScrollArriba";
 
@@ -12,6 +14,8 @@ const Notificaciones = () => {
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 480px)"); 
+  
 
   useEffect(() => {
     if (user?.id) {
@@ -30,20 +34,13 @@ const Notificaciones = () => {
 
   const renderTexto = (n) => {
     switch (n.tipo) {
-      case "follow":
-        return "te ha seguido";
-      case "post":
-        return "ha creado una nueva publicación";
-      case "mensaje":
-        return "te ha enviado un mensaje";
-      case "comentario":
-        return "comentó tu publicación";
-      case "respuesta":
-        return "respondió a tu comentario";
-      case "like":
-        return "le dio like a tu publicación";
-      default:
-        return "tienes una nueva notificación";
+      case "follow": return "te ha seguido";
+      case "post": return "ha creado una nueva publicación";
+      case "mensaje": return "te ha enviado un mensaje";
+      case "comentario": return "comentó tu publicación";
+      case "respuesta": return "respondió a tu comentario";
+      case "like": return "le dio like a tu publicación";
+      default: return "tienes una nueva notificación";
     }
   };
 
@@ -69,6 +66,8 @@ const Notificaciones = () => {
   return (
     <div className="notificaciones-container">
       <Barranav />
+      {isMobile && <BarraSuperiorMovil />} 
+
       <div className="notificaciones-content">
         <h2>Notificaciones</h2>
 

@@ -200,8 +200,14 @@ html, body {
 @media (max-width: 480px) {
 .crear-post-content {
     padding: 10px;
-    margin-top: 60px;
+    margin-top: -99px;
     border-radius: 8px;
+    padding-bottom: 30px;
+    padding-top: 10px;
+    margin-right: -5px;
+    margin-left: -5px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 .crear-post-title {

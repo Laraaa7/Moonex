@@ -602,7 +602,7 @@
     flex-direction: column;
     min-height: 100vh;
     background-color: #0E1C49;
-    margin-top: 200px;
+    margin-top: 55px;
     margin-bottom: 50px;
   }
   
@@ -657,7 +657,7 @@
     margin: 0 auto;
   }
 
-  /* Menú móvil toggle */
+ /* Menú móvil toggle */
   .menu-movil-toggle {
     padding: 10px;
     margin-top: -30px;
@@ -709,7 +709,6 @@
   }
 
   .post-nombre {
-    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -719,7 +718,6 @@
   }
 
   .post-username {
-    font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -729,7 +727,6 @@
   }
 
   .post-time {
-    font-size: 12px;
     white-space: nowrap;
     flex-shrink: 0; /* La fecha nunca se corta */
   }
@@ -877,5 +874,41 @@
   .posts-container {
     width: 100%;
     max-width: 90%;
+  }
+}
+
+/* Media query específica SOLO para resolución 1440x900 sin afectar 1920x1080 */
+@media screen and (min-width: 1430px) and (max-width: 1450px) and (min-height: 890px) and (max-height: 910px) {
+
+  /* Contenedor central */
+  .posts-container {
+    max-width: 600px;
+    margin: 5px auto;
+  }
+  
+  /* Ajustes del feed */
+  .feed-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Ajustes navbar */
+  .feed-container {
+    margin-top: 90px;
+  }
+  
+  /* Ajustes para posts */
+  .posts-card {
+    width: 100%;
+    max-width: 900px;
+    width: 700px;
+    margin-left: -50px;
+  }
+
+  /* Posición de elementos populares */
+  .posts-populares-container,
+  .follow-suggestions-container {
+    width: 100%;
   }
 }

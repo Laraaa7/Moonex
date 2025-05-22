@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from "@mui/material";
 import Barranav from "../components/Barranav"; 
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil";
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import './CrearPost.css';
@@ -13,6 +15,7 @@ const CrearPost = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 480px)");
 
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");
@@ -33,12 +36,12 @@ const CrearPost = () => {
   const modules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ list: 'ordered' }],
       ['image']
     ]
   };
 
-  const formats = ['bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'image'];
+  const formats = ['bold', 'italic', 'underline', 'strike', 'list', 'image'];
 
   const handlePublish = async () => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -95,6 +98,7 @@ const CrearPost = () => {
   return (
     <div>
       <Barranav />
+      {isMobile && <BarraSuperiorMovil />}
       <div className="crear-post-container">
         <div className="crear-post-content">
           <h2 className="crear-post-title">Escribir Post</h2>

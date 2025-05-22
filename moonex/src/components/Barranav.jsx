@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { FaUserCircle, FaBell } from "react-icons/fa";
+import { IconButton, Menu, MenuItem, useMediaQuery } from "@mui/material";
+import { FaUserCircle, FaBell, FaHome, FaComments, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Barranav.css";
 import MoonexLogo from "../img/MoonexLogo.png";
@@ -12,6 +12,7 @@ const Barranav = () => {
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const { logOut } = UserAuth();
+  const isMobile = useMediaQuery("(max-width:480px)");
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -29,29 +30,55 @@ const Barranav = () => {
 
   return (
     <nav className="navbar">
-      <div className="logo">
-        <a href="/feed">
-          <img src={MoonexLogo} alt="Moonex Logo" />
-        </a>
-      </div>
-
-      <div className="search-bar-container">
-        <SearchBar />
-      </div>
+      {!isMobile && (
+        <>
+          <div className="logo">
+            <a href="/feed">
+              <img src={MoonexLogo} alt="Moonex Logo" />
+            </a>
+          </div>
+          <div className="search-bar-container">
+            <SearchBar />
+          </div>
+        </>
+      )}
 
       <div className="nav-links">
-        <a href="/feed">Inicio</a>
-        <a href="/chat">Chats</a>
-        <a href="/crearpost">Postear</a>
+        {isMobile ? (
+          <>
+            <IconButton onClick={() => navigate("/feed")}>
+              <FaHome size={20} />
+            </IconButton>
+            <IconButton onClick={() => navigate("/chat")}>
+              <FaComments size={20} />
+            </IconButton>
+            <IconButton onClick={() => navigate("/crearpost")}>
+              <FaPlus size={20} />
+            </IconButton>
+            <IconButton onClick={() => navigate("/notificaciones")}>
+              <FaBell size={20} />
+            </IconButton>
+            <IconButton onClick={() => navigate("/perfil")}>
+              <FaUserCircle size={22} />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <a href="/feed">Inicio</a>
+            <a href="/chat">Chats</a>
+            <a href="/crearpost">Postear</a>
+            <IconButton className="notification-icon" onClick={() => navigate("/notificaciones")}>
+              <FaBell size={22} color="white" />
+            </IconButton>
+            <div className="user-menu">
+              <IconButton onClick={handleMenuOpen} className="user-icon">
+                <FaUserCircle size={28} color="white" />
+              </IconButton>
+            </div>
+          </>
+        )}
 
-        <IconButton className="notification-icon" onClick={() => navigate("/notificaciones")}>
-          <FaBell size={22} color="white" />
-        </IconButton>
-
-        <div className="user-menu">
-          <IconButton onClick={handleMenuOpen} className="user-icon">
-            <FaUserCircle size={28} color="white" />
-          </IconButton>
+        {!isMobile && (
           <Menu
             anchorEl={anchorEl}
             open={open}
@@ -68,7 +95,7 @@ const Barranav = () => {
             </MenuItem>
             <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
           </Menu>
-        </div>
+        )}
       </div>
     </nav>
   );

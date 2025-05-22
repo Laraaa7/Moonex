@@ -146,3 +146,131 @@
     transform: rotate(360deg);
   }
 }
+@media screen and (max-width: 480px) {
+  .amigos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .amigos-modal {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 80vh;
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    background-color: #4A5F8C;
+    overflow: hidden;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    margin-right: 1rem;
+    margin-left: 0.5rem;
+  }
+
+  .amigos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #8394b7;
+    position: sticky;
+    top: 0;
+    background-color: #4A5F8C;
+    z-index: 10;
+  }
+
+  .amigos-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #DAE0EE;
+    margin: 0;
+  }
+
+  .close-button {
+    background: transparent;
+    border: none;
+    color: #DAE0EE;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-top: 6px;
+  }
+
+  .close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .amigos-list {
+    max-height: 460px;
+    overflow-y: auto;
+    padding-bottom: 1px;
+  }
+
+  .amigo-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(218, 224, 238, 0.1);
+  }
+
+  .amigo-avatar {
+    width: 42px;
+    height: 42px;
+    margin-right: 2px;
+  }
+
+  .amigo-info {
+    gap: 12px;
+    max-width: 65%;
+  }
+
+  .amigo-text {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .amigo-name {
+    font-size: 15px;
+    margin-bottom: 3px;
+    max-width: 100%;
+  }
+
+  .amigo-username {
+    font-size: 13px;
+    color: rgba(218, 224, 238, 0.7);
+    max-width: 100%;
+  }
+
+  .amigo-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    min-width: 90px;
+    height: 32px;
+    border-radius: 20px;
+    font-weight: 500;
+    background-color: rgba(14, 28, 73, 0.55);
+    color: #DAE0EE;
+  }
+
+  .amigo-btn:hover {
+    background-color: #5d71a0;
+    transform: translateY(-2px);
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+    margin: 30px auto;
+  }
+}

@@ -145,7 +145,15 @@ const Login = () => {
             </label>
 
             <button type="submit">Iniciar Sesión</button>
+
+            <p className="forgot-password">
+              ¿Olvidaste tu contraseña?{' '}
+              <span className="link" onClick={() => navigate('/recuperar')}>
+                Recupérala aquí
+              </span>
+            </p>
           </form>
+
           {message && <p className="message">{message}</p>}
         </div>
       </div>
