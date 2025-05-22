@@ -129,11 +129,11 @@ router.get('/comentarios/:postId', async (req, res) => {
   try {
     const sql = `
       SELECT c.id, c.contenido, c.fecha_comentario AS fecha,
-             u.username, u.nombre, u.foto_perfil
+            c.usuario_id, u.username, u.nombre, u.foto_perfil
       FROM comentarios c
       JOIN usuarios u ON c.usuario_id = u.id
       WHERE c.publicacion_id = ?
-      ORDER BY c.fecha_comentario ASC
+      ORDER BY c.fecha_comentario DESC
     `;
     const [results] = await db.query(sql, [postId]);
     res.json(results);
@@ -158,6 +158,28 @@ router.get('/comentarios/count/:postId', async (req, res) => {
   } catch (err) {
     console.error('Error al contar comentarios:', err);
     res.status(500).json({ error: 'Error al contar comentarios' });
+  }
+});
+
+// Eliminar publicación
+router.delete('/posts/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("DELETE FROM respuestas WHERE comentario_id IN (SELECT id FROM comentarios WHERE publicacion_id = ?)", [id]);
+    await db.query("DELETE FROM comentarios WHERE publicacion_id = ?", [id]);
+    await db.query("DELETE FROM likes WHERE publicacion_id = ?", [id]);
+
+    const [result] = await db.query("DELETE FROM publicaciones WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Publicación no encontrada' });
+    }
+
+    res.json({ success: true, message: "Publicación eliminada correctamente" });
+  } catch (err) {
+    console.error('Error al eliminar publicación:', err);
+    res.status(500).json({ error: 'Error al eliminar publicación' });
   }
 });
 

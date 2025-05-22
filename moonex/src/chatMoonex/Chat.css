@@ -279,8 +279,7 @@
 .confirm-button {
   margin-top: 5px;
   cursor: pointer;
-  color: white;
-  background-color: #d9534f;
+
   border: none;
   padding: 5px;
   border-radius: 5px;
@@ -289,19 +288,9 @@
 .cancel-button {
   margin-top: 5px;
   cursor: pointer;
-  color: white;
-  background-color: #5bc0de;
   border: none;
   padding: 5px;
   border-radius: 5px;
-}
-
-.confirm-button:hover {
-  background-color: #c9302c;
-}
-
-.cancel-button:hover {
-  background-color: #31b0d5;
 }
 
 .delete-confirmation-modal > div {
@@ -330,7 +319,6 @@
   }
 }
 
-
 .delete-confirmation-modal > div {
   background-color: #192c63;
   padding: 24px 32px;
@@ -350,7 +338,7 @@
 
 .delete-confirmation-modal p {
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 16px;
   color: #ccc;
 }
 
@@ -358,6 +346,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  margin-left: 5px;
 }
 
 .cancel-button,
@@ -798,7 +787,38 @@
   object-fit: cover;
   cursor: pointer;
 }
+/* Add a close button to the chat sidebar header for mobile view */
+.mobile-close-button {
+  display: none; /* Hidden by default */
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px;
+  border-radius: 50%;
+}
 
+.mobile-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Only show the close button on mobile devices when sidebar is open */
+@media (max-width: 480px) {
+  .mobile-close-button {
+    display: block;
+    padding-bottom: 40px;
+  }
+  
+  /* Adjust the sidebar header to accommodate the close button */
+  .chat-sidebar-header {
+    position: relative;
+    padding-right: 40px;
+  }
+}
 /* Responsive */
 @media (max-width: 768px) {
   .toggle-sidebar-button {
@@ -812,7 +832,7 @@
     bottom: 0;
     width: 120px;
     z-index: 1000;
-    background-color: rgba(14, 28, 73, 0.8);
+    background-color: rgba(14, 28, 73, 0.936);
   }
 
   .chat-sidebar.closed {

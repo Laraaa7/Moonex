@@ -13,6 +13,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
   const [textoRespuestas, setTextoRespuestas] = useState({});
   const [likes, setLikes] = useState({});
   const [mostrarRespuestas, setMostrarRespuestas] = useState({});
+  const [respuestaAEliminar, setRespuestaAEliminar] = useState(null);
   const userId = currentUser?.id;
 
   useEffect(() => {
@@ -91,10 +92,6 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     }
   };
 
-  const toggleForm = (id) => setMostrarForm(prev => ({ ...prev, [id]: !prev[id] }));
-  const toggleMostrarRespuestas = (id) => setMostrarRespuestas(prev => ({ ...prev, [id]: !prev[id] }));
-  const handleInputChange = (id, value) => setTextoRespuestas(prev => ({ ...prev, [id]: value }));
-
   const enviarRespuesta = async (padreId, esSubrespuesta = false) => {
     const texto = textoRespuestas[padreId]?.trim();
     if (!texto) return;
@@ -117,6 +114,18 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     }
   };
 
+  const eliminarRespuesta = async (respuestaId) => {
+    try {
+      const res = await fetch(`${API_URL}/respuestas/${respuestaId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Error al eliminar respuesta");
+      await cargarTodo();
+    } catch (err) {
+      console.error("Error al eliminar respuesta:", err);
+    }
+  };
+
   const formatearFecha = (fecha) => {
     const dateUTC = new Date(fecha);
     const date = new Date(dateUTC.getTime() + 2 * 60 * 60 * 1000);
@@ -130,6 +139,10 @@ const Respuestas = ({ comentarioId, currentUser }) => {
     const d = Math.floor(h / 24);
     return `${d}d`;
   };
+
+  const toggleForm = (id) => setMostrarForm(prev => ({ ...prev, [id]: !prev[id] }));
+  const toggleMostrarRespuestas = (id) => setMostrarRespuestas(prev => ({ ...prev, [id]: !prev[id] }));
+  const handleInputChange = (id, value) => setTextoRespuestas(prev => ({ ...prev, [id]: value }));
 
   const renderRespuesta = (respuesta, esSub = false) => (
     <div key={respuesta.id} className={`respuesta-item ${esSub ? "subrespuesta" : ""}`}>
@@ -161,7 +174,17 @@ const Respuestas = ({ comentarioId, currentUser }) => {
               : `Ver respuestas (${subrespuestas[respuesta.id].length})`}
           </span>
         )}
+        {currentUser?.id === respuesta.usuario_id && (
+          <span
+            className="comentario-accion-pequena respuesta-eliminar-btn"
+            onClick={() => setRespuestaAEliminar(respuesta.id)}
+            style={{ color: "#ff6b6b", marginLeft: "auto" }}
+          >
+            Eliminar
+          </span>
+        )}
       </div>
+
       {mostrarForm[respuesta.id] && (
         <form
           onSubmit={(e) => {
@@ -180,6 +203,7 @@ const Respuestas = ({ comentarioId, currentUser }) => {
           <button type="submit" className="respuesta-submit">Enviar</button>
         </form>
       )}
+
       {mostrarRespuestas[respuesta.id] && subrespuestas[respuesta.id]?.length > 0 && (
         <div className="respuestas-sublista">
           {subrespuestas[respuesta.id].map((sub) => renderRespuesta(sub, true))}
@@ -191,6 +215,27 @@ const Respuestas = ({ comentarioId, currentUser }) => {
   return (
     <div className="respuestas-container">
       {respuestas.map((respuesta) => renderRespuesta(respuesta))}
+
+      {respuestaAEliminar && (
+        <div className="modal-overlay">
+          <div className="ddelete-confirmation-modal">
+            <h4>¿Eliminar respuesta?</h4>
+            <p>Esta acción es permanente y no se puede deshacer.</p>
+            <div className="modal-buttons">
+              <button className="cancel-button" onClick={() => setRespuestaAEliminar(null)}>Cancelar</button>
+              <button
+                className="confirm-button"
+                onClick={async () => {
+                  await eliminarRespuesta(respuestaAEliminar);
+                  setRespuestaAEliminar(null);
+                }}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

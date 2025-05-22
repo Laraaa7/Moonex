@@ -141,7 +141,7 @@ const SearchBar = () => {
       {results.length > 0 && (
         <List className="search-results" ref={resultsRef}>
           {results.map((item, index) => (
-            <ListItem button key={index} onClick={() => handleSelect(item)}>
+            <ListItem key={index} onClick={() => handleSelect(item)} style={{ cursor: 'pointer' }}>
               {item.type === "usuario" ? (
                 <>
                   <ListItemAvatar>

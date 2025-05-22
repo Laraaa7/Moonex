@@ -169,32 +169,39 @@
 /* portrait */
 @media (max-width: 480px) {
   .posts-section {
-    width: 95%;
+    width: 100%;
     padding: 15px 10px;
     min-height: 250px;
+    align-items: center;
   }
-  
+
   .ppost-card {
     padding: 15px;
-    margin-bottom: 20px;
-    width: 90%;
-    margin-left: -2px;
+    margin-bottom: 15px;
+    width: 89%;
+    margin-left: 1px;    
+    margin-right: 0;
   }
-  
+
   .post-titulo-fecha {
     flex-direction: row;
     gap: 2px;
+    justify-content: center;
   }
+
   .ver-mas-btn {
-    padding: 7px 100px;
+    padding: 7px 50px;
   }
+
   .loading-card {
-    width: 90%;
-    margin-left: 10px;
-  }
-  .posts-scroll-container {
-    padding-left: 25px;
     width: 100%;
+    margin-left: 0;
+  }
+
+  .posts-scroll-container {
+    padding-left: 0;       
+    padding-right: 0;
     margin: 0 auto;
+    width: 100%;
   }
 }

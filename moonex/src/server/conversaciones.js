@@ -48,4 +48,38 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+// Eliminar conversación completa entre dos usuarios (usuario logueado y receptor)
+router.delete('/:conversacionId', async (req, res) => {
+  const conversacionId = parseInt(req.params.conversacionId); // ID del receptor
+  const userId = parseInt(req.query.userId); // ID del usuario logueado (debe venir en query)
+
+  if (!conversacionId || !userId) {
+    return res.status(400).json({ error: "Faltan parámetros" });
+  }
+
+  try {
+    // Obtener todos los mensajes entre ambos usuarios
+    const [mensajes] = await db.query(`
+      SELECT id FROM mensajes 
+      WHERE (emisor_id = ? AND receptor_id = ?) 
+         OR (emisor_id = ? AND receptor_id = ?)
+    `, [userId, conversacionId, conversacionId, userId]);
+
+    const mensajeIds = mensajes.map(m => m.id);
+    
+    if (mensajeIds.length > 0) {
+      // Eliminar imágenes asociadas a esos mensajes
+      await db.query(`DELETE FROM mensaje_imagenes WHERE mensaje_id IN (?)`, [mensajeIds]);
+      // Eliminar mensajes
+      await db.query(`DELETE FROM mensajes WHERE id IN (?)`, [mensajeIds]);
+    }
+
+    res.json({ success: true, message: "Conversación eliminada correctamente" });
+  } catch (err) {
+    console.error("Error al eliminar conversación:", err.message);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+
 module.exports = router;

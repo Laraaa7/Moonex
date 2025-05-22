@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FiMail } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 import Barranav from "../components/Barranav";
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil"; 
 import PostsUsuario from "../components/PostsUsuario";
 import "./Profile.css";
 import "./UserProfile.css";
@@ -19,6 +21,8 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId: username } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const isMobile = useMediaQuery("(max-width: 480px)"); 
 
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "Fecha desconocida";
@@ -130,6 +134,7 @@ const UserProfile = () => {
     return (
       <div className="profile-container">
         <Barranav />
+        {isMobile && <BarraSuperiorMovil />}
         <div className="profile-content">
           <div className="spinner-profile">
             <div className="loader"></div>
@@ -143,6 +148,7 @@ const UserProfile = () => {
     return (
       <div className="profile-container">
         <Barranav />
+        {isMobile && <BarraSuperiorMovil />}
         <div className="profile-content">
           <div className="error-message">
             <h3>Error</h3>
@@ -158,6 +164,7 @@ const UserProfile = () => {
     return (
       <div className="profile-container">
         <Barranav />
+        {isMobile && <BarraSuperiorMovil />} 
         <div className="profile-content">
           <p>Usuario no encontrado</p>
           <button onClick={() => navigate("/")}>Volver al inicio</button>
@@ -169,6 +176,8 @@ const UserProfile = () => {
   return (
     <div className="profile-container">
       <Barranav />
+      {isMobile && <BarraSuperiorMovil />} 
+
       <div className="profile-content">
         <div className="profile-card">
           <div

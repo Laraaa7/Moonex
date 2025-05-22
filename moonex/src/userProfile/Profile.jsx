@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Barranav from "../components/Barranav";
+import BarraSuperiorMovil from "../components/BarraSuperiorMovil";
+import { useMediaQuery } from "@mui/material"; 
 import "./Profile.css";
 import Seguidores from "../components/Seguidores";
 import Siguiendo from "../components/Siguiendo";
@@ -19,6 +21,8 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const isMobile = useMediaQuery("(max-width: 480px)");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -63,6 +67,7 @@ const Profile = () => {
     return (
       <div className="profile-container">
         <Barranav />
+        {isMobile && <BarraSuperiorMovil />} 
         <div className="profile-content">
           <div className="spinner-profile">
             <div className="loader"></div>
@@ -75,6 +80,8 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <Barranav />
+      {isMobile && <BarraSuperiorMovil />}
+
       <div className="profile-content">
         <div className="profile-card">
           <div

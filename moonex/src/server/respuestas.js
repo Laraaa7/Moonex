@@ -130,4 +130,35 @@ router.get('/likes/conteo', async (req, res) => {
   }
 });
 
+/// Función recursiva para eliminar subrespuestas antes que el padre
+async function eliminarSubrespuestas(respuestaId) {
+  const [subrespuestas] = await db.query(
+    'SELECT id FROM respuestas WHERE respuesta_padre_id = ?', 
+    [respuestaId]
+  );
+
+  for (const sub of subrespuestas) {
+    await eliminarSubrespuestas(sub.id); // eliminar nietas, bisnietas...
+    await db.query('DELETE FROM respuestas WHERE id = ?', [sub.id]);
+  }
+}
+
+// Ruta DELETE mejorada que elimina todo en cascada
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await eliminarSubrespuestas(id); // primero eliminar hijas recursivamente
+    const [resultado] = await db.query('DELETE FROM respuestas WHERE id = ?', [id]);
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ mensaje: 'Respuesta no encontrada' });
+    }
+
+    res.json({ mensaje: 'Respuesta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar respuesta:', error);
+    res.status(500).json({ mensaje: 'Error al eliminar respuesta' });
+  }
+});
+
 module.exports = router;

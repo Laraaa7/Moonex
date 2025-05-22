@@ -87,7 +87,9 @@ const Chat = () => {
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // Estado para mostrar el modal de confirmación
   const [mensajeRespondido, setMensajeRespondido] = useState(null);
-
+  const [chatAEliminar, setChatAEliminar] = useState(null);
+  const [mostrarConfirmacionChat, setMostrarConfirmacionChat] = useState(false);
+  
   const SOCKET_URL = process.env.REACT_APP_API_URL;
   const API_URL = process.env.REACT_APP_API_URL;
   
@@ -249,6 +251,7 @@ const Chat = () => {
     document.getElementById("image-upload").click();
   };
 
+  
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     const validFiles = [];
@@ -294,6 +297,7 @@ const Chat = () => {
     setImagePreviews((prev) => [...prev, ...newPreviews]);
   };
 
+  
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() && imagePreviews.length === 0) return;
@@ -322,6 +326,8 @@ const Chat = () => {
     }
   };
 
+
+  
   const handleClosePreview = (index) => {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
@@ -356,12 +362,46 @@ const Chat = () => {
     setShowDeleteConfirm(false); // Cerrar el modal sin eliminar
   };
 
+  const eliminarChatCompleto = async (conversacionId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/conversaciones/${conversacionId}?userId=${currentUser.id}`, {
+        method: "DELETE"
+      });
+      
+  
+      if (!res.ok) throw new Error("Error al eliminar chat");
+  
+      setConversaciones(prev => prev.filter(c => c.id !== conversacionId));
+      setMessages([]);
+  
+      // Cargar al chat más reciente
+      const restantes = conversaciones.filter(c => c.id !== conversacionId);
+      if (restantes.length > 0) {
+        const ordenadas = [...restantes].sort((a, b) =>
+          new Date(b.fecha_envio) - new Date(a.fecha_envio)
+        );
+        navigate(`/chat/${ordenadas[0].username}`);
+      } else {
+        navigate("/chat");
+      }
+  
+    } catch (err) {
+      console.error("Error al eliminar conversación:", err);
+    }
+  };
   return (
     <div className="chat-container">
       <div className={`chat-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
         <div className="chat-sidebar-header">
           <h3>Chats</h3>
-        </div>
+          <button 
+    className="mobile-close-button" 
+    onClick={toggleSidebar}
+    aria-label="Cerrar menú de chats"
+  >
+    <FaTimes size={18} />
+  </button>
+</div>
         <div className="chat-sidebar-rooms">
           {conversaciones.length === 0 ? (
             <div>No hay chats disponibles</div>
@@ -394,6 +434,22 @@ const Chat = () => {
                       ? "📷 Imagen"
                       : ""}
                   </div>
+                  <div className="chat-sidebar-item" onClick={() => handleChatSelect(convo.username)}>
+                {/* ...Avatar y detalles... */}
+                <div className="chat-sidebar-actions">
+                  <button
+                    className="chat-options-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+    setChatAEliminar(convo.id);       // ✅ Guardamos ID
+    setMostrarConfirmacionChat(true); // ✅ Mostramos modal
+                    }}
+                  >
+                    ⋯
+                  </button>
+                </div>
+              </div>
+
                 </div>
               </div>
             ))
@@ -601,6 +657,30 @@ const Chat = () => {
         <div className="modal-buttons">
           <button className="cancel-button" onClick={cancelDeleteMessage}>Cancelar</button>
           <button className="confirm-button" onClick={confirmDeleteMessage}>Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+{mostrarConfirmacionChat && (
+  <div className="modal-overlay" onClick={() => setMostrarConfirmacionChat(false)}>
+    <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="delete-confirmation-box">
+        <h4>¿Eliminar conversación?</h4>
+        <p>Esta acción no se puede deshacer.</p>
+        <div className="modal-buttons">
+          <button className="cancel-button" onClick={() => setMostrarConfirmacionChat(false)}>
+            Cancelar
+          </button>
+          <button
+            className="confirm-button"
+            onClick={() => {
+              eliminarChatCompleto(chatAEliminar);
+              setMostrarConfirmacionChat(false);
+            }}
+          >
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
