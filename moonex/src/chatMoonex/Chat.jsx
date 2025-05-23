@@ -14,7 +14,6 @@ import { FaArrowLeft } from "react-icons/fa";
 
 import "./Chat.css";
 
-const SOCKET_URL = "http://localhost:5000";
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 
@@ -167,7 +166,7 @@ const Chat = () => {
     if (username) {
       fetchReceiverData();
     }
-  }, [username]);
+  }, [username, API_URL]);
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL, {
@@ -216,7 +215,7 @@ const Chat = () => {
     });
 
     return () => newSocket.disconnect();
-  }, [receptorId, currentUser.id]);
+ }, [receptorId, currentUser.id, SOCKET_URL]);
 
   useEffect(() => {
     const fetchConversaciones = async () => {
@@ -232,7 +231,7 @@ const Chat = () => {
     if (currentUser.id) {
       fetchConversaciones();
     }
-  }, [currentUser.id]);
+  }, [currentUser.id, API_URL]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -253,6 +252,25 @@ const Chat = () => {
       navigate(`/chat/${ordenadas[0].username}`);
     }
   }, [username, conversaciones, navigate]);
+
+  const isMobile = window.innerWidth <= 480;
+
+const longPressTimeout = useRef(null);
+
+const handleLongPressStart = (msg) => {
+  if (!isMobile) return;
+  longPressTimeout.current = setTimeout(() => {
+    console.log("Long press activado para:", msg.contenido); // DEBUG
+    setMessageToDelete(msg.id);
+  }, 500);
+};
+
+const handleLongPressEnd = () => {
+  if (longPressTimeout.current) {
+    clearTimeout(longPressTimeout.current);
+    longPressTimeout.current = null;
+  }
+};
 
   const triggerImageUpload = () => {
     document.getElementById("image-upload").click();
@@ -506,9 +524,19 @@ const Chat = () => {
     const isSelf = msg.emisor_id === currentUser.id;
     return (
       <div
-        key={index}
-        className={`message-container ${isSelf ? "self-message" : "other-message"}`}
-      >
+      key={index}
+      className={`message-container ${isSelf ? "self-message" : "other-message"}`}
+      onTouchStart={() => handleLongPressStart(msg)}
+      onTouchEnd={handleLongPressEnd}
+      onTouchMove={handleLongPressEnd}
+      onMouseDown={(e) => {
+        if (!isMobile) return;
+        handleLongPressStart(msg);
+      }}
+      onMouseUp={handleLongPressEnd}
+      onMouseLeave={handleLongPressEnd}
+    >
+    
         <div className="messages">
         {msg.responde_a && (
   <div className="mensaje-original-preview">
@@ -547,15 +575,38 @@ const Chat = () => {
             {formatearFechaMensaje(msg.fecha_envio)}
           </span>
           <div className="message-options-container">
-            <button
-              className="message-options-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setMessageToDelete((prev) => (prev === msg.id ? null : msg.id));
-              }}
-            >
-              ⋯
-            </button>
+          {window.innerWidth > 480 && (
+  <button
+    className="message-options-button"
+    onClick={(e) => {
+      e.stopPropagation();
+      setMessageToDelete((prev) => (prev === msg.id ? null : msg.id));
+    }}
+  >
+    ⋯
+  </button>
+)}
+
+{/* Mostrar el menú si es el mensaje seleccionado, incluso en móvil */}
+{messageToDelete === msg.id && (
+  <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
+    {isSelf && (
+      <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
+        <RiDeleteBin6Line style={{ marginRight: 8 }} /> Eliminar
+      </div>
+    )}
+    <div
+      className="message-option"
+      onClick={() => {
+        setMensajeRespondido(msg);
+        setMessageToDelete(null);
+      }}
+    >
+      <BiCommentDetail style={{ marginRight: 8 }} /> Responder
+    </div>
+  </div>
+)}
+
 
             {messageToDelete === msg.id && (
   <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
@@ -705,7 +756,7 @@ const Chat = () => {
                   { method: "DELETE" }
                 );
                 if (!res.ok) throw new Error("Error al eliminar todas las conversaciones");
-                const data = await res.json();
+                await res.json();
                 setConversaciones([]);
                 setMessages([]);
                 setMostrarModalEliminarTodo(false);

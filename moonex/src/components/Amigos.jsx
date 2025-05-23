@@ -6,7 +6,7 @@ import defaultProfile from "../img/PfpDefecto.png";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-const Amigos = ({ onClose }) => {
+const Amigos = ({ onClose, userId }) => {
   const [amigos, setAmigos] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -14,10 +14,10 @@ const Amigos = ({ onClose }) => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    const fetchAmigos = async () => {
+    const fetchAmigos = async (idParaBuscar) => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${currentUser.id}`);
+        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${idParaBuscar}`);
         const seguidos = await res.json();
 
         const amigosMutuos = [];
@@ -29,7 +29,7 @@ const Amigos = ({ onClose }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               seguidor_id: user.id,
-              seguido_id: currentUser.id,
+              seguido_id: idParaBuscar,
             }),
           });
 
@@ -50,10 +50,11 @@ const Amigos = ({ onClose }) => {
       }
     };
 
-    if (currentUser?.id) {
-      fetchAmigos();
+    const idParaBuscar = userId || currentUser?.id;
+    if (idParaBuscar) {
+      fetchAmigos(idParaBuscar);
     }
-  }, [currentUser?.id]);
+  }, [userId, currentUser?.id]);
 
   const toggleFollow = async (usuarioId) => {
     try {
@@ -97,7 +98,7 @@ const Amigos = ({ onClose }) => {
           {isLoading ? (
             <div className="spinner"></div>
           ) : amigos.length === 0 ? (
-            <p>No tienes amigos aún.</p>
+            <p>No se encontraron amigos.</p>
           ) : (
             amigos.map((user) => (
               <div
@@ -121,7 +122,7 @@ const Amigos = ({ onClose }) => {
                     <p className="amigo-username">@{user.username}</p>
                   </div>
                 </div>
-                {user.id !== currentUser.id && (
+                {!userId && user.id !== currentUser.id && (
                   <button
                     className={`amigo-btn ${estadoBotones[user.id] ? "amigos" : ""}`}
                     onClick={(e) => {

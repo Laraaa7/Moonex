@@ -206,7 +206,7 @@
   transition: all 0.2s ease;
 }
 
-.cancel-button {
+.cancel-buttton {
   background-color: transparent;
   border: 2px solid #DAE0EE;
   color: #DAE0EE;
@@ -221,7 +221,7 @@
   background-color: #5d71a0;
 }
 
-.cancel-button:hover {
+.cancel-buttton:hover {
   background-color: rgba(143, 154, 182, 0.1);
 }
 
@@ -230,6 +230,8 @@
 @media (max-width: 480px) {
   .modal-content {
     padding: 15px;
+    margin-right: 20px;
+    margin-bottom: 20px;
   }
   
   .modal-buttons {
@@ -237,7 +239,10 @@
     gap: 10px;
   }
   
-  .save-button, .cancel-button {
+  .close-button{
+    margin-top: 20px;
+  }
+  .save-button, .cancel-buttton {
     width: 100%;
   }
 }

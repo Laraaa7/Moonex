@@ -148,7 +148,7 @@ const CrearPost = () => {
             >
               Publicar
             </button>
-            <button className="cancel-button" onClick={handleCancel}>Cancelar</button>
+            <button className="cancel-buttton" onClick={handleCancel}>Cancelar</button>
           </div>
         </div>
       </div>

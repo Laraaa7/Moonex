@@ -6,20 +6,19 @@ import defaultProfile from "../img/PfpDefecto.png";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-const Siguiendo = ({ onClose }) => {
+const Siguiendo = ({ onClose, userId }) => {
   const [siguiendo, setSiguiendo] = useState([]);
   const [estadoBoton, setEstadoBoton] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = currentUser?.id;
 
   useEffect(() => {
-    const fetchSiguiendo = async () => {
+    const fetchSiguiendo = async (idParaBuscar) => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${userId}`);
+        const res = await fetch(`${API_BASE_URL}/social/siguiendo/${idParaBuscar}`);
         const data = await res.json();
         setSiguiendo(data);
 
@@ -35,10 +34,11 @@ const Siguiendo = ({ onClose }) => {
       }
     };
 
-    if (userId) {
-      fetchSiguiendo();
+    const idParaBuscar = userId || currentUser?.id;
+    if (idParaBuscar) {
+      fetchSiguiendo(idParaBuscar);
     }
-  }, [userId]);
+  }, [userId, currentUser?.id]);
 
   const toggleFollow = async (usuarioId) => {
     try {
@@ -46,7 +46,7 @@ const Siguiendo = ({ onClose }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          seguidor_id: userId,
+          seguidor_id: currentUser.id,
           seguido_id: usuarioId,
         }),
       });
@@ -78,7 +78,7 @@ const Siguiendo = ({ onClose }) => {
           {isLoading ? (
             <div className="spinner"></div>
           ) : siguiendo.length === 0 ? (
-            <p>No estás siguiendo a nadie todavía.</p>
+            <p>No está siguiendo a nadie todavía.</p>
           ) : (
             siguiendo.map((user) => (
               <div
@@ -103,15 +103,17 @@ const Siguiendo = ({ onClose }) => {
                   </div>
                 </div>
 
-                <button
-                  className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFollow(user.id);
-                  }}
-                >
-                  {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
-                </button>
+                {!userId && user.id !== currentUser.id && (
+                  <button
+                    className={`follow-btn ${estadoBoton[user.id] ? "following" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFollow(user.id);
+                    }}
+                  >
+                    {estadoBoton[user.id] ? "Siguiendo" : "Seguir"}
+                  </button>
+                )}
               </div>
             ))
           )}

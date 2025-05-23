@@ -6,7 +6,7 @@ import defaultProfile from "../img/PfpDefecto.png";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-const Seguidores = ({ onClose }) => {
+const Seguidores = ({ onClose, userId }) => {
   const [seguidores, setSeguidores] = useState([]);
   const [estadoBotones, setEstadoBotones] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -14,28 +14,30 @@ const Seguidores = ({ onClose }) => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    const fetchSeguidores = async () => {
+    const fetchSeguidores = async (idParaBuscar) => {
       try {
         setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/social/seguidores/${currentUser.id}`);
+        const res = await fetch(`${API_BASE_URL}/social/seguidores/${idParaBuscar}`);
         const data = await res.json();
         setSeguidores(data);
 
-        const estados = {};
-        for (const user of data) {
-          const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              seguidor_id: currentUser.id,
-              seguido_id: user.id,
-            }),
-          });
-          const checkData = await checkRes.json();
-          estados[user.id] = checkData.isFollowing;
+        // Solo obtener estado de botones si el usuario actual está viendo su perfil
+        if (!userId || userId === currentUser.id) {
+          const estados = {};
+          for (const user of data) {
+            const checkRes = await fetch(`${API_BASE_URL}/social/check`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                seguidor_id: currentUser.id,
+                seguido_id: user.id,
+              }),
+            });
+            const checkData = await checkRes.json();
+            estados[user.id] = checkData.isFollowing;
+          }
+          setEstadoBotones(estados);
         }
-
-        setEstadoBotones(estados);
       } catch (err) {
         console.error("Error al obtener seguidores:", err);
       } finally {
@@ -43,10 +45,11 @@ const Seguidores = ({ onClose }) => {
       }
     };
 
-    if (currentUser?.id) {
-      fetchSeguidores();
+    const idParaBuscar = userId || currentUser.id;
+    if (idParaBuscar) {
+      fetchSeguidores(idParaBuscar);
     }
-  }, [currentUser?.id]);
+  }, [userId, currentUser.id]);
 
   const toggleFollow = async (usuarioId) => {
     try {
@@ -90,7 +93,7 @@ const Seguidores = ({ onClose }) => {
           {isLoading ? (
             <div className="spinner"></div>
           ) : seguidores.length === 0 ? (
-            <p>No tienes seguidores aún.</p>
+            <p>No tiene seguidores aún.</p>
           ) : (
             seguidores.map((user) => (
               <div
@@ -114,7 +117,9 @@ const Seguidores = ({ onClose }) => {
                     <p className="follower-username">@{user.username}</p>
                   </div>
                 </div>
-                {user.id !== currentUser.id && (
+
+                {/* Solo mostrar botón de seguir si estás viendo tu propio perfil */}
+                {!userId && user.id !== currentUser.id && (
                   <button
                     className={`follow-btn ${estadoBotones[user.id] ? "following" : ""}`}
                     onClick={(e) => {
