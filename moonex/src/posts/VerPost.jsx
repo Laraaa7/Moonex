@@ -241,26 +241,23 @@ const VerPost = () => {
       console.error("Error al enviar respuesta:", err);
     }
   };
-  const formatearTiempo = (fechaString) => {
-    const publicadaUTC = new Date(fechaString);
-    const publicadaLocal = new Date(
-      publicadaUTC.getTime() + publicadaUTC.getTimezoneOffset() * 60000
-    );
-    const ahora = new Date();
-  
-    const diffSegundos = Math.floor((ahora - publicadaLocal) / 1000);
-    if (diffSegundos < 0) return "Justo ahora";
-  
-    if (diffSegundos < 60) return `${diffSegundos}s`;
-    const minutos = Math.floor(diffSegundos / 60);
-    if (minutos < 60) return `${minutos}min`;
-    const horas = Math.floor(minutos / 60);
-    if (horas < 24) return `${horas}h`;
-    const dias = Math.floor(horas / 24);
-    return `${dias}d`;
-  };
-  
-  
+const formatearTiempo = (fechaString) => {
+  const publicadaLocal = new Date(fechaString);
+  const ahora = new Date();
+  const diffSegundos = Math.floor((ahora - publicadaLocal) / 1000);
+  const minutos = Math.floor(diffSegundos / 60);
+  const horas = Math.floor(minutos / 60);
+  const dias = Math.floor(horas / 24);
+  const meses = Math.floor(dias / 30);
+  const anos = Math.floor(dias / 365);
+  if (diffSegundos < 60) return `${diffSegundos}s`;
+  if (minutos < 60) return `${minutos}min`;
+  if (horas < 24) return `${horas}h`;
+  if (dias < 30) return `${dias}d`;
+  if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
+  return `${anos}año${anos > 1 ? "s" : ""}`;
+};
+
   const navigateToProfile = (username, userIdParam) => {
     if (!currentUser.username) return navigate("/login");
     if (currentUser.username === username || currentUser.id === userIdParam) {
