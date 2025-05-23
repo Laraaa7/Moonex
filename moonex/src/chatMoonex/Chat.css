@@ -71,10 +71,17 @@
 .chat-sidebar-header-info {
   display: flex;
   align-items: center;
-  gap: 5px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
 }
 
+.chat-sidebar-header-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: 80%;
+}
 .chat-sidebar-name {
   font-weight: bold;
   color: #fff;
@@ -188,18 +195,17 @@
 }
 
 .messages {
-  padding: 8px 15px; /* Reducido desde 15px */
+  padding: 8px 15px; 
   border-radius: 15px;
   max-width: 70%;
   word-wrap: break-word;
   position: relative;
-  margin: 2px 0; /* Añadido margin más pequeño */
+  margin: 2px 0; 
 }
 
-/* Reducir el tamaño del texto dentro del mensaje */
 .messages p {
-  margin: 3px 0; /* Reducir el margen del párrafo dentro del mensaje */
-  line-height: 1.3; /* Reducir la altura de línea */
+  margin: 3px 0; 
+  line-height: 1.3; 
 }
 
 .self-message .messages {
@@ -473,27 +479,27 @@
 
 .mensaje-original-preview {
   width: 100%;
-  margin-bottom: 4px; /* Reducir desde 6px */
-  padding: 4px 8px; /* Reducir el padding */
+  margin-bottom: 4px; 
+  padding: 4px 8px; 
   border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.08); /* sutil fondo */
+  background-color: rgba(255, 255, 255, 0.08);
   box-sizing: border-box;
 }
 
 .mensaje-original-label {
-  font-size: 0.7rem; /* Reducir desde 0.75rem */
+  font-size: 0.7rem;
   font-weight: 500;
-  color: #d1d1d1; /* gris claro */
-  margin-bottom: 2px; /* Reducir desde 4px */
+  color: #d1d1d1;
+  margin-bottom: 2px;
   display: block;
 }
 
 .mensaje-original-texto {
-  font-size: 0.85rem; /* Reducir desde 0.9rem */
+  font-size: 0.85rem; 
   color: inherit;
   word-wrap: break-word;
   white-space: pre-wrap;
-  line-height: 1.2; /* Añadir altura de línea más compacta */
+  line-height: 1.2;
 }
 
 .mensaje-original-imagen {
@@ -717,11 +723,11 @@
 }
 
 .message-time {
-  display: inline-block; /* Cambiar a inline-block */
-  font-size: 0.7rem; /* Reducir tamaño de la fuente */
+  display: inline-block; 
+  font-size: 0.7rem; 
   color: #ccc;
-  margin-top: 2px; /* Reducir margen superior */
-  margin-left: 5px; /* Añadir un pequeño margen izquierdo */
+  margin-top: 2px;
+  margin-left: 5px; 
   text-align: right;
 }
 
@@ -787,16 +793,16 @@
   object-fit: cover;
   cursor: pointer;
 }
-/* Add a close button to the chat sidebar header for mobile view */
+
 .mobile-close-button {
-  display: none; /* Hidden by default */
+  display: none;
   background: transparent;
   border: none;
   color: white;
   cursor: pointer;
   position: absolute;
   right: 10px;
-  top: 50%;
+  top: 30%;
   transform: translateY(-50%);
   padding: 8px;
   border-radius: 50%;
@@ -805,6 +811,32 @@
 .mobile-close-button:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+.chat-sidebar-actions {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.chat-sidebar-item:hover .chat-sidebar-actions {
+  opacity: 1;
+}
+
+.chat-options-button {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.chat-options-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: red;
+}
+
 
 /* Only show the close button on mobile devices when sidebar is open */
 @media (max-width: 480px) {
@@ -819,6 +851,60 @@
     padding-right: 40px;
   }
 }
+
+.chat-sidebar-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-all-button {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 150px;
+  margin-top: 6px;
+}
+
+.clear-all-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: red;
+}
+
+.back-to-feed-button {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  margin-top: 5px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.back-to-feed-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .toggle-sidebar-button {
@@ -946,6 +1032,9 @@
     max-width: calc(100% - 45px);
   }
 
+  .clear-all-button {
+    margin-left: 20px;
+  }
   /* Improve message options positioning */
   .self-message .message-options-container {
     left: -20px;

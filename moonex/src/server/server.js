@@ -18,6 +18,7 @@ const busquedaRouter = require('./busqueda');
 const respuestasRoutes = require('./respuestas');
 const notificacionesRoutes = require('./notificaciones');
 const verifyEmailRoute = require('./verifyEmail');
+const comentariosRoutes = require('./comentarios');
 
 const recuperarRoutes = require('./recuperar');
 const resetPasswordRoutes = require('./resetPassword');
@@ -50,6 +51,7 @@ app.use('/api/conversaciones', conversacionesRoutes);
 app.use('/api/busqueda', busquedaRouter);
 app.use('/respuestas', respuestasRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
+app.use('/comentarios', comentariosRoutes);
 
 app.use('/api/auth/recuperar', recuperarRoutes);
 app.use('/auth/reset-password', resetPasswordRoutes);
