@@ -42,7 +42,7 @@
     resize: none;
     font-family: sans-serif;
     border-radius: 20px;
-    padding: 0 15px; /* quitamos padding vertical */
+    padding: 0 15px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -92,5 +92,24 @@
     border-top: 1px solid rgba(218, 224, 238, 0.2);
     margin-bottom: 20px;
     margin-top: -20px;
+  }
+
+  @media (max-width: 480px) {
+    .comments-container {
+      width: 84%;
+      padding: 10px;
+    }
+  
+    .comments-form {
+      width: 100%;
+    }
+  
+    .comments-form textarea {
+      width: 100%;
+    }
+  
+    .comments-divider {
+      width: 100%;
+    }
   }
   
