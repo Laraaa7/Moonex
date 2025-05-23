@@ -241,12 +241,14 @@ const VerPost = () => {
       console.error("Error al enviar respuesta:", err);
     }
   };
-  const formatearTiempo = (fechaUTC) => {
-    const publicada = new Date(fechaUTC); 
+  const formatearTiempo = (fechaString) => {
+    const publicadaUTC = new Date(fechaString);
+    const publicadaLocal = new Date(
+      publicadaUTC.getTime() + publicadaUTC.getTimezoneOffset() * 60000
+    );
     const ahora = new Date();
   
-    const diffSegundos = Math.floor((ahora - publicada) / 1000);
-  
+    const diffSegundos = Math.floor((ahora - publicadaLocal) / 1000);
     if (diffSegundos < 0) return "Justo ahora";
   
     if (diffSegundos < 60) return `${diffSegundos}s`;
@@ -257,6 +259,7 @@ const VerPost = () => {
     const dias = Math.floor(horas / 24);
     return `${dias}d`;
   };
+  
   
   const navigateToProfile = (username, userIdParam) => {
     if (!currentUser.username) return navigate("/login");
