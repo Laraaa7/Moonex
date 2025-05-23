@@ -15,28 +15,33 @@ router.get('/link-preview', async (req, res) => {
     const response = await axios.get(url, { 
       timeout: 10000,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
       }
     });
+    
     
     const html = response.data;
     const $ = cheerio.load(html);
 
     const metadata = {
-      title: $('meta[property="og:title"]').attr('content') || 
+      title: $('meta[property="og:title"]').attr('content') ||
+             $('meta[name="twitter:title"]').attr('content') ||
              $('title').text() || 
              '',
-      description: $('meta[property="og:description"]').attr('content') || 
+      description: $('meta[property="og:description"]').attr('content') ||
+                  $('meta[name="twitter:description"]').attr('content') ||
                   $('meta[name="description"]').attr('content') || 
                   $('p').first().text().substring(0, 100) || 
                   '',
       image: $('meta[property="og:image"]').attr('content') || 
-             $('meta[property="twitter:image"]').attr('content') || 
+             $('meta[name="twitter:image"]').attr('content') || 
              $('img').first().attr('src') || 
              '',
       siteName: $('meta[property="og:site_name"]').attr('content') || 
+               $('meta[name="twitter:site"]').attr('content') ||
                new URL(url).hostname
     };
+    
 
     if (metadata.image && !metadata.image.startsWith('http')) {
       const urlObj = new URL(url);

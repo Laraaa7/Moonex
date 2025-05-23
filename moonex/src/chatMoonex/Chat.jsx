@@ -6,6 +6,12 @@ import { IoMdSend } from "react-icons/io";
 import { HiMenu } from "react-icons/hi";
 import { FaTimes } from "react-icons/fa";
 import pfpDefecto from "../img/PfpDefecto.png";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { MdOutlineDeleteSweep } from "react-icons/md";
+import { BiCommentDetail } from "react-icons/bi";
+import { FaArrowLeft } from "react-icons/fa";
+
+
 import "./Chat.css";
 
 const SOCKET_URL = "http://localhost:5000";
@@ -89,7 +95,8 @@ const Chat = () => {
   const [mensajeRespondido, setMensajeRespondido] = useState(null);
   const [chatAEliminar, setChatAEliminar] = useState(null);
   const [mostrarConfirmacionChat, setMostrarConfirmacionChat] = useState(false);
-  
+  const [mostrarModalEliminarTodo, setMostrarModalEliminarTodo] = useState(false);
+
   const SOCKET_URL = process.env.REACT_APP_API_URL;
   const API_URL = process.env.REACT_APP_API_URL;
   
@@ -371,11 +378,11 @@ const Chat = () => {
   
       if (!res.ok) throw new Error("Error al eliminar chat");
   
-      setConversaciones(prev => prev.filter(c => c.id !== conversacionId));
+      setConversaciones(prev => prev.filter(c => c.id !== conversacionId && c.usuario_id !== conversacionId));
       setMessages([]);
   
       // Cargar al chat más reciente
-      const restantes = conversaciones.filter(c => c.id !== conversacionId);
+      const restantes = conversaciones.filter(c => c.id !== conversacionId && c.usuario_id !== conversacionId);
       if (restantes.length > 0) {
         const ordenadas = [...restantes].sort((a, b) =>
           new Date(b.fecha_envio) - new Date(a.fecha_envio)
@@ -393,68 +400,80 @@ const Chat = () => {
     <div className="chat-container">
       <div className={`chat-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
         <div className="chat-sidebar-header">
-          <h3>Chats</h3>
-          <button 
-    className="mobile-close-button" 
-    onClick={toggleSidebar}
-    aria-label="Cerrar menú de chats"
-  >
-    <FaTimes size={18} />
+        <div className="chat-sidebar-header-title">
+  <button className="back-to-feed-button" onClick={() => navigate('/feed')} title="Volver al feed">
+    <FaArrowLeft />
   </button>
-</div>
-        <div className="chat-sidebar-rooms">
-          {conversaciones.length === 0 ? (
-            <div>No hay chats disponibles</div>
-          ) : (
-            conversaciones.map((convo) => (
-              <div
-                key={convo.id}
-                className="chat-sidebar-item"
-                onClick={() => handleChatSelect(convo.username)}
-              >
-                <div className="chat-avatar-small">
-                  {convo.foto_perfil ? (
-                    <img src={convo.foto_perfil} alt="Perfil" />
-                  ) : (
-                    <img src={pfpDefecto} alt="Por defecto" />
-                  )}
-                </div>
-                <div className="chat-sidebar-info">
-                  <div className="chat-sidebar-header-info">
-                    <span className="chat-sidebar-name">{convo.nombre}</span>
-                    <span className="chat-sidebar-username">@{convo.username}</span>
-                    <span className="chat-sidebar-date">
-                      • {formatearTiempoChat(convo.fecha_envio)}
-                    </span>
-                  </div>
-                  <div className="chat-last-message">
-                    {convo.ultimo_mensaje
-                      ? convo.ultimo_mensaje
-                      : convo.tiene_imagen
-                      ? "📷 Imagen"
-                      : ""}
-                  </div>
-                  <div className="chat-sidebar-item" onClick={() => handleChatSelect(convo.username)}>
-                {/* ...Avatar y detalles... */}
-                <div className="chat-sidebar-actions">
-                  <button
-                    className="chat-options-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-    setChatAEliminar(convo.id);       // ✅ Guardamos ID
-    setMostrarConfirmacionChat(true); // ✅ Mostramos modal
-                    }}
-                  >
-                    ⋯
-                  </button>
-                </div>
-              </div>
+  <h3>Chats</h3>
+  <div className="chat-header-buttons">
+  <button
+  className="clear-all-button"
+  title="Eliminar todas las conversaciones"
+  onClick={() => setMostrarModalEliminarTodo(true)}
+>
+  <MdOutlineDeleteSweep size={20} />
+</button>
 
-                </div>
-              </div>
-            ))
-          )}
+    <button className="mobile-close-button" onClick={toggleSidebar}>
+      <FaTimes size={18} />
+    </button>
+  </div>
+</div>
+
+</div>
+<div className="chat-sidebar-rooms">
+  {conversaciones.length === 0 ? (
+    <div>No hay chats disponibles</div>
+  ) : (
+    conversaciones.map((convo) => (
+      <div
+        key={convo.id}
+        className="chat-sidebar-item"
+        onClick={() => handleChatSelect(convo.username)}
+      >
+        <div className="chat-avatar-small">
+          <img src={convo.foto_perfil || pfpDefecto} alt="Perfil" />
         </div>
+
+        <div className="chat-sidebar-info">
+          {/* Encabezado: nombre, username, tiempo y papelera a la derecha */}
+          <div className="chat-sidebar-header-info">
+            <div className="chat-sidebar-header-left">
+              <span className="chat-sidebar-name">{convo.nombre}</span>
+              <span className="chat-sidebar-username">@{convo.username}</span>
+              <span className="chat-sidebar-date">• {formatearTiempoChat(convo.fecha_envio)}</span>
+            </div>
+            <div className="chat-sidebar-actions">
+              <button
+                className="chat-options-button"
+                title="Eliminar conversación"
+                aria-label="Eliminar conversación"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setChatAEliminar(convo.id);
+                  setMostrarConfirmacionChat(true);
+                }}
+              >
+                <RiDeleteBin6Line size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Último mensaje */}
+          <div className="chat-last-message">
+            {convo.ultimo_mensaje
+              ? convo.ultimo_mensaje
+              : convo.tiene_imagen
+              ? "📷 Imagen"
+              : ""}
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
+   
       </div>
       <div className={`chat-main ${isSidebarOpen ? "with-sidebar" : "full-width"}`}>
         <div className="chat-header">
@@ -539,23 +558,24 @@ const Chat = () => {
             </button>
 
             {messageToDelete === msg.id && (
-              <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
-                {isSelf && (
-                  <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
-                    🗑️ Eliminar
-                  </div>
-                )}
-                <div
-                  className="message-option"
-                  onClick={() => {
-                    setMensajeRespondido(msg);
-                    setMessageToDelete(null); // Cerrar el menú
-                  }}
-                >
-                  💬 Responder
-                </div>
-              </div>
-            )}
+  <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
+    {isSelf && (
+      <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
+        <RiDeleteBin6Line style={{ marginRight: 8 }} /> Eliminar
+      </div>
+    )}
+    <div
+      className="message-option"
+      onClick={() => {
+        setMensajeRespondido(msg);
+        setMessageToDelete(null); // Cerrar el menú
+      }}
+    >
+      <BiCommentDetail style={{ marginRight: 8 }} /> Responder
+    </div>
+  </div>
+)}
+
           </div>
         </div>
       </div>
@@ -662,6 +682,48 @@ const Chat = () => {
     </div>
   </div>
 )}
+
+{mostrarModalEliminarTodo && (
+  <div className="modal-overlay" onClick={() => setMostrarModalEliminarTodo(false)}>
+    <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="delete-confirmation-box">
+        <h4>¿Eliminar todas las conversaciones?</h4>
+        <p>Esta acción no se puede deshacer.</p>
+        <div className="modal-buttons">
+          <button
+            className="cancel-button"
+            onClick={() => setMostrarModalEliminarTodo(false)}
+          >
+            Cancelar
+          </button>
+          <button
+            className="confirm-button"
+            onClick={async () => {
+              try {
+                const res = await fetch(
+                  `${process.env.REACT_APP_API_URL}/api/conversaciones/todas/${currentUser.id}`,
+                  { method: "DELETE" }
+                );
+                if (!res.ok) throw new Error("Error al eliminar todas las conversaciones");
+                const data = await res.json();
+                setConversaciones([]);
+                setMessages([]);
+                setMostrarModalEliminarTodo(false);
+                navigate("/chat");
+              } catch (err) {
+                console.error(err);
+                alert("No se pudo eliminar todas las conversaciones");
+              }
+            }}
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
 {mostrarConfirmacionChat && (
   <div className="modal-overlay" onClick={() => setMostrarConfirmacionChat(false)}>
     <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>

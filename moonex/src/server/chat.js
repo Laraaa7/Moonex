@@ -44,41 +44,60 @@ const setupChat = (server) => {
     }
 
     // Nuevo mensaje
-    socket.on("new message", async (message) => {
-      console.log("Mensaje recibido");
+ // Nuevo mensaje
+socket.on("new message", async (message) => {
+  console.log("Mensaje recibido");
 
-      const messageQuery = `
-        INSERT INTO mensajes (emisor_id, receptor_id, contenido, fecha_envio, responde_a)
-        VALUES (?, ?, ?, ?, ?)
+  const messageQuery = `
+    INSERT INTO mensajes (emisor_id, receptor_id, contenido, fecha_envio, responde_a)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  const messageValues = [
+    message.emisor_id,
+    message.receptor_id,
+    message.contenido || "",
+    new Date(),
+    message.responde_a || null
+  ];
+
+  try {
+    // Insertar mensaje
+    const [result] = await db.query(messageQuery, messageValues);
+    const mensaje_id = result.insertId;
+    const messageWithId = { ...message, id: mensaje_id };
+
+    // Guardar imágenes si hay
+    if (message.imagenes && message.imagenes.length > 0) {
+      const imageValues = message.imagenes.map((img) => [mensaje_id, img]);
+      const imageQuery = `
+        INSERT INTO mensaje_imagenes (mensaje_id, imagen_url)
+        VALUES ?
       `;
-      const messageValues = [
-        message.emisor_id,
-        message.receptor_id,
-        message.contenido || "",
-        new Date(),
-        message.responde_a || null
-      ];
+      await db.query(imageQuery, [imageValues]);
+      console.log("Imágenes guardadas para el mensaje ID:", mensaje_id);
+    }
 
-      try {
-        const [result] = await db.query(messageQuery, messageValues);
-        const mensaje_id = result.insertId;
-        const messageWithId = { ...message, id: mensaje_id };
+    // Eliminar eliminación lógica si el emisor había borrado la conversación
+    await db.query(
+      `DELETE FROM conversaciones_eliminadas 
+      WHERE usuario_id = ? AND conversacion_id = ?`,
+      [message.emisor_id, message.receptor_id]
+    );
 
-        if (message.imagenes && message.imagenes.length > 0) {
-          const imageValues = message.imagenes.map((img) => [mensaje_id, img]);
-          const imageQuery = `
-            INSERT INTO mensaje_imagenes (mensaje_id, imagen_url)
-            VALUES ?
-          `;
-          await db.query(imageQuery, [imageValues]);
-          console.log("Imágenes guardadas para el mensaje ID:", mensaje_id);
-        }
+    // Eliminar eliminación lógica si el receptor había borrado la conversación
+    await db.query(
+      `DELETE FROM conversaciones_eliminadas 
+      WHERE usuario_id = ? AND conversacion_id = ?`,
+      [message.receptor_id, message.emisor_id]
+    );
 
-        io.emit("new message", messageWithId);
-      } catch (err) {
-        console.error("Error al guardar el mensaje:", err.message);
-      }
-    });
+
+    // Emitir el nuevo mensaje a todos
+    io.emit("new message", messageWithId);
+  } catch (err) {
+    console.error("Error al guardar el mensaje:", err.message);
+  }
+});
 
     // Eliminar mensaje
     socket.on("delete message", async (messageId) => {
