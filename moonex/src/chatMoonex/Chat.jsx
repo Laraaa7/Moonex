@@ -95,6 +95,8 @@ const Chat = () => {
   const [chatAEliminar, setChatAEliminar] = useState(null);
   const [mostrarConfirmacionChat, setMostrarConfirmacionChat] = useState(false);
   const [mostrarModalEliminarTodo, setMostrarModalEliminarTodo] = useState(false);
+  const menuRef = useRef(null);
+  const [bloquearClickOutside, setBloquearClickOutside] = useState(false);
 
   const SOCKET_URL = process.env.REACT_APP_API_URL;
   const API_URL = process.env.REACT_APP_API_URL;
@@ -253,15 +255,25 @@ const Chat = () => {
     }
   }, [username, conversaciones, navigate]);
 
-  const isMobile = window.innerWidth <= 480;
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+  
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
 
 const longPressTimeout = useRef(null);
 
 const handleLongPressStart = (msg) => {
   if (!isMobile) return;
   longPressTimeout.current = setTimeout(() => {
-    console.log("Long press activado para:", msg.contenido); // DEBUG
+    setBloquearClickOutside(true); // Bloquear durante unos milisegundos
     setMessageToDelete(msg.id);
+    setTimeout(() => setBloquearClickOutside(false), 300); // Desbloquea tras 300ms
   }, 500);
 };
 
@@ -271,6 +283,24 @@ const handleLongPressEnd = () => {
     longPressTimeout.current = null;
   }
 };
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (bloquearClickOutside) return;
+
+    const clickedInsideMenu = event.target.closest(".message-options-menu");
+    const clickedInsideMessage = event.target.closest(".message-container");
+
+    if (!clickedInsideMenu && !clickedInsideMessage && messageToDelete !== null && isMobile) {
+      setMessageToDelete(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, [messageToDelete, bloquearClickOutside, isMobile]);
+
+
+
 
   const triggerImageUpload = () => {
     document.getElementById("image-upload").click();
@@ -590,6 +620,8 @@ const handleLongPressEnd = () => {
 {/* Mostrar el menú si es el mensaje seleccionado, incluso en móvil */}
 {messageToDelete === msg.id && (
   <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
+
+
     {isSelf && (
       <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
         <RiDeleteBin6Line style={{ marginRight: 8 }} /> Eliminar

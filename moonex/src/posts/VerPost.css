@@ -480,10 +480,34 @@ max-height: calc(100vh - 120px);
     margin-top: -30px ;
     padding: 10px;
     width: 84%;
-    margin-left: 10px;
+    margin-left: 8px;
     margin-bottom: 25px;
   }
-  
+.comentario-form {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 60px;
+}
+
+.comentario-input {
+  flex: 1 1 70%;
+  min-width: 0;
+}
+
+.comentario-submit {
+  flex: 1 1 25%;
+  max-width: 120px;
+  white-space: nowrap;
+}
+
+  .post-options-dropdown {
+    left: 0;
+    right: 0;
+    top: 50px;
+    margin-left: -100px;
+  }
   .verpost-card {
     padding: 12px;
     width: 320px;
@@ -504,11 +528,30 @@ max-height: calc(100vh - 120px);
     width: 40px;
   } 
 
-  .comentario-submit {
-    margin-top: 5px;
-    height: 40px;
+  .comentario-nombre,
+  .comentario-username,
+  .comentario-fecha {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px; /* Ajusta este ancho según tu diseño */
+    display: inline-block;
   }
+
+  .comentario-userinfo {
+    min-width: 0;
+    overflow: hidden;
+    flex-wrap: nowrap;
+  }
+  .ddelete-confirmation-modal {
+    width: 90%;
+    max-width: 300px;
+    margin-right: 20px;
+  }
+  
 }
+
+
 @media screen and (min-width: 1430px) and (max-width: 1450px) and (min-height: 890px) and (max-height: 910px) {
   .verpost-container {
     margin-left: 330px;

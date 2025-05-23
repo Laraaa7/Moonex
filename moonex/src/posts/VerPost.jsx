@@ -241,20 +241,23 @@ const VerPost = () => {
       console.error("Error al enviar respuesta:", err);
     }
   };
-
-  const formatearTiempo = (fecha) => {
-    const publicada = new Date(fecha);
+  const formatearTiempo = (fechaUTC) => {
+    const publicada = new Date(fechaUTC); 
     const ahora = new Date();
-    const diff = Math.floor((ahora - publicada) / 1000);
-    if (diff < 60) return `${diff}s`;
-    const min = Math.floor(diff / 60);
-    if (min < 60) return `${min}min`;
-    const h = Math.floor(min / 60);
-    if (h < 24) return `${h}h`;
-    const d = Math.floor(h / 24);
-    return `${d}d`;
+  
+    const diffSegundos = Math.floor((ahora - publicada) / 1000);
+  
+    if (diffSegundos < 0) return "Justo ahora";
+  
+    if (diffSegundos < 60) return `${diffSegundos}s`;
+    const minutos = Math.floor(diffSegundos / 60);
+    if (minutos < 60) return `${minutos}min`;
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `${horas}h`;
+    const dias = Math.floor(horas / 24);
+    return `${dias}d`;
   };
-
+  
   const navigateToProfile = (username, userIdParam) => {
     if (!currentUser.username) return navigate("/login");
     if (currentUser.username === username || currentUser.id === userIdParam) {

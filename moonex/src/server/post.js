@@ -162,14 +162,51 @@ router.get('/comentarios/count/:postId', async (req, res) => {
 });
 
 // Eliminar publicación
+async function eliminarSubrespuestas(respuestaId) {
+  const [subrespuestas] = await db.query(
+    "SELECT id FROM respuestas WHERE respuesta_padre_id = ?",
+    [respuestaId]
+  );
+
+  for (const sub of subrespuestas) {
+    await eliminarSubrespuestas(sub.id);
+    await db.query("DELETE FROM respuestas WHERE id = ?", [sub.id]);
+  }
+}
+
+// Función para eliminar respuestas (y subrespuestas) de un comentario
+async function eliminarRespuestasDeComentario(comentarioId) {
+  const [respuestas] = await db.query(
+    "SELECT id FROM respuestas WHERE comentario_id = ? AND respuesta_padre_id IS NULL",
+    [comentarioId]
+  );
+
+  for (const respuesta of respuestas) {
+    await eliminarSubrespuestas(respuesta.id);
+    await db.query("DELETE FROM respuestas WHERE id = ?", [respuesta.id]);
+  }
+}
+
+// Endpoint para eliminar publicación
 router.delete('/posts/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db.query("DELETE FROM respuestas WHERE comentario_id IN (SELECT id FROM comentarios WHERE publicacion_id = ?)", [id]);
+    // Obtener todos los comentarios de la publicación
+    const [comentarios] = await db.query("SELECT id FROM comentarios WHERE publicacion_id = ?", [id]);
+
+    // Eliminar todas las respuestas (recursivamente) asociadas a los comentarios
+    for (const comentario of comentarios) {
+      await eliminarRespuestasDeComentario(comentario.id);
+    }
+
+    // Eliminar los comentarios
     await db.query("DELETE FROM comentarios WHERE publicacion_id = ?", [id]);
+
+    // Eliminar likes de la publicación
     await db.query("DELETE FROM likes WHERE publicacion_id = ?", [id]);
 
+    // Eliminar la publicación
     const [result] = await db.query("DELETE FROM publicaciones WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
@@ -182,5 +219,6 @@ router.delete('/posts/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar publicación' });
   }
 });
+
 
 module.exports = router;

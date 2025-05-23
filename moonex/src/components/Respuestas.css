@@ -1,134 +1,151 @@
 .respuestas-container {
-    margin-left: 3rem;
-    margin-top: 0.5rem;
-    border-left: 2px solid #344066;
-    padding-left: 1rem;
-  }
-  
-  .respuesta-item {
-    background-color: #2b3660;
-    margin-top: 1rem;
-    padding: 0.75rem;
-    border-radius: 10px;
-  }
-  
-  .subrespuesta {
-    margin-left: 2rem;
-    background-color: #263159;
-  }
-  
-  .respuesta-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .respuesta-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .respuesta-userinfo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    font-size: 0.9rem;
-  }
-  
-  .respuesta-nombre {
-    font-weight: 600;
-    color: #ffffff;
-  }
-  
-  .respuesta-username {
-    color: #a4b3da;
-  }
-  
-  .respuesta-fecha {
-    color: #8994bb;
-  }
-  
-  .respuesta-texto {
-    margin-top: 0.4rem;
-    color: #dde4f8;
-    font-size: 0.95rem;
-    white-space: pre-wrap;
-  }
-  
-  .respuesta-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 0.5rem;
-  }
-  
-  .respuesta-like-btn,
-  .respuesta-reply-btn,
-  .respuesta-toggle-sub {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    color: #a4b3da;
-    font-size: 0.8rem;
-    transition: color 0.2s ease;
-  }
-  
-  .respuesta-like-btn.liked {
-    color: #e0245e;
-  }
-  
-  .respuesta-reply-btn:hover,
-  .respuesta-toggle-sub:hover {
-    color: #dae0eecc;
-  }
-  
-  .like-icon-small,
-  .reply-icon-small {
-    font-size: 0.9rem;
-  }
-  
-  .respuesta-form {
-    display: flex;
-    margin-top: 0.5rem;
-    gap: 0.5rem;
-  }
-  
-  .respuesta-input {
-    flex: 1;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    border: 1px solid #4a5f8c;
-    background-color: #1e2643;
-    color: white;
-  }
-  
-  .respuesta-submit {
-    background-color: #4a5f8c;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 0.4rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .respuesta-submit:hover {
-    background-color: #3a4f75;
-  }
-  
-  .respuestas-sublista {
-    margin-top: 0.5rem;
-  }
-  
-  .respuesta-toggle-sub {
-    text-decoration: underline;
-    margin-left: 12px;
-  }
-  /* Botón Eliminar (estilo pequeño como en comentarios) */
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+.respuesta-item {
+  background-color: #2b3660;
+  margin: 1rem 0;
+  padding: 0.85rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+  transition: all 0.2s ease-in-out;
+}
+
+.subrespuesta {
+  background-color: #1e2b4f;
+  border-left: 3px solid #4a5f8c;
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+}
+
+.respuesta-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.respuesta-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #4a5f8c;
+}
+
+.respuesta-userinfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+.respuesta-nombre {
+  font-weight: 600;
+  color: #ffffff;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.respuesta-username {
+  color: #a4b3da;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.respuesta-fecha {
+  color: #8994bb;
+  font-size: 0.8rem;
+}
+
+.respuesta-texto {
+  margin-top: 0.5rem;
+  color: #dde4f8;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.respuesta-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.respuesta-like-btn,
+.respuesta-reply-btn,
+.respuesta-toggle-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #a4b3da;
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
+}
+
+.respuesta-like-btn.liked {
+  color: #e0245e;
+}
+
+.respuesta-reply-btn:hover,
+.respuesta-toggle-sub:hover {
+  color: #dae0ee;
+}
+
+.like-icon-small,
+.reply-icon-small {
+  font-size: 0.9rem;
+}
+
+.respuesta-form {
+  display: flex;
+  margin-top: 0.6rem;
+  gap: 0.5rem;
+}
+
+.respuesta-input {
+  flex: 1;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid #4a5f8c;
+  background-color: #1e2643;
+  color: white;
+}
+
+.respuesta-submit {
+  background-color: #4a5f8c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.respuesta-submit:hover {
+  background-color: #3a4f75;
+}
+
+.respuestas-sublista {
+  margin-top: 0.5rem;
+}
+
+.respuesta-toggle-sub {
+  text-decoration: underline;
+  margin-left: 12px;
+}
+
+/* Botón Eliminar */
 .respuesta-eliminar-btn {
   font-size: 13px;
   color: #ff6b6b;
@@ -145,7 +162,7 @@
   text-decoration: underline;
 }
 
-/* Modal de confirmación de eliminación */
+/* Modal eliminación */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -200,9 +217,90 @@
 .confirm-button {
   background-color: #ff5e5e;
   color: white;
-  border: none;
 }
 
 .confirm-button:hover {
   background-color: #e24a4a;
+}
+
+/* Responsive: móvil */
+@media (max-width: 480px) {
+  .respuesta-userinfo {
+    max-width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .respuesta-nombre,
+  .respuesta-username {
+    max-width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .respuesta-texto {
+    font-size: 0.85rem;
+  }
+
+  .respuesta-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .respuesta-userinfo {
+    max-width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .respuesta-nombre,
+  .respuesta-username {
+    max-width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .respuesta-texto {
+    font-size: 0.85rem;
+  }
+
+  .respuesta-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* Evita desplazamiento lateral de subrespuestas en móvil */
+  .subrespuesta {
+    margin-left: 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid #4a5f8c;
+    background-color: #243152;
+  }
+
+  .respuesta-item {
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-left: 0 !important;
+  }
+
+  .respuestas-container {
+    padding-left: 0;
+    margin-left: 0;
+  }
 }
