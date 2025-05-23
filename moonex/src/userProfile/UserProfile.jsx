@@ -9,6 +9,9 @@ import "./Profile.css";
 import "./UserProfile.css";
 import defaultBanner from "../img/bannerDefecto.jpg";
 import defaultProfile from "../img/PfpDefecto.png";
+import Seguidores from "../components/Seguidores";
+import Siguiendo from "../components/Siguiendo";
+import Amigos from "../components/Amigos";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -21,7 +24,11 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId: username } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
+ 
+  const [showSeguidores, setShowSeguidores] = useState(false);
+  const [showSiguiendo, setShowSiguiendo] = useState(false);
+  const [showAmigos, setShowAmigos] = useState(false);
+  
   const isMobile = useMediaQuery("(max-width: 480px)"); 
 
   const formatDate = (dateString) => {
@@ -228,19 +235,32 @@ const UserProfile = () => {
           </div>
 
           <div className="stats">
-            <div>
-              <p>Amigos</p>
-              <p className="stat-number">{stats.amigos}</p>
-            </div>
-            <div>
-              <p>Seguidores</p>
-              <p className="stat-number">{stats.seguidores}</p>
-            </div>
-            <div>
-              <p>Siguiendo</p>
-              <p className="stat-number">{stats.siguiendo}</p>
-            </div>
-          </div>
+  <div onClick={() => setShowAmigos(!showAmigos)} style={{ cursor: "pointer" }}>
+    <p>Amigos</p>
+    <p className="stat-number">{stats.amigos}</p>
+    {showAmigos && (
+      <Amigos onClose={() => setShowAmigos(false)} userId={userData.id} />
+    )}
+  </div>
+
+  <div onClick={() => setShowSeguidores(!showSeguidores)} style={{ cursor: "pointer" }}>
+    <p>Seguidores</p>
+    <p className="stat-number">{stats.seguidores}</p>
+    {showSeguidores && (
+      <Seguidores onClose={() => setShowSeguidores(false)} userId={userData.id} />
+    )}
+  </div>
+
+  <div onClick={() => setShowSiguiendo(!showSiguiendo)} style={{ cursor: "pointer" }}>
+    <p>Siguiendo</p>
+    <p className="stat-number">{stats.siguiendo}</p>
+    {showSiguiendo && (
+      <Siguiendo onClose={() => setShowSiguiendo(false)} userId={userData.id} />
+    )}
+  </div>
+</div>
+
+     
         </div>
 
         {userData?.id && <PostsUsuario usuarioId={userData.id} />}

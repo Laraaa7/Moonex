@@ -215,7 +215,7 @@ const EditProfile = ({ closeModal }) => {
           <button className="save-button" onClick={handleSave} disabled={isLoading}>
             {isLoading ? "Guardando..." : "Guardar"}
           </button>
-          <button className="cancel-button" onClick={closeModal}>Cancelar</button>
+          <button className="cancel-buttton" onClick={closeModal}>Cancelar</button>
         </div>
       </div>
     </div>

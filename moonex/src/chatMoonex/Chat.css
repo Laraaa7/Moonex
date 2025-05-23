@@ -838,14 +838,20 @@
 }
 
 
-/* Only show the close button on mobile devices when sidebar is open */
 @media (max-width: 480px) {
   .mobile-close-button {
     display: block;
     padding-bottom: 40px;
   }
-  
-  /* Adjust the sidebar header to accommodate the close button */
+  .chat-messages {
+    overflow-y: auto;        /* Permite scroll */
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;    /* Firefox */
+  }
+
+  .chat-messages::-webkit-scrollbar {
+    display: none; /* Chrome, Safari y Opera */
+  }
   .chat-sidebar-header {
     position: relative;
     padding-right: 40px;
