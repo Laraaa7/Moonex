@@ -13,11 +13,14 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -31,7 +34,7 @@ const Register = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/register/google`, {
+      const response = await fetch(`${API_URL}/api/register/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,27 +66,27 @@ const Register = () => {
     const { userName, email, password, confirmPassword } = formData;
 
     if (!userName || userName.length < 4 || !/^[a-z0-9_]+$/.test(userName)) {
-      setMessage({ text: "Nombre de usuario inválido.", type: "error" });
+      setMessage({ text: 'Nombre de usuario inválido (minúsculas, números, guiones bajos, mínimo 4 caracteres).', type: 'error' });
       return;
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setMessage({ text: "Correo inválido.", type: "error" });
+      setMessage({ text: 'Correo electrónico inválido.', type: 'error' });
       return;
     }
 
     if (!password || password.length < 10 || password.length > 100 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-      setMessage({ text: "Contraseña inválida.", type: "error" });
+      setMessage({ text: 'Contraseña inválida. Mínimo 10 caracteres, una mayúscula y un número.', type: 'error' });
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage({ text: "Las contraseñas no coinciden.", type: "error" });
+      setMessage({ text: 'Las contraseñas no coinciden.', type: 'error' });
       return;
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/register`, {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: userName, email, password })
@@ -91,17 +94,17 @@ const Register = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
-        setMessage({
-          text: 'Registro exitoso. Verifica tu correo antes de iniciar sesión.',
-          type: 'success'
-        });
-        setTimeout(() => navigate('/login'), 4000);
+      if (response.ok && data.message) {
+        setMessage({ text: data.message, type: 'success' });
+
+        setTimeout(() => {
+          navigate('/login', { state: { mostrarReenvio: true, email } });
+        }, 4000);
       } else {
         setMessage({ text: data.error || 'Error al registrarse.', type: 'error' });
       }
     } catch (error) {
-      console.error('Error en el registro (catch):', error);
+      console.error('Error en el registro:', error);
       setMessage({ text: 'Error de conexión con el servidor.', type: 'error' });
     }
   };
@@ -132,7 +135,7 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="register-form">
             <label>
-              <i className='bx bx-user'></i>
+              <i className="bx bx-user"></i>
               <input
                 type="text"
                 name="userName"
@@ -149,7 +152,7 @@ const Register = () => {
             </label>
 
             <label>
-              <i className='bx bx-envelope'></i>
+              <i className="bx bx-envelope"></i>
               <input
                 type="email"
                 name="email"
@@ -161,9 +164,9 @@ const Register = () => {
             </label>
 
             <label className="password-label">
-              <i className='bx bx-lock-alt'></i>
+              <i className="bx bx-lock-alt"></i>
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
@@ -177,9 +180,9 @@ const Register = () => {
             </label>
 
             <label className="password-label">
-              <i className='bx bx-lock-alt'></i>
+              <i className="bx bx-lock-alt"></i>
               <input
-                type={showConfirm ? "text" : "password"}
+                type={showConfirm ? 'text' : 'password'}
                 name="confirmPassword"
                 placeholder="Confirmar Contraseña"
                 value={formData.confirmPassword}

@@ -22,6 +22,7 @@ const comentariosRoutes = require('./comentarios');
 
 const recuperarRoutes = require('./recuperar');
 const resetPasswordRoutes = require('./resetPassword');
+const resendVerificationRoute = require('./resendVerification');
 
 const app = express();
 const server = http.createServer(app);
@@ -55,6 +56,7 @@ app.use('/comentarios', comentariosRoutes);
 
 app.use('/api/auth/recuperar', recuperarRoutes);
 app.use('/auth/reset-password', resetPasswordRoutes);
+app.use('/auth/resend-verification', resendVerificationRoute);
 
 // Ruta de prueba
 app.get('/api', (req, res) => {
