@@ -5,7 +5,7 @@ import './VerificarCorreo.css';
 const VerificarCorreo = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [estado, setEstado] = useState('verificando'); // verificando | exito | error
+  const [estado, setEstado] = useState('verificando');
   const [mensaje, setMensaje] = useState('');
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -33,13 +33,14 @@ const VerificarCorreo = () => {
           setMensaje(text);
         }
       } catch (err) {
+        console.error('Error al verificar:', err);
         setEstado('error');
-        setMensaje('Error al verificar tu correo.');
+        setMensaje('Error del servidor al verificar tu correo.');
       }
     };
 
     verificar();
-  }, [location, navigate]);
+  }, [location.search, navigate, API_URL]);
 
   return (
     <div className="verificar-container">
@@ -51,6 +52,12 @@ const VerificarCorreo = () => {
           </>
         ) : (
           <>
+            {estado === 'exito' && (
+              <i className="bx bx-check-circle icon-success"></i>
+            )}
+            {estado === 'error' && (
+              <i className="bx bx-error-circle icon-error"></i>
+            )}
             <h2>{mensaje}</h2>
             {estado === 'exito' && <p>Redirigiendo al login...</p>}
           </>

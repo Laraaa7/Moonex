@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { auth, provider } from '../api/firebase.config';
 import { signInWithPopup } from 'firebase/auth';
 import logo from '../img/logo.png';
@@ -10,14 +10,32 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [reenviarVisible, setReenviarVisible] = useState(false);
+  const [emailParaReenviar, setEmailParaReenviar] = useState('');
+
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) navigate('/feed');
   }, [navigate]);
+
+  useEffect(() => {
+    if (location.state?.mostrarReenvio && location.state?.email) {
+      setReenviarVisible(true);
+      setEmailParaReenviar(location.state.email);
+    }
+  }, [location.state]);
+
+  const showMessage = (text, type = 'error') => {
+    setMessage({ text, type });
+    setTimeout(() => {
+      setMessage({ text: '', type: '' });
+    }, 5000);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,11 +68,11 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/feed');
       } else {
-        setMessage(data.error || 'Error al iniciar sesión con Google');
+        showMessage(data.error || 'Error al iniciar sesión con Google');
       }
     } catch (error) {
-      console.error("Error en Google Sign-In:", error);
-      setMessage('Error al iniciar sesión con Google');
+      console.error('Error en Google Sign-In:', error);
+      showMessage('Error al iniciar sesión con Google');
     }
   };
 
@@ -62,35 +80,58 @@ const Login = () => {
     e.preventDefault();
     const { email, password } = formData;
 
-    if (!email || !password) {
-      setMessage('Por favor, completa todos los campos.');
-      return;
-    }
+    if (!email && !password) return showMessage('Por favor, completa el correo y la contraseña.');
+    if (!email) return showMessage('Por favor, introduce tu correo.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMessage('El formato del correo es inválido.');
+    if (!password) return showMessage('Por favor, introduce tu contraseña.');
+    if (password.length < 6) return showMessage('La contraseña debe tener al menos 6 caracteres.');
 
     try {
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.token) {
-        if (data.user?.verificado === 0) {
-          setMessage('Debes verificar tu correo electrónico antes de iniciar sesión.');
-          return;
-        }
+      if (response.status === 403 && data.error?.includes('verificar')) {
+        showMessage(data.error);
+        setReenviarVisible(true);
+        setEmailParaReenviar(email);
+        return;
+      }
 
+      if (response.ok && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/feed');
+        showMessage('Inicio de sesión exitoso.', 'success');
+        setTimeout(() => navigate('/feed'), 1000);
       } else {
-        setMessage(data.error || 'Error al iniciar sesión');
+        showMessage(data.error || 'Correo o contraseña incorrectos.');
       }
     } catch (error) {
       console.error('Error en login:', error);
-      setMessage('Error en el servidor');
+      showMessage('Error en el servidor');
+    }
+  };
+
+  const handleReenviarCorreo = async () => {
+    try {
+      const response = await fetch(`${API_URL}/verify-email/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailParaReenviar }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showMessage('Correo de verificación reenviado correctamente.', 'success');
+      } else {
+        showMessage(data.error || 'Error al reenviar el correo.');
+      }
+    } catch (err) {
+      showMessage('Error del servidor al reenviar verificación.');
     }
   };
 
@@ -119,7 +160,7 @@ const Login = () => {
           <h2>Iniciar Sesión</h2>
           <form onSubmit={handleSubmit} className="login-form">
             <label className="input-label">
-              <i className='bx bx-envelope'></i>
+              <i className="bx bx-envelope"></i>
               <input
                 type="email"
                 name="email"
@@ -130,7 +171,7 @@ const Login = () => {
             </label>
 
             <label className="input-label password-label">
-              <i className='bx bx-lock-alt'></i>
+              <i className="bx bx-lock-alt"></i>
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -154,7 +195,19 @@ const Login = () => {
             </p>
           </form>
 
-          {message && <p className="message">{message}</p>}
+          {message.text && (
+            <p className={`message ${message.type === 'success' ? 'success' : 'error'}`}>
+              {message.text}
+            </p>
+          )}
+
+          {reenviarVisible && (
+            <div className="verificacion-mensaje">
+              <button className="reenviar-btn" onClick={handleReenviarCorreo}>
+                Reenviar correo de verificación
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

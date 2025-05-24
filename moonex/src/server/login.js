@@ -3,11 +3,33 @@ const express = require('express');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sgMail = require('@sendgrid/mail');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Login con email + contraseña (solo MySQL)
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Función para enviar correo de verificación
+const sendVerificationEmail = async (email, userId) => {
+  const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1d' });
+  const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+
+  const msg = {
+    to: email,
+    from: 'noreply@moonex.com',
+    subject: 'Verifica tu cuenta Moonex',
+    html: `
+      <h2>Bienvenido a Moonex</h2>
+      <p>Haz clic en el siguiente enlace para verificar tu cuenta:</p>
+      <a href="${verificationUrl}">${verificationUrl}</a>
+    `
+  };
+
+  await sgMail.send(msg);
+};
+
+// Login con email + contraseña
 router.post('/', async (req, res) => {
   const { email, password } = req.body;
 
@@ -19,41 +41,41 @@ router.post('/', async (req, res) => {
     const [results] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
 
     if (results.length === 0) {
-      return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
+      return res.status(401).json({ error: 'Correo o contrase帽a incorrectos' });
     }
 
     const user = results[0];
 
-    // Verificar si el usuario fue creado con Google
+    // Verificar si es cuenta de Google
     if (!user.password) {
-      return res.status(401).json({ error: 'Este usuario se registró con Google' });
+      return res.status(401).json({ error: 'Este usuario se registr贸 con Google' });
     }
 
-    // Verificar contraseña
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
+      return res.status(401).json({ error: 'Correo o contrase帽a incorrectos' });
     }
 
-    // Verificar si el correo está confirmado (desde MySQL)
     if (user.verificado === 0) {
-      return res.status(403).json({ error: 'Debes verificar tu correo antes de iniciar sesión.' });
+      const { password: _, ...userSinPassword } = user;
+      return res.status(403).json({
+        error: 'Debes verificar tu correo antes de iniciar sesi贸n.',
+        user: userSinPassword
+      });
     }
 
-    // Generar token
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
-    // Enviar usuario sin contraseña
     const { password: _, ...userSinPassword } = user;
     res.json({ token, user: userSinPassword });
 
   } catch (error) {
     console.error('Error en login manual:', error);
-    res.status(500).json({ error: 'Error al iniciar sesión' });
+    res.status(500).json({ error: 'Error al iniciar sesi贸n' });
   }
 });
 
-// Login con Google (sin verificar correo manualmente)
+// Login con Google
 router.post('/google', async (req, res) => {
   const { uid, email, nombre, foto_perfil } = req.body;
 
@@ -86,7 +108,36 @@ router.post('/google', async (req, res) => {
     res.json({ token, user: usuario });
   } catch (error) {
     console.error('Error en login con Google:', error);
-    res.status(500).json({ error: 'Error al iniciar sesión con Google. Este correo ya está en uso. Usa otra cuenta diferente' });
+    res.status(500).json({ error: 'Error al iniciar sesi贸n con Google. Este correo ya est谩 en uso. Usa otra cuenta diferente' });
+  }
+});
+
+// Reenviar correo de verificación
+router.post('/resend-verification', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Correo requerido' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT id, verificado FROM usuarios WHERE email = ?', [email]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Correo no registrado.' });
+    }
+
+    const usuario = rows[0];
+
+    if (usuario.verificado === 1) {
+      return res.status(400).json({ error: 'Este usuario ya est谩 verificado.' });
+    }
+
+    await sendVerificationEmail(email, usuario.id);
+    res.status(200).json({ message: 'Correo reenviado correctamente.' });
+  } catch (err) {
+    console.error('Error al reenviar verificaci贸n:', err);
+    res.status(500).json({ error: 'Error del servidor al reenviar correo.' });
   }
 });
 

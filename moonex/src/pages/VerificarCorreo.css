@@ -4,6 +4,7 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f1f1f1;
+  padding: 1rem;
 }
 
 .verificar-box {
@@ -14,6 +15,13 @@
   text-align: center;
   max-width: 400px;
   width: 100%;
+  transition: all 0.3s ease;
+}
+
+.verificar-box h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 }
 
 .verificar-box.verificando {
@@ -38,8 +46,39 @@
   animation: spin 1s linear infinite;
 }
 
+.icon-success,
+.icon-error {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.icon-success {
+  color: #28a745;
+}
+
+.icon-error {
+  color: #dc3545;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .verificar-box {
+    padding: 1.5rem;
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
+  }
+
+  .verificar-box h2 {
+    font-size: 1rem;
   }
 }

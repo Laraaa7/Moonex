@@ -1,131 +1,130 @@
 .recuperar-wrapper {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #0f2c5a; 
-    padding: 2rem;
-  }
-  
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f2c5a; 
+  padding: 2rem;
+}
+
+.recuperar-container {
+  background: #d9e1f2; 
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.recuperar-container h2 {
+  color: #0f2c5a;
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+}
+
+.recuperar-container p {
+  color: #2c2c2c;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.recuperar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recuperar-form input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: #0f2c5a;
+}
+
+.recuperar-form input::placeholder {
+  color: #888;
+}
+
+.recuperar-form button {
+  padding: 0.9rem;
+  background-color: #0f2c5a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition:  0.3s ease;
+}
+
+.recuperar-form button:hover {
+  background-color: #3f5481;
+}
+
+.mensaje {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.mensaje.exito {
+  color: green;
+}
+
+.mensaje.error {
+  color: crimson;
+}
+
+.volver-btn {
+  margin-top: 1.5rem;
+  background: none;
+  border: none;
+  color: #0f2c5a;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+
+@media (max-width: 480px) {
   .recuperar-container {
-    background: #d9e1f2; 
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-    text-align: center;
+    padding: 2rem 1rem;
+    border-radius: 16px;
   }
-  
+
   .recuperar-container h2 {
-    color: #0f2c5a;
-    margin-bottom: 1rem;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
   }
-  
+
   .recuperar-container p {
-    color: #2c2c2c;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
-  
-  .recuperar-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .recuperar-form input {
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 1rem;
-    background-color: #ffffff;
-    color: #0f2c5a;
-  }
-  
-  .recuperar-form input::placeholder {
-    color: #888;
-  }
-  
+
+  .recuperar-form input,
   .recuperar-form button {
-    padding: 0.9rem;
-    background-color: #0f2c5a;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition:  0.3s ease;
-  }
-  
-  .recuperar-form button:hover {
-    background-color: #3f5481;
-  }
-  
-  .mensaje {
-    margin-top: 1rem;
     font-size: 0.95rem;
+    padding: 0.75rem;
   }
-  
-  .mensaje.exito {
-    color: green;
-  }
-  
-  .mensaje.error {
-    color: crimson;
-  }
-  
+
   .volver-btn {
-    margin-top: 1.5rem;
-    background: none;
-    border: none;
-    color: #0f2c5a;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
-  
-  /* Responsive design */
-  
-  @media (max-width: 480px) {
-    .recuperar-container {
-      padding: 2rem 1rem;
-      border-radius: 16px;
-    }
-  
-    .recuperar-container h2 {
-      font-size: 1.4rem;
-    }
-  
-    .recuperar-container p {
-      font-size: 0.95rem;
-    }
-  
-    .recuperar-form input,
-    .recuperar-form button {
-      font-size: 0.95rem;
-      padding: 0.75rem;
-    }
-  
-    .volver-btn {
-      font-size: 0.9rem;
-    }
+}
+
+@media (max-width: 350px) {
+  .recuperar-container h2 {
+    font-size: 1.2rem;
   }
-  
-  @media (max-width: 350px) {
-    .recuperar-container h2 {
-      font-size: 1.2rem;
-    }
-  
-    .recuperar-container p {
-      font-size: 0.9rem;
-    }
-  
-    .recuperar-form input,
-    .recuperar-form button {
-      font-size: 0.9rem;
-      padding: 0.7rem;
-    }
+
+  .recuperar-container p {
+    font-size: 0.9rem;
   }
+
+  .recuperar-form input,
+  .recuperar-form button {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+}

@@ -1,3 +1,11 @@
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #0f2c5a;
+}
+
 .login-container {
   display: flex;
   width: 95%;
@@ -11,19 +19,11 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-.login-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #0E1C49;
-}
-
 /* Lado izquierdo */
 .login-left {
   flex: 1;
-  background-color: #DAE0EE;
-  color: #0E1C49;
+  background-color: #d9e1f2;
+  color: #0f2c5a;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -59,8 +59,8 @@
   gap: 0.75rem;
   padding: 0.8rem;
   border-radius: 10px;
-  background-color: #4A5F8C;
-  color: #DAE0EE;
+  background-color: #4a5f8c;
+  color: #d9e1f2;
   font-weight: bold;
   font-size: 0.95rem;
   border: none;
@@ -74,16 +74,16 @@
 }
 
 .btn-social:hover {
-  background-color: #8F9AB6;
+  background-color: #8f9ab6;
 }
 
 .switch-btn {
   padding: 0.7rem 1.3rem;
   border-radius: 10px;
   background-color: #ffffff;
-  color: #0E1C49;
+  color: #0f2c5a;
   font-weight: bold;
-  border: 1px solid #0E1C49;
+  border: 1px solid #0f2c5a;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.95rem;
@@ -94,13 +94,13 @@
 }
 
 .switch-btn:hover {
-  background-color: #0E1C49;
+  background-color: #0f2c5a;
   color: #ffffff;
 }
 
 .separator {
   margin: 1rem 0;
-  color: #0E1C49;
+  color: #0f2c5a;
   font-weight: 500;
 }
 
@@ -113,7 +113,7 @@
 /* Lado derecho */
 .login-right {
   flex: 1;
-  background-color: #4A5F8C;
+  background-color: #4a5f8c;
   padding: 3rem 4rem;
   display: flex;
   flex-direction: column;
@@ -125,7 +125,7 @@
 .login-right h2 {
   font-size: 1.8rem;
   margin-bottom: 2rem;
-  color: #DAE0EE;
+  color: #d9e1f2;
 }
 
 .login-form {
@@ -144,15 +144,48 @@
   outline: none;
 }
 
+.input-label {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 0rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.input-label input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #0f2c5a;
+}
+
 .input-label:focus-within {
   box-shadow: 0 0 0 2px rgba(74, 95, 140, 0.2);
-  border: 2px solid #0E1C49;
+  border: 2px solid #0f2c5a;
+}
+
+.password-label input {
+  padding-right: 40px;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 10px;
+  font-size: 1.2rem;
+  color: #4a5f8c;
+  cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .login-form button {
   padding: 0.9rem;
-  background-color: #0E1C49;
-  color: #DAE0EE;
+  background-color: #0f2c5a;
+  color: #d9e1f2;
   border: none;
   border-radius: 10px;
   font-weight: bold;
@@ -162,56 +195,31 @@
 }
 
 .login-form button:hover {
-  background-color: #8F9AB6;
+  background-color: #8f9ab6;
 }
 
+/* Mensajes de estado */
 .message {
   margin-top: 1rem;
   text-align: center;
   font-size: 0.95rem;
-  color: crimson;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
-.input-label {
-  display: flex;
-  align-items: center;
-  gap: 0rem;
-  background-color: #ffffff;
-  padding: 0rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+.message.success {
+  color: #2ecc71;
 }
 
-.input-label input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  background: transparent;
-  color: #0E1C49;
-}
-
-.password-labe {
-  position: relative;
-}
-
-.password-labe input {
-  padding-right: 40px;
-}
-
-.toggle-eye {
-  position: absolute;
-  right: 10px;
-  font-size: 1.2rem;
-  color: #4A5F8C;
-  cursor: pointer;
+.message.error {
+  color: #e74c3c;
 }
 
 /* Frase de recuperar contraseña */
 .forgot-password {
   margin-top: -0.5rem;
   font-size: 0.9rem;
-  color: #DAE0EE;
+  color: #d9e1f2;
   text-align: center;
 }
 
@@ -223,6 +231,22 @@
 
 .forgot-password .link:hover {
   color: #cce0ff;
+}
+
+/* 🔁 Botón reenviar correo */
+.reenviar-btn {
+  margin-top: 0.8rem;
+  padding: 0.6rem 1rem;
+  background-color: #0f2c5a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:  0.3s ease;
+}
+
+.reenviar-btn:hover {
+  background-color: #3f5481;
 }
 
 /* Responsive */
@@ -246,11 +270,7 @@
   }
 
   .login-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #DAE0EE;
+    background-color: #d9e1f2;
     padding-bottom: 1rem;
   }
 
@@ -277,10 +297,6 @@
 
   .separator {
     margin: 0.8rem 0;
-  }
-
-  .register-text {
-    margin-bottom: 0.5rem;
   }
 
   .switch-btn {
@@ -310,8 +326,14 @@
     width: 100%;
     box-sizing: border-box;
   }
+
+  .toggle-eye {
+    font-size: 1.1rem;
+    right: 8px;
+  }
 }
 
+/* Animación */
 @keyframes fadeIn {
   from {
     opacity: 0;
