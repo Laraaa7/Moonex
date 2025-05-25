@@ -228,20 +228,25 @@
 
 /* Responsive */
 @media (max-width: 480px) {
+  .modal-overlay {
+    padding-top: 10px;
+  }
+
   .modal-content {
     padding: 15px;
     margin-right: 20px;
     margin-bottom: 20px;
   }
-  
+
   .modal-buttons {
     flex-direction: column;
     gap: 10px;
   }
-  
-  .close-button{
+
+  .close-button {
     margin-top: 20px;
   }
+
   .save-button, .cancel-buttton {
     width: 100%;
   }

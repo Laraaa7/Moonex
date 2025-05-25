@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   background-color: #0E1C49;
-  margin-top: 92px; 
+  margin-top: 85px; 
   width: 100%;
   max-width: 1200px; 
   margin-left: auto;
@@ -198,59 +198,48 @@ html, body {
 
 /* Responsive para dispositivos móviles */
 @media (max-width: 480px) {
-.crear-post-content {
+  .crear-post-container {
+    margin-top: 40px; 
     padding: 10px;
-    margin-top: -99px;
+  }
+
+  .crear-post-content {
+    padding: 10px;
     border-radius: 8px;
     padding-bottom: 30px;
     padding-top: 10px;
-    margin-right: -5px;
-    margin-left: -5px;
+    margin: 0 auto;
     padding-right: 15px;
     padding-left: 15px;
-}
+  }
 
-.crear-post-title {
+  .crear-post-title {
     font-size: 20px;
     margin-bottom: 15px;
-}
+  }
 
-.form-group label {
+  .form-group label {
     font-size: 15px;
-}
+  }
 
-.post-title-input {
+  .post-title-input {
     padding: 10px;
     font-size: 14px;
-}
+  }
 
-.ql-container {
+  .ql-container {
     min-height: 150px;
     font-size: 14px;
     border-radius: 0 0 10px 10px;
-}
+  }
 
-.ql-toolbar {
+  .ql-toolbar {
     border-radius: 10px 10px 0 0;
-}
+  }
 
-.publish-button, .cancel-button {
+  .publish-button, .cancel-button {
     width: 100%;
     padding: 10px;
     font-size: 15px;
-}
-
-.message {
-    width: 90%;
-    font-size: 14px;
-}
-
-.char-counter {
-    font-size: 12px;
-}
-
-.form-actions {
-    flex-direction: column;
-    align-items: stretch;
-}
+  }
 }
