@@ -85,3 +85,15 @@
   .link-preview-fallback:hover {
     text-decoration: underline;
   }
+  .default-preview {
+    border: 1px solid #444;
+    background-color: #1e1e2f;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    color: #ccc;
+  }
+  .default-preview .link-preview-title {
+    font-weight: bold;
+  }
+  

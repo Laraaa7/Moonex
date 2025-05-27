@@ -36,9 +36,8 @@
   /* Media query for mobile devices */
   @media (max-width: 480px) {
     .scroll-arriba {
-      bottom: 70px; /* Higher position on mobile to avoid navigation bars */
-      right: 15px;
-      width: 35px;
-      height: 35px;
+      display: none !important;
     }
   }
+  
+  

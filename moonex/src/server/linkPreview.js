@@ -1,57 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const cheerio = require('cheerio');
+
+const LINK_PREVIEW_API_KEY = process.env.LINK_PREVIEW_API_KEY;
 
 router.get('/link-preview', async (req, res) => {
   const { url } = req.query;
-  
-  if (!url) {
-    return res.status(400).json({ error: 'URL is required' });
-  }
-  
+  if (!url) return res.status(400).json({ error: 'URL is required' });
+
   try {
+    const response = await axios.get(`https://api.linkpreview.net/?key=${LINK_PREVIEW_API_KEY}&q=${encodeURIComponent(url)}`);
+    const data = response.data;
 
-    const response = await axios.get(url, { 
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
-      }
+    res.json({
+      title: data.title || 'Enlace externo',
+      description: data.description || '',
+      image: data.image || '',
+      siteName: new URL(data.url).hostname
     });
-    
-    
-    const html = response.data;
-    const $ = cheerio.load(html);
 
-    const metadata = {
-      title: $('meta[property="og:title"]').attr('content') ||
-             $('meta[name="twitter:title"]').attr('content') ||
-             $('title').text() || 
-             '',
-      description: $('meta[property="og:description"]').attr('content') ||
-                  $('meta[name="twitter:description"]').attr('content') ||
-                  $('meta[name="description"]').attr('content') || 
-                  $('p').first().text().substring(0, 100) || 
-                  '',
-      image: $('meta[property="og:image"]').attr('content') || 
-             $('meta[name="twitter:image"]').attr('content') || 
-             $('img').first().attr('src') || 
-             '',
-      siteName: $('meta[property="og:site_name"]').attr('content') || 
-               $('meta[name="twitter:site"]').attr('content') ||
-               new URL(url).hostname
-    };
-    
-
-    if (metadata.image && !metadata.image.startsWith('http')) {
-      const urlObj = new URL(url);
-      metadata.image = `${urlObj.protocol}//${urlObj.host}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
-    }
-    
-    res.json(metadata);
   } catch (error) {
-    console.error('Error fetching link preview:', error);
-    res.status(500).json({ error: 'Failed to fetch link preview', details: error.message });
+    console.error('LinkPreview error:', error.message);
+    res.status(200).json({
+      title: 'Enlace externo',
+      description: '',
+      image: '',
+      siteName: new URL(url).hostname
+    });
   }
 });
 

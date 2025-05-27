@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./VistaEnlace.css"; 
+import "./VistaEnlace.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -11,22 +11,21 @@ const VistaEnlace = ({ url }) => {
   useEffect(() => {
     const obtenerVista = async () => {
       try {
-        console.log("Solicitando vista previa para:", url);
         setLoading(true);
         const res = await fetch(`${API_BASE_URL}/link-preview?url=${encodeURIComponent(url)}`);
-        
+
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
-        
+
         const data = await res.json();
-        console.log("Datos recibidos:", data);
-        
-        if (data.title || data.description || data.image) {
-          setVista(data);
-        } else {
-          throw new Error("No se pudo obtener la vista previa");
+
+        // Si no hay nada útil, usamos vista mínima
+        if (!data || (!data.title && !data.description && !data.image)) {
+          throw new Error("Vista previa vacía");
         }
+
+        setVista(data);
       } catch (err) {
         console.error("Error al obtener vista previa:", err);
         setError(err.message);
@@ -40,7 +39,7 @@ const VistaEnlace = ({ url }) => {
     }
   }, [url]);
 
-  // Función para validar URLs
+  // Valida que sea una URL real
   const isValidUrl = (string) => {
     try {
       new URL(string);
@@ -75,7 +74,7 @@ const VistaEnlace = ({ url }) => {
         </div>
       )}
       <div className="link-preview-content">
-        <h4 className="link-preview-title">{vista.title}</h4>
+        <h4 className="link-preview-title">{vista.title || 'Enlace externo'}</h4>
         {vista.description && <p className="link-preview-description">{vista.description}</p>}
         <span className="link-preview-domain">{vista.siteName}</span>
       </div>
