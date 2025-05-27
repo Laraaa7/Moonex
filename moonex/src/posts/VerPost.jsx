@@ -183,18 +183,17 @@ const VerPost = () => {
       if (!res.ok) throw new Error("Error al comentar");
 
       const nuevo = await res.json();
+      console.log("Nuevo comentario:", nuevo);
       setComentarios(prev => [
         {
-          id: nuevo.id,
+          ...nuevo, // aquí se asume que el backend devuelve: id, contenido, fecha, etc.
           username: currentUser.username,
           nombre: currentUser.nombre,
-          foto_perfil: currentUser.foto_perfil,
-          contenido: nuevoComentario,
-          fecha: new Date().toISOString(),
-          usuario_id: userId, 
+          foto_perfil: currentUser.foto_perfil
         },
         ...prev,
       ]);
+      
       
       
       setNuevoComentario("");
@@ -241,17 +240,19 @@ const VerPost = () => {
       console.error("Error al enviar respuesta:", err);
     }
   };
-
   const formatearTiempo = (fechaString) => {
     const publicadaUTC = new Date(fechaString);
-    const publicadaLocal = new Date(publicadaUTC.getTime() + 2 * 60 * 60 * 1000);
+    if (isNaN(publicadaUTC)) return "Fecha inválida";
+  
     const ahora = new Date();
-    const diffSegundos = Math.floor((ahora - publicadaLocal) / 1000);
+    const diffSegundos = Math.max(0, Math.floor((ahora - publicadaUTC) / 1000));
+  
     const minutos = Math.floor(diffSegundos / 60);
     const horas = Math.floor(minutos / 60);
     const dias = Math.floor(horas / 24);
     const meses = Math.floor(dias / 30);
     const anos = Math.floor(dias / 365);
+  
     if (diffSegundos < 60) return `${diffSegundos}s`;
     if (minutos < 60) return `${minutos}min`;
     if (horas < 24) return `${horas}h`;
@@ -259,6 +260,8 @@ const VerPost = () => {
     if (meses < 12) return `${meses}mes${meses > 1 ? "es" : ""}`;
     return `${anos}año${anos > 1 ? "s" : ""}`;
   };
+  
+  
 
   const navigateToProfile = (username, userIdParam) => {
     if (!currentUser.username) return navigate("/login");

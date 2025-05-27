@@ -115,7 +115,14 @@ router.post('/comentarios', async (req, res) => {
     `;
     const fecha = new Date();
     const [result] = await db.query(sql, [usuario_id, publicacion_id, contenido, fecha]);
-    res.status(201).json({ success: true, id: result.insertId });
+    
+    const [comentarioCreado] = await db.query(`
+      SELECT id, contenido, fecha_comentario AS fecha
+      FROM comentarios
+      WHERE id = ?
+    `, [result.insertId]);
+    
+    res.status(201).json(comentarioCreado[0]);
   } catch (err) {
     console.error('Error al insertar comentario:', err);
     res.status(500).json({ error: 'Error al insertar comentario' });
