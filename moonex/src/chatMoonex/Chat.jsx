@@ -295,8 +295,9 @@ useEffect(() => {
     }
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
+  document.addEventListener("click", handleClickOutside);
+
+  return () => document.removeEventListener("click", handleClickOutside);
 }, [messageToDelete, bloquearClickOutside, isMobile]);
 
 
@@ -640,24 +641,7 @@ useEffect(() => {
 )}
 
 
-            {messageToDelete === msg.id && (
-  <div className="message-options-menu" onClick={(e) => e.stopPropagation()}>
-    {isSelf && (
-      <div className="message-option" onClick={() => handleDeleteMessage(msg.id)}>
-        <RiDeleteBin6Line style={{ marginRight: 8 }} /> Eliminar
-      </div>
-    )}
-    <div
-      className="message-option"
-      onClick={() => {
-        setMensajeRespondido(msg);
-        setMessageToDelete(null); // Cerrar el menú
-      }}
-    >
-      <BiCommentDetail style={{ marginRight: 8 }} /> Responder
-    </div>
-  </div>
-)}
+        
 
           </div>
         </div>
@@ -759,7 +743,17 @@ useEffect(() => {
         <p>Esta acción no se puede deshacer.</p>
         <div className="modal-buttons">
           <button className="cancel-button" onClick={cancelDeleteMessage}>Cancelar</button>
-          <button className="confirm-button" onClick={confirmDeleteMessage}>Eliminar</button>
+          <button
+        className="confirm-button"
+        onClick={(e) => {
+          e.stopPropagation(); // <---- AÑADE ESTO
+          confirmDeleteMessage();
+          
+        }}
+      >
+        Eliminar
+      </button>
+
         </div>
       </div>
     </div>
