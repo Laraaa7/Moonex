@@ -411,7 +411,7 @@
   position: absolute;
   z-index: 10;
   top: 5px;
-  opacity: 1; /* Oculta por defecto */
+  opacity: 0; /* Oculta por defecto */
   transition: opacity 0.3s ease; 
 }
 
