@@ -41,25 +41,25 @@ router.post('/', async (req, res) => {
     const [results] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
 
     if (results.length === 0) {
-      return res.status(401).json({ error: 'Correo o contrase帽a incorrectos' });
+      return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
     }
 
     const user = results[0];
 
     // Verificar si es cuenta de Google
     if (!user.password) {
-      return res.status(401).json({ error: 'Este usuario se registr贸 con Google' });
+      return res.status(401).json({ error: 'Este usuario se registró con Google' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Correo o contrase帽a incorrectos' });
+      return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
     }
 
     if (user.verificado === 0) {
       const { password: _, ...userSinPassword } = user;
       return res.status(403).json({
-        error: 'Debes verificar tu correo antes de iniciar sesi贸n.',
+        error: 'Debes verificar tu correo antes de iniciar sesión.',
         user: userSinPassword
       });
     }
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 
   } catch (error) {
     console.error('Error en login manual:', error);
-    res.status(500).json({ error: 'Error al iniciar sesi贸n' });
+    res.status(500).json({ error: 'Error al iniciar sesión' });
   }
 });
 
@@ -108,7 +108,7 @@ router.post('/google', async (req, res) => {
     res.json({ token, user: usuario });
   } catch (error) {
     console.error('Error en login con Google:', error);
-    res.status(500).json({ error: 'Error al iniciar sesi贸n con Google. Este correo ya est谩 en uso. Usa otra cuenta diferente' });
+    res.status(500).json({ error: 'Error al iniciar sesión con Google. Este correo ya está en uso. Usa otra cuenta diferente' });
   }
 });
 
@@ -130,13 +130,13 @@ router.post('/resend-verification', async (req, res) => {
     const usuario = rows[0];
 
     if (usuario.verificado === 1) {
-      return res.status(400).json({ error: 'Este usuario ya est谩 verificado.' });
+      return res.status(400).json({ error: 'Este usuario ya está verificado.' });
     }
 
     await sendVerificationEmail(email, usuario.id);
     res.status(200).json({ message: 'Correo reenviado correctamente.' });
   } catch (err) {
-    console.error('Error al reenviar verificaci贸n:', err);
+    console.error('Error al reenviar verificación:', err);
     res.status(500).json({ error: 'Error del servidor al reenviar correo.' });
   }
 });
