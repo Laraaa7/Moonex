@@ -178,7 +178,7 @@ const CrearPost = () => {
           </div>
 
           {message && (
-            <p className={`message ${messageType}`}>{message}</p>
+            <p className={`crearpost-message ${messageType}`}>{message}</p>
           )}
 
           <div className="form-actions">
