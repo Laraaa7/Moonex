@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from "@mui/material";
 import Barranav from "../components/Barranav"; 
 import BarraSuperiorMovil from "../components/BarraSuperiorMovil";
 import ReactQuill from 'react-quill-new';
+import Quill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import './CrearPost.css';
 
@@ -16,6 +17,7 @@ const CrearPost = () => {
   const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 480px)");
+  const quillRef = useRef(null);
 
   const getPlainTextLength = (html) => {
     const temp = document.createElement("div");
@@ -33,13 +35,52 @@ const CrearPost = () => {
     titleTooLong ||
     contentTooLong;
 
-  const modules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }],
-      ['image']
-    ]
-  };
+    const modules = {
+      toolbar: {
+        container: [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }],
+          ['image']
+        ],
+        handlers: {
+          image: () => {
+            const editor = quillRef.current.getEditor();
+            const currentContent = editor.getContents();
+            const imageCount = currentContent.ops.filter(op => op.insert && op.insert.image).length;
+    
+            if (imageCount >= 2) {
+              setMessage("Solo puedes insertar hasta 2 imágenes.");
+              setMessageType("error");
+              return;
+            }
+    
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+    
+            input.onchange = async () => {
+              const file = input.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const range = editor.getSelection(true);
+                  editor.insertText(range.index, '\n');
+                  editor.insertEmbed(range.index + 1, 'image', reader.result);
+                  setTimeout(() => {
+                    const totalLength = editor.getLength();
+                    editor.deleteText(range.index + 2, totalLength);
+                    editor.setSelection(0);
+                  }, 0);
+                };
+                reader.readAsDataURL(file);
+              }
+            };
+          }
+        }
+      }
+    };
+    
 
   const formats = ['bold', 'italic', 'underline', 'strike', 'list', 'image'];
 
@@ -122,6 +163,7 @@ const CrearPost = () => {
           <div className="form-group">
             <label>Contenido <span className="required">*</span></label>
             <ReactQuill
+              ref={quillRef}
               theme="snow"
               modules={modules}
               formats={formats}

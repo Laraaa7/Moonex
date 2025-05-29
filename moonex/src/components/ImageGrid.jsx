@@ -1,10 +1,10 @@
 import React from 'react';
 import "./ImageGrid.css";
 
-const ImageGrid = ({ images }) => {
+const ImageGrid = ({ images, onImageClick }) => {
   if (!images || images.length === 0) return null;
 
-  const displayImages = images.slice(0, 4);
+  const displayImages = images.slice(0, 2);
   const totalImages = displayImages.length;
 
   const singleImageHeight = '220px';
@@ -20,22 +20,8 @@ const ImageGrid = ({ images }) => {
       overflow: 'hidden',
       margin: '10px 0',
     },
-    1: {
-      gridTemplateColumns: '1fr',
-      gridTemplateRows: '1fr',
-    },
-    2: {
-      gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr',
-    },
-    3: {
-      gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr 1fr',
-    },
-    4: {
-      gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr 1fr',
-    }
+    1: { gridTemplateColumns: '1fr', gridTemplateRows: '1fr' },
+    2: { gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr' },
   };
 
   const getImageStyle = (index, totalImages) => {
@@ -72,9 +58,13 @@ const ImageGrid = ({ images }) => {
         >
           <img
             src={image}
-            alt="" 
+            alt=""
             style={getImageStyle(index, totalImages)}
             className="post-grid-image"
+            onClick={(e) => {
+              e.stopPropagation(); 
+              onImageClick?.(image, e);
+            }}
           />
         </div>
       ))}

@@ -42,3 +42,12 @@
     font-size: 12px;
   }
   
+  @media (max-width: 480px) {
+    .post-image-grid {
+      width: 100%;
+      max-width: none;   
+      padding-right: 10px;
+      box-sizing: border-box;
+    }
+  }
+  

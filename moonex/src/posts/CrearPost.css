@@ -5,11 +5,11 @@
   background-color: #0E1C49;
   margin-top: 85px; 
   width: 100%;
-  max-width: 1200px; 
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
-  padding: 20px;
-  min-height: calc(100vh - 80px); 
+  padding: 15px;
+  height: calc(100vh - 85px); /* Cambié min-height por height fijo */
   box-sizing: border-box;
 }
 
@@ -17,8 +17,8 @@
 .crear-post-content {
   background-color: rgb(40, 55, 108); 
   border-radius: 8px;
-  padding: 25px;
-  max-width: 800px;
+  padding: 20px;
+  max-width: 900px; /* Aumentado a 900px para más ancho */
   width: 100%;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   color: #DAE0EE;
@@ -27,14 +27,13 @@
 .crear-post-title {
   color: #DAE0EE;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 18px; /* Reducido de 20px a 18px */
   text-align: center;
-  font-size: 25px;
-
+  font-size: 24px; /* Reducido de 25px a 24px */
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px; /* Reducido de 20px a 18px */
 }
 
 .form-group label {
@@ -42,7 +41,7 @@
   margin-bottom: 5px;
   color: #DAE0EE;
   font-weight: bold;
-  font-size: 17px;
+  font-size: 16px; /* Reducido de 17px a 16px */
 }
 
 .required {
@@ -51,7 +50,7 @@
 
 .post-title-input {
   width: 100%;
-  padding: 12px;
+  padding: 10px; /* Reducido de 12px a 10px */
   border: 1px solid #4A5F8C;
   border-radius: 15px;
   font-size: 16px;
@@ -63,15 +62,63 @@
 .quill-editor {
   width: 100%;
   border-radius: 5px;
+  flex: 1; /* Toma el espacio disponible */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evita que crezca */
 }
 
 .ql-container {
-  min-height: 200px;
+  min-height: 180px;
+  max-height: 180px; /* Altura máxima fija */
   border-radius: 0 0 15px 15px;
   font-size: 16px;
   background: #DAE0EE; 
   color: #000000; 
   border: none;
+  overflow-y: auto; /* Scroll interno si es necesario */
+}
+
+/* Estilos para controlar el tamaño de las imágenes en el editor */
+.ql-editor img {
+  max-width: 250px !important;
+  max-height: 200px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+  display: block;
+  margin: 5px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  clear: both;
+}
+
+/* Para imágenes muy pequeñas, establecer un ancho mínimo razonable */
+.ql-editor img[width] {
+  min-width: 150px !important;
+}
+
+/* Prevenir que las imágenes rompan el layout del contenedor */
+.ql-editor {
+  overflow-x: hidden;
+}
+
+/* Forzar que el contenido después de una imagen no se coloque debajo */
+.ql-editor p:has(+ img), 
+.ql-editor div:has(+ img) {
+  margin-bottom: 0;
+}
+
+/* Hacer que las imágenes siempre estén al final del contenido */
+.ql-editor img + * {
+  display: none;
+}
+
+/* Alternativa: Limitar la escritura después de imágenes */
+.ql-editor img ~ p,
+.ql-editor img ~ div,
+.ql-editor img ~ br {
+  display: none;
 }
 
 .ql-toolbar {
@@ -101,7 +148,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 18px; /* Reducido de 20px a 18px */
 }
 
 .publish-button {
@@ -162,12 +209,39 @@ html, body {
 }
 
 .message {
-  margin: 10px 0;
+  position: fixed;
+  bottom: 50px; 
+  right: 920px;
+  z-index: 1000;
+  margin: 0;
   font-weight: bold;
-  padding: 10px;
+  padding: 15px 25px;
   border-radius: 10px;
   text-align: center;
-  width: 50%;
+  width: auto;
+  max-width: 400px;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.message-stable {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 1000;
+  margin: 0;
+  font-weight: bold;
+  padding: 15px 25px;
+  border-radius: 10px;
+  text-align: center;
+  width: auto;
+  max-width: 400px;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  will-change: transform; 
 }
 
 .message.success {

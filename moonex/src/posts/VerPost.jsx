@@ -32,8 +32,8 @@ const VerPost = () => {
   const [conteoRespuestas, setConteoRespuestas] = useState({});
   const [showOpciones, setShowOpciones] = useState(false);
   const [showModalEliminar, setShowModalEliminar] = useState(false);
-  const [comentarioOpcionesAbiertas, setComentarioOpcionesAbiertas] = useState({});
   const [comentarioAEliminar, setComentarioAEliminar] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null); 
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -57,8 +57,6 @@ const VerPost = () => {
         setLoading(false);
       }
     };
-
-
 
     const fetchLikes = async () => {
       if (!postId || !userId) return;
@@ -423,7 +421,13 @@ const VerPost = () => {
               <VistaEnlace key={i} url={url} />
             ))}
             {obtenerImagenesPost(post).length > 0 && (
-              <ImageGrid images={obtenerImagenesPost(post)} />
+              <ImageGrid 
+                images={obtenerImagenesPost(post)} 
+                onImageClick={(img, e) => {
+                  e.stopPropagation(); 
+                  setSelectedImage(img);
+                }}
+              />
             )}
 
             <div className="post-actions">
@@ -561,6 +565,14 @@ const VerPost = () => {
           {post.usuario_id && <PostsUsuario usuarioId={post.usuario_id} />}
         </div>
       </div>
+
+      {/* Modal para mostrar imagen ampliada */}
+      {selectedImage && (
+        <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+          <img src={selectedImage} alt="Ampliada" className="modal-image" />
+        </div>
+      )}
+
       <ScrollArriba />
     </div>
   );

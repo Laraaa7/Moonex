@@ -30,7 +30,7 @@ function Feed() {
   const [likeCounts, setLikeCounts] = useState({});
   const postsPerPage = 5;
   const observer = useRef();
-  
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -368,7 +368,17 @@ function Feed() {
                       {urls.map((url, i) => (
                         <VistaEnlace key={i} url={url} />
                       ))}
-                      {imagenesPost.length > 0 && <ImageGrid images={imagenesPost} />}
+                      {imagenesPost.length > 0 && (
+                        <ImageGrid
+                      images={imagenesPost}
+                      onImageClick={(img, e) => {
+                        e.stopPropagation(); // 👈 Esto evita que se active el onClick del post
+                        setSelectedImage(img);
+                      }}
+                    />
+
+                  )}
+
                     </div>
 
                     <div className="post-actions">
@@ -405,6 +415,12 @@ function Feed() {
               );
             })
           )}
+          {selectedImage && (
+          <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+            <img src={selectedImage} alt="Ampliada" className="modal-image" />
+          </div>
+        )}
+
         </div>
 
         {/* Sidebar derecho solo visible en desktop (>1200px) */}
