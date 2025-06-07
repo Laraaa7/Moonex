@@ -13,6 +13,7 @@ import PostButton from "../components/PostButton";
 import PostsUsuario from "../components/PostsUsuario";
 import defaultProfile from "../img/PfpDefecto.png";
 import Respuestas from "../components/Respuestas";
+import { Link } from "react-router-dom";
 import "./VerPost.css";
 
 const VerPost = () => {
@@ -461,19 +462,26 @@ const VerPost = () => {
                   comentarios.map((comentario) => (
                     
                     <div key={comentario.id} className="comentario-item">
-              <div className="comentario-header">
-  <img
-    src={comentario.foto_perfil || defaultProfile}
-    alt="avatar"
-    className="comentario-avatar"
-  />
+ <div className="comentario-header">
+  <Link to={`/perfilDeUsuario/${comentario.username}`}>
+    <img
+      src={comentario.foto_perfil || defaultProfile}
+      alt="avatar"
+      className="comentario-avatar"
+    />
+  </Link>
 
   <div className="comentario-header-content">
     <div className="comentario-userinfo">
-      <span className="comentario-nombre">{comentario.nombre}</span>
-      <span className="comentario-username">@{comentario.username}</span>
+      <Link to={`/perfilDeUsuario/${comentario.username}`} className="comentario-nombre-link">
+        <span className="comentario-nombre">{comentario.nombre}</span>
+      </Link>
+      <Link to={`/perfilDeUsuario/${comentario.username}`} className="comentario-username-link">
+        <span className="comentario-username">@{comentario.username}</span>
+      </Link>
       <span className="comentario-fecha">· {formatearTiempoC(comentario.fecha)}</span>
     </div>
+
 
     {userId === comentario.usuario_id && (
       <span
