@@ -437,6 +437,20 @@ max-height: calc(100vh - 120px);
   text-decoration: underline;
 }
 
+/* Aplica subrayado solo al nombre cuando se pasa el mouse */
+.comentario-nombre-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.comentario-nombre-link:hover {
+  text-decoration: underline;
+}
+
+.comentario-username-link {
+  text-decoration: none;
+  color: inherit;
+}
 
 
 .comentario-eliminar {

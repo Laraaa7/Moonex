@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { FaReply } from "react-icons/fa";
 import defaultProfile from "../img/PfpDefecto.png";
@@ -146,14 +147,21 @@ const Respuestas = ({ comentarioId, currentUser }) => {
 
   const renderRespuesta = (respuesta, esSub = false) => (
     <div key={respuesta.id} className={`respuesta-item ${esSub ? "subrespuesta" : ""}`}>
-      <div className="respuesta-header">
+    <div className="respuesta-header">
+      <Link to={`/perfilDeUsuario/${respuesta.username}`}>
         <img src={respuesta.foto_perfil || defaultProfile} alt="avatar" className="respuesta-avatar" />
-        <div className="respuesta-userinfo">
+      </Link>
+      <div className="respuesta-userinfo">
+        <Link to={`/perfilDeUsuario/${respuesta.username}`} className="respuesta-nombre-link">
           <span className="respuesta-nombre">{respuesta.nombre}</span>
+        </Link>
+        <Link to={`/perfilDeUsuario/${respuesta.username}`} className="respuesta-username-link">
           <span className="respuesta-username">@{respuesta.username}</span>
-          <span className="respuesta-fecha">· {formatearFecha(respuesta.fecha_respuesta)}</span>
-        </div>
+        </Link>
+        <span className="respuesta-fecha">· {formatearFecha(respuesta.fecha_respuesta)}</span>
       </div>
+    </div>
+
       <div className="respuesta-texto">{respuesta.contenido}</div>
       <div className="respuesta-actions">
         <span

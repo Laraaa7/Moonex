@@ -29,7 +29,12 @@ const EditProfile = ({ closeModal }) => {
       setUsername(user.username || "");
       setOriginalUsername(user.username || "");
       setUbicacion(user.ubicacion || "");
-      setNacimiento(user.fecha_nacimiento?.split("T")[0] || "");
+      if (user.fecha_nacimiento) {
+        const fechaUTC = new Date(user.fecha_nacimiento);
+        const fechaLocal = new Date(fechaUTC.getTime() + Math.abs(fechaUTC.getTimezoneOffset() * 60000));
+        setNacimiento(fechaLocal.toISOString().split("T")[0]);
+      }
+      
       if (user.banner) setBannerImage(user.banner);
       if (user.foto_perfil) setProfileImage(user.foto_perfil);
     }
